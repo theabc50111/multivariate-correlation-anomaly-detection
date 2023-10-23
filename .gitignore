@@ -1,3 +1,23 @@
+# ywt custom gitignore
+.ipynb_checkpoints/
+stock_correlation_prediction/
+correlation_record/
+lstm_only_models/
+lstm_only_scores/
+LSTM_ONLY/dataset/
+dataset/
+dataset.csv
+*train_logs/
+save_models/
+model_result_figs/
+pipeline_dataset/
+*__pycache__/
+*.log
+cscope*
+*.swp
+stock08_price.csv
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

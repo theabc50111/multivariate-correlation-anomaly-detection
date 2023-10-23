@@ -1,0 +1,3 @@
+3711/中租-KY : No adj_close
+5876/台灣大 : No adj_close
+6770/台塑化 : No adj_close
