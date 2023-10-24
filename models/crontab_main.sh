@@ -77,7 +77,7 @@ while [[ $# -gt 0 ]]; do
   case "$1" in
     --log_suffix)
       log_suffix="$2" # Note: In order to handle the argument containing space, the quotes around '$2': they are essential!
-      log_file="$HOME/Documents/codes/correlation-change-predict/mts_corr_ad_model/crontab_main_${log_suffix}.log"
+      log_file="$HOME/Documents/codes/multivariate-correlation-anomaly-detection/models/crontab_main_${log_suffix}.log"
       shift 2 # The 'shift' eats a commandline argument, i.e. converts $1=a, $2=b, $3=c, $4=d into $1=b, $2=c, $3=d. shift 2 moves it all the way to $1=c, $2=d. It's done since that particular branch uses an argument, so it has to remove two things from the list (the -r and the argument following it) not just one.
       ;;
 
@@ -217,6 +217,6 @@ done
 
 echo "========================== Start training at $(/usr/bin/date) ==========================" >> $log_file
 
-/usr/bin/docker container exec ywt-pytorch python /workspace/correlation-change-predict/mts_corr_ad_model/main.py $data_implement $batch_size $tr_epochs $train_models $seq_len $corr_type $corr_window $corr_stride $model_input_cus_bins $target_mats_path $cuda_device $learning_rate $weight_decay $use_optim_scheduler ${drop_pos[@]} $drop_p $gru_l $gru_h $gru_input_feature_idx $use_weighted_loss $tol_edge_acc_loss_atol $output_type $save_model >> "$log_file" 2>&1
+/usr/bin/docker container exec ywt-pytorch python /workspace/multivariate-correlation-anomaly-detection/models/main.py $data_implement $batch_size $tr_epochs $train_models $seq_len $corr_type $corr_window $corr_stride $model_input_cus_bins $target_mats_path $cuda_device $learning_rate $weight_decay $use_optim_scheduler ${drop_pos[@]} $drop_p $gru_l $gru_h $gru_input_feature_idx $use_weighted_loss $tol_edge_acc_loss_atol $output_type $save_model >> "$log_file" 2>&1
 
 echo "========================== End training at $(/usr/bin/date) ================================" >> $log_file
