@@ -389,6 +389,7 @@ class GRUCorrClass(torch.nn.Module):
 
 
 class GRUCorrClassOneFeature(GRUCorrClass):
+    # TODO: add docstring
     pass
 
 
