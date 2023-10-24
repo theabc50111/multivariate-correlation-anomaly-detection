@@ -216,7 +216,6 @@ while [[ $# -gt 0 ]]; do
 done
 
 echo "========================== Start training at $(/usr/bin/date) ==========================" >> $log_file
-
 /usr/bin/docker container exec ywt-pytorch python /workspace/multivariate-correlation-anomaly-detection/models/main.py $data_implement $batch_size $tr_epochs $train_models $seq_len $corr_type $corr_window $corr_stride $model_input_cus_bins $target_mats_path $cuda_device $learning_rate $weight_decay $use_optim_scheduler ${drop_pos[@]} $drop_p $gru_l $gru_h $gru_input_feature_idx $use_weighted_loss $tol_edge_acc_loss_atol $output_type $save_model >> "$log_file" 2>&1
 
 echo "========================== End training at $(/usr/bin/date) ================================" >> $log_file
