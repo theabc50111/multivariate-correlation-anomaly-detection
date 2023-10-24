@@ -102,15 +102,15 @@ if __name__ == "__main__":
                              help="input the number of stride length of correlation computing")
     args_parser.add_argument("--corr_window", type=int, nargs='?', default=50,
                              help="input the number of window length of correlation computing")
-    args_parser.add_argument("--input_data_cus_disc_bins", type=float, nargs='*', default=None,
+    args_parser.add_argument("--model_input_cus_bins", type=float, nargs='*', default=None,
                              help="input the custom discrete boundaries(bins) of model input data")
     args_parser.add_argument("--target_mats_path", type=str, nargs='?', default=None,
                              help="input the relative path of target matrices, the base directory of path is data_cfg[DIR][PIPELINE_DATA_DIR])/data_cfg[DATASETS][data_implement][OUTPUT_FILE_NAME_BASIS] + train_items_setting")
     args_parser.add_argument("--cuda_device", type=int, nargs='?', default=0,
                              help="input the number of cuda device")
     args_parser.add_argument("--train_models", type=str, nargs='+', default=[],
-                             choices=["GRUCORRCOEFPRED"],
-                             help="input to decide which models to train, the choices are [GRUCorrCoefPred]")
+                             choices=["GRUCORRCOEFPRED", "GRUCORRCLASS"],
+                             help="input to decide which models to train, the choices are [GRUCORRCOEFPRED, GRUCORRCLASS]")
     args_parser.add_argument("--learning_rate", type=float, nargs='?', default=0.001,
                              help="input the learning rate of training")
     args_parser.add_argument("--weight_decay", type=float, nargs='?', default=0,
@@ -140,8 +140,8 @@ if __name__ == "__main__":
     args_parser.add_argument("--save_model", type=bool, default=False, action=argparse.BooleanOptionalAction,  # setting of output files
                              help="input --save_model to save model weight and model info")
     args_parser.add_argument("--inference_models", type=str, nargs='+', default=[],
-                             choices=["GRUCORRCOEFPRED"],
-                             help="input to decide which models to train, the choices are [GRUCORRCOEFPRED]")
+                             choices=["GRUCORRCOEFPRED", "GRUCORRCLASS"],
+                             help="input to decide which models to inference, the choices are [GRUCORRCOEFPRED, GRUCORRCLASS]")
     args_parser.add_argument("--inference_model_paths", type=str, nargs='+', default=[],
                              help="input the path of inference model weight")
     args_parser.add_argument("--inference_data_split", type=str, nargs='?', default="val",
@@ -149,11 +149,11 @@ if __name__ == "__main__":
     ARGS = args_parser.parse_args()
     assert bool(ARGS.train_models) != bool(ARGS.inference_models), "train_models and inference_models must be input one of them"
     assert bool(ARGS.drop_pos) == bool(ARGS.drop_p), "drop_pos and drop_p must be both input or not input"
-    assert ("GRUCORRCOEFPRED" not in ARGS.train_models+ARGS.inference_models) or (ARGS.output_type != "class_probability"), "output_type can not be class_probability when train_models|inferene_models is GRUCORRCOEFPRED"
-    ###assert ("CLASSBASELINE" not in ARGS.train_models+ARGS.inference_models) or ARGS.output_type == "class_probability", "output_type must be class_probability when train_models|inferene_models is ClassBaseline"
+    assert ("GRUCORRCOEFPRED" not in ARGS.train_models+ARGS.inference_models) or (ARGS.output_type == "corr_coef"), "output_type must be corr_coef when train_models|inferene_models is GRUCORRCOEFPRED"
+    assert ("GRUCORRCLASS" not in ARGS.train_models+ARGS.inference_models) or ARGS.output_type == "class_probability", "output_type must be class_probability when train_models|inferene_models is GRUCORRCLASS"
     ###assert ("CLASSBASELINEONEFEATURE" not in ARGS.train_models+ARGS.inference_models) or ARGS.output_type == "class_probability", "output_type must be class_probability when train_models|inferene_models is ClassBaselineOneFeature"
     ###assert ("CLASSBASELINECUSTOMFEATURE" not in ARGS.train_models+ARGS.inference_models) or ARGS.output_type == "class_probability", "output_type must be class_probability when train_models|inferene_models is ClassBaselineCustomFeature"
-    ###assert "class_fc" not in ARGS.drop_pos or ARGS.output_type == "class_probability", "output_type must be class_probability when class_fc in drop_pos"
+    assert "class_fc" not in ARGS.drop_pos or ARGS.output_type == "class_probability", "output_type must be class_probability when class_fc in drop_pos"
     ###assert ("CLASSBASELINEONEFEATURE" not in ARGS.train_models+ARGS.inference_models) or (ARGS.gru_input_feature_idx is not None and len(ARGS.gru_input_feature_idx) == 1), "gru_input_feature_idx must be input when train_models|inferene_models is ClassBaselineOneFeature and len(gru_input_feature_idx) must be 1"
     ###assert ("CLASSBASELINECUSTOMFEATURE" not in ARGS.train_models+ARGS.inference_models) or (ARGS.gru_input_feature_idx is not None and len(ARGS.gru_input_feature_idx) > 1), "gru_input_feature_idx must be input when train_models|inferene_models is ClassBaselineCustomFeature and len(gru_input_feature_idx) must be greater than 1"
     logger.info(pformat(f"\n{vars(ARGS)}", indent=1, width=100, compact=True))
@@ -174,8 +174,8 @@ if __name__ == "__main__":
     torch.autograd.set_detect_anomaly(True)  # for debug grad
 
     s_l, w_l = ARGS.corr_stride, ARGS.corr_window
-    if ARGS.input_data_cus_disc_bins:
-        corr_data_mode_dir = f"custom_discretize_corr_data/bins_{'_'.join((str(f) for f in ARGS.input_data_cus_disc_bins)).replace('.', '')}"
+    if ARGS.model_input_cus_bins:
+        corr_data_mode_dir = f"custom_discretize_corr_data/bins_{'_'.join((str(f) for f in ARGS.model_input_cus_bins)).replace('.', '')}"
     else:
         corr_data_mode_dir = "corr_data"
     corr_df_dir = Path(data_cfg["DIRS"]["PIPELINE_DATA_DIR"])/f"{output_file_name}/{ARGS.corr_type}/{corr_data_mode_dir}"
@@ -192,7 +192,7 @@ if __name__ == "__main__":
                                        "test": ceil((test_dataset["model_input"].shape[1]-ARGS.seq_len)/ARGS.batch_size)},
                        "seq_len": ARGS.seq_len,
                        "num_pairs": train_dataset["model_input"].shape[0],
-                       "input_data_cus_disc_bins": '_'.join((str(f) for f in ARGS.input_data_cus_disc_bins)).replace('.', '') if ARGS.input_data_cus_disc_bins else None,
+                       "model_input_cus_bins": '_'.join((str(f) for f in ARGS.model_input_cus_bins)).replace('.', '') if ARGS.model_input_cus_bins else None,
                        "learning_rate": ARGS.learning_rate,
                        "weight_decay": ARGS.weight_decay,
                        "can_use_optim_scheduler": ARGS.use_optim_scheduler,

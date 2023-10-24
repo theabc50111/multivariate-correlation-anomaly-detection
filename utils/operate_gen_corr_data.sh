@@ -4,12 +4,14 @@
 # Define the list of items
 
 
-dataset_list=("--data_implement SP500_20082017" "--data_implement SP500_20082012" "--data_implement SP500_20112015" "--data_implement SP500_20122017")
-train_items_setting_list=("--train_items_setting train_all" "--train_items_setting train_train")  # ("--train_items_setting train_train" "--train_items_setting train_all")
+###dataset_list=("--data_implement SP500_20082017" "--data_implement SP500_20082012" "--data_implement SP500_20112015" "--data_implement SP500_20122017")
+dataset_list=("--data_implement SP500_20082012")
+###train_items_setting_list=("--train_items_setting train_all" "--train_items_setting train_train")  # ("--train_items_setting train_train" "--train_items_setting train_all")
+train_items_setting_list=("--train_items_setting train_train")  # ("--train_items_setting train_train" "--train_items_setting train_all")
 corr_type_list=("--corr_type pearson")  # ("--corr_type pearson" "--corr_type cross_corr")
 corr_win_list=("--corr_window 50")  # ("--corr_window 10" "--corr_window 30" "--corr_window 50")
 corr_str_list=("--corr_stride 1")
-custom_discrete_bins_list=("--custom_discrete_bins -1 -0.3 0.3 1")  # ("--custom_discrete_bins -1 0 1" "--custom_discrete_bins -1 -0.25 0.25 1" "--custom_discrete_bins -1 -0.5 0 0.5 1")
+custom_discrete_bins_list=("--custom_discrete_bins -1 -0.7 -0.3 0.3 0.7 1")  # ("--custom_discrete_bins -1 0 1" "--custom_discrete_bins -1 -0.25 0.25 1" "--custom_discrete_bins -1 -0.5 0 0.5 1")
 
 # Loop through the list
 

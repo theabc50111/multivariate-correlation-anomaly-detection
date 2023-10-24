@@ -77,7 +77,7 @@ def gen_custom_discretize_corr(src_dir: Path, data_gen_cfg: dict, bins: list, sa
     discretize_idxs[discretize_idxs == 0] = 1
     discretize_idxs[discretize_idxs > num_bins] = num_bins
     discretize_data = discretize_idxs.astype(np.float32)
-    discretize_values = np.linspace(-1, 1, num_bins)
+    discretize_values = np.linspace(-1, num_bins-2, num_bins)
     for discretize_tag, discretize_value in zip(np.unique(discretize_data), discretize_values):
         discretize_data[discretize_data == discretize_tag] = discretize_value
     discretize_corr_dataset = pd.DataFrame(discretize_data, index=corr_data.index, columns=corr_data.columns)
