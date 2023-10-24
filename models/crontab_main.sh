@@ -30,7 +30,7 @@ ARGUMENT_LIST=(
 )
 
 # Default empty values of arguments
-sh_script_err_log_file="$HOME/Documents/codes/correlation-change-predict/mts_corr_ad_model/crontab_main_sh_err.log"
+sh_script_err_log_file="$HOME/Documents/codes/multivariate-correlation-anomaly-detection/models/crontab_main_sh_err.log"
 data_implement=""
 log_suffix=""
 batch_size=""

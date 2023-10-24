@@ -162,7 +162,7 @@ if __name__ == "__main__":
     # data implement setting
     data_implement = ARGS.data_implement
     # train set setting
-    train_items_setting = "-train_train"  # -train_train|-train_all
+    train_items_setting = "-train_all"  # -train_train|-train_all
     # setting of name of output files and pictures title
     output_file_name = data_cfg["DATASETS"][data_implement]['OUTPUT_FILE_NAME_BASIS'] + train_items_setting
     # setting of output files
@@ -265,29 +265,29 @@ if __name__ == "__main__":
                     if save_model_info:
                         model_dir, model_log_dir = model_type.set_save_model_dir(current_dir, output_file_name, ARGS.corr_type, s_l, w_l)
                         model.save_model(best_model, best_model_info, model_dir=model_dir, model_log_dir=model_log_dir)
-    ###elif len(ARGS.inference_models) > 0:
-    ###    logger.info(f"===== inference model:[{ARGS.inference_models}] on {ARGS.inference_data_split} data =====")
-    ###    logger.info(f"===== if inference_models is more than one, the inference result is ensemble result =====")
-    ###    assert list(filter(lambda x: x in ModelType.__members__.keys(), ARGS.inference_models)), f"inference_models must be input one of {ModelType.__members__.keys()}"
-    ###    if ARGS.inference_data_split == "train":
-    ###        inference_data = train_dataset
-    ###    elif ARGS.inference_data_split == "val":
-    ###        inference_data = val_dataset
-    ###    elif ARGS.inference_data_split == "test":
-    ###        inference_data = test_dataset
-    ###    loss = None
-    ###    edge_acc = None
-    ###    if len(ARGS.inference_models) == 1:
-    ###        model_type = ModelType[ARGS.inference_models[0]]
-    ###        model = model_type.set_model(basic_model_cfg, ARGS)
-    ###        model_dir, _ = model_type.set_save_model_dir(current_dir, output_file_name, ARGS.corr_type, s_l, w_l)
-    ###        model_param_path = model_dir.parents[2].joinpath(ARGS.inference_model_paths[0])
-    ###        assert model_param_path.exists(), f"{model_param_path} not exists"
-    ###        model.load_state_dict(torch.load(model_param_path, map_location=device))
-    ###        model.eval()
-    ###        loss, edge_acc, preds, y_labels = model.test(inference_data, loss_fns=loss_fns_dict)
-    ###        conf_mat_save_fig_dir = current_dir/f"exploration_model_result/model_result_figs/{ARGS.inference_models[0]}/{model_param_path.stem}"
-    ###        conf_mat_save_fig_name = f'confusion_matrix-{ARGS.inference_data_split}.png'
+    elif len(ARGS.inference_models) > 0:
+        logger.info(f"===== inference model:[{ARGS.inference_models}] on {ARGS.inference_data_split} data =====")
+        logger.info(f"===== if inference_models is more than one, the inference result is ensemble result =====")
+        assert list(filter(lambda x: x in ModelType.__members__.keys(), ARGS.inference_models)), f"inference_models must be input one of {ModelType.__members__.keys()}"
+        if ARGS.inference_data_split == "train":
+            inference_data = train_dataset
+        elif ARGS.inference_data_split == "val":
+            inference_data = val_dataset
+        elif ARGS.inference_data_split == "test":
+            inference_data = test_dataset
+        loss = None
+        edge_acc = None
+        if len(ARGS.inference_models) == 1:
+            model_type = ModelType[ARGS.inference_models[0]]
+            model = model_type.set_model(basic_model_cfg, ARGS)
+            model_dir, _ = model_type.set_save_model_dir(current_dir, output_file_name, ARGS.corr_type, s_l, w_l)
+            model_param_path = model_dir.parents[2].joinpath(ARGS.inference_model_paths[0])
+            assert model_param_path.exists(), f"{model_param_path} not exists"
+            model.load_state_dict(torch.load(model_param_path, map_location=device))
+            model.eval()
+            loss, edge_acc, preds, y_labels = model.test(inference_data, loss_fns=loss_fns_dict)
+            conf_mat_save_fig_dir = current_dir/f"exploration_model_result/model_result_figs/{ARGS.inference_models[0]}/{model_param_path.stem}"
+            conf_mat_save_fig_name = f'confusion_matrix-{ARGS.inference_data_split}.png'
     ###    elif len(ARGS.inference_models) > 1:
     ###        assert sorted(ARGS.inference_models) == ARGS.inference_models, f"inference_models must be input in order, but the input order is {ARGS.inference_models}"
     ###        ensemble_pred_prob = 0
