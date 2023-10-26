@@ -162,7 +162,7 @@ if __name__ == "__main__":
     # data implement setting
     data_implement = ARGS.data_implement
     # train set setting
-    train_items_setting = "-train_all"  # -train_train|-train_all
+    train_items_setting = "-train_train"  # -train_train|-train_all
     # setting of name of output files and pictures title
     output_file_name = data_cfg["DATASETS"][data_implement]['OUTPUT_FILE_NAME_BASIS'] + train_items_setting
     # setting of output files
@@ -170,6 +170,7 @@ if __name__ == "__main__":
     # set devide of pytorch
     device = torch.device(f'cuda:{ARGS.cuda_device}' if torch.cuda.is_available() else 'cpu')
     torch.cuda.set_device(device)
+    torch.set_default_device(device)
     torch.set_default_dtype(torch.float64)
     torch.autograd.set_detect_anomaly(True)  # for debug grad
 
