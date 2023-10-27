@@ -280,8 +280,11 @@ class GRUCorrClass(torch.nn.Module):
         if epoch_i % 100 == 0:  # show oredictive and real adjacency matrix every 500 epochs
             x, y = last_batch_data[0], last_batch_data[1]
             preds, y = last_batch_output['tr_preds'], last_batch_output['tr_labels']
+            seq_len = self.model_cfg['seq_len']
             logger.info("="*50)
-            logger.info(f"\nIn Epoch {epoch_i:>3}, batch_idx:{batch_idx}, data_batch_idx:7 \ninput_graph_adj[7, 0, :5]:\n{x[7, 0, :5]}\npred_graph_adj[7, :5]:\n{preds[7, :5]}\ny_graph_adj[7, :5]:\n{y[7, :5]}")
+            logger.info(f"epoch_i: {epoch_i:>3}, batch_idx: {batch_idx:>3}, data_batch_idx:0")
+            logger.info(f"x.shape: {x.shape}, y.shape: {y.shape}, preds.shape: {preds.shape}")
+            logger.info(f"\nIn Epoch {epoch_i:>3}, batch_idx:{batch_idx}, data_batch_idx:0, input_corr_data_seq_len:{seq_len} \ninput_corr_data[0, {seq_len-1}, :5]:\n{x[0, seq_len-1, :5]}\npred_corr_data[0, :5]:\n{preds[0, :5]}\ny_labels[0, :5]:\n{y[0, :5]}")
             logger.info("="*50)
 
     @overload
