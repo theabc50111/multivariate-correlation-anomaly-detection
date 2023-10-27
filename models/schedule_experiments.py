@@ -6,7 +6,7 @@ from pprint import pprint
 
 data_implement_list = ["--data_implement SP500_20112015", "--data_implement SP500_20082012", "--data_implement SP500_20122017", "--data_implement SP500_20082017"]  # "--data_implement LINEAR_REG_ONE_CLUSTER_DIM_30_BKPS_0_NOISE_STD_30"
 batch_size_list = [""]
-train_models_list = ["--train_models GRUCORRCLASS "]  # ["", "--train_models GRUCORRCLASS", "--train_models GRUCORRCLASS --train_models GRUCORRCOEFPRED"]
+train_models_list = ["--train_models GRUCORRCLASS"]  # ["", "--train_models GRUCORRCLASS", "--train_models GRUCORRCLASS --train_models GRUCORRCOEFPRED"]
 corr_type_list = ["--corr_type pearson"]  # ["--corr_type pearson", "--corr_type cross_corr"]
 seq_len_list = ["--seq_len 30"]  # ["--seq_len 5", "--seq_len 10"]
 model_input_cus_bins_list = [""]  # ["", "--model_input_cus_bins -1 --model_input_cus_bins 0 --model_input_cus_bins 1", "--model_input_cus_bins -1 --model_input_cus_bins -0.25 --model_input_cus_bins 0.25 --model_input_cus_bins 1", "--model_input_cus_bins -1 --model_input_cus_bins -0.5 --model_input_cus_bins 0 --model_input_cus_bins 0.5 --model_input_cus_bins 1"]

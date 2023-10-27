@@ -213,10 +213,12 @@ class GRUCorrClass(torch.nn.Module):
         """
         best_model_info = self.best_model_info
         epoch_metrics = self.epoch_metrics
-        epoch_metrics["tr_preds"] = last_batch_output['tr_preds']  # only record the last batch
-        epoch_metrics["tr_labels"] = last_batch_output['tr_labels']
-        epoch_metrics["val_preds"] = last_batch_output['val_preds']
-        epoch_metrics["val_labels"] = last_batch_output['val_labels']
+        total_epochs = self.best_model_info["epochs"]
+        if epoch_i in np.linspace(0, total_epochs-1, 5, dtype=int):
+            epoch_metrics["tr_preds"] = last_batch_output['tr_preds']  # only record the last batch
+            epoch_metrics["tr_labels"] = last_batch_output['tr_labels']
+            epoch_metrics["val_preds"] = last_batch_output['val_preds']
+            epoch_metrics["val_labels"] = last_batch_output['val_labels']
         for k, v in epoch_metrics.items():
             history_list = best_model_info.setdefault(k+"_history", [])
             if isinstance(v, torch.Tensor):
