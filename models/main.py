@@ -235,7 +235,7 @@ if __name__ == "__main__":
     logger.info(f"test_dataset['model_input'].max:{test_dataset['model_input'].max()}, test_dataset['model_input'].min:{test_dataset['model_input'].min()}")
     logger.info(f'Training set   = {train_dataset["model_input"].shape[1]} timesteps')
     logger.info(f'Validation set = {val_dataset["model_input"].shape[1]} timesteps')
-    logger.info(f'Test set       = {test_dataset["model_input"].shape[1]} timestep')
+    logger.info(f'Test set       = {test_dataset["model_input"].shape[1]} timesteps')
     logger.info("="*80)
 
     if len(ARGS.train_models) > 0:

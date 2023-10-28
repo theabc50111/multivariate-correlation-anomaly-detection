@@ -10,7 +10,7 @@ train_models_list = ["--train_models GRUCORRCLASS"]  # ["", "--train_models GRUC
 corr_type_list = ["--corr_type pearson"]  # ["--corr_type pearson", "--corr_type cross_corr"]
 seq_len_list = ["--seq_len 30"]  # ["--seq_len 5", "--seq_len 10"]
 model_input_cus_bins_list = [""]  # ["", "--model_input_cus_bins -1 --model_input_cus_bins 0 --model_input_cus_bins 1", "--model_input_cus_bins -1 --model_input_cus_bins -0.25 --model_input_cus_bins 0.25 --model_input_cus_bins 1", "--model_input_cus_bins -1 --model_input_cus_bins -0.5 --model_input_cus_bins 0 --model_input_cus_bins 0.5 --model_input_cus_bins 1"]
-target_mats_path_list = ["--target_mats_path pearson/custom_discretize_corr_data/bins_-10_-03_03_10"]  # ["", "--target_mats_path pearson/custom_discretize_corr_data/bins_-10_-025_025_10", "--target_mats_path pearson/quan_discretize_corr_data/bin3"]
+target_mats_path_list = ["--target_mats_path pearson/custom_discretize_corr_data/bins_-10_-07_-03_03_07_10"]  # ["", "--target_mats_path pearson/custom_discretize_corr_data/bins_-10_-025_025_10", "--target_mats_path pearson/quan_discretize_corr_data/bin3"]
 learning_rate_list = [""]  # ["--learn_rate 0.0001", "--learn_rate 0.0005", "--learn_rate 0.001", "--learn_rate 0.005", "--learn_rate 0.01", "--learn_rate 0.05", "--learn_rate 0.1"]
 weight_decay_list = [""]  # ["--weight_decay 0.0001", "--weight_decay 0.0005", "--weight_decay 0.001", "--weight_decay 0.005", "--weight_decay 0.01", "--weight_decay 0.05", "--weight_decay 0.1"]
 use_optim_scheduler_list = [""]  # ["", "--use_optim_scheduler true"]
@@ -45,7 +45,7 @@ if set(map(lambda x: x['gru_l'], args_list)) != {""}:
     model_timedelta_list = [timedelta(hours=1, minutes=20), timedelta(hours=1, minutes=20), timedelta(hours=1, minutes=25)]  # The order of elements of model_timedelta_list should comply with the order of elements of args_list
 else:
     num_models = len(args_list)
-    model_timedelta_list = [timedelta(hours=4, minutes=15)]
+    model_timedelta_list = [timedelta(hours=5, minutes=25)]
 
 model_timedelta_list = list(chain.from_iterable(repeat(x, num_models) for x in model_timedelta_list))
 model_timedelta_list = [0] + model_timedelta_list

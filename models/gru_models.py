@@ -374,17 +374,17 @@ class GRUCorrClass(torch.nn.Module):
         """
         Yield batch data
         """
-        num_pairs, timesteps = model_input_data.shape[0], model_input_data.shape[1]-1  # the graph of last "t" can't be used as train data
+        num_pairs, all_timesetps = model_input_data.shape[0], model_input_data.shape[1]-1  # the graph of last "t" can't be used as train data
         input_arr = model_input_data.T
         target_arr = target_data.T
-        for input_t in range(0, timesteps, batch_size):
-            cur_batch_size = batch_size if input_t+batch_size <= timesteps-seq_len else timesteps-seq_len-input_t
+        for batch_start_t in range(0, all_timesetps, batch_size):
+            cur_batch_size = batch_size if batch_start_t+batch_size <= all_timesetps-seq_len else all_timesetps-seq_len-batch_start_t
             if cur_batch_size <= 0:
                 break
             batch_x = torch.empty((cur_batch_size, seq_len, num_pairs)).fill_(np.nan)
             batch_y = torch.empty((cur_batch_size, num_pairs)).fill_(np.nan)
             for data_batch_idx in range(cur_batch_size):
-                begin_t, end_t = input_t+data_batch_idx, input_t+data_batch_idx+seq_len
+                begin_t, end_t = batch_start_t+data_batch_idx, batch_start_t+data_batch_idx+seq_len
                 batch_x[data_batch_idx] = torch.tensor(np.nan_to_num(input_arr[begin_t:end_t], nan=0))
                 batch_y[data_batch_idx] = torch.tensor(np.nan_to_num(target_arr[end_t], nan=0))
 
@@ -393,9 +393,43 @@ class GRUCorrClass(torch.nn.Module):
             yield batch_x, batch_y
 
 
-class GRUCorrClassOneFeature(GRUCorrClass):
-    # TODO: add docstring
-    pass
+class GRUCorrClassCustomFeatures(GRUCorrClass):
+    """
+    GRU model for predicting correlation class with custom input features
+    """
+    def init_best_model_info(self, train_data: dict, loss_fns: dict, epochs: int):
+        """
+        Initialize best_model_info
+        """
+        super().init_best_model_info(train_data, loss_fns, epochs)
+        self.best_model_info.update({"input_feature_idx": self.model_cfg["input_featrue_idx"]})
+
+        return self.best_model_info
+
+    def yeild_batch_data(self, model_input_data: np.ndarray, target_data: np.ndarray, seq_len: int = 10, batch_size: int = 5):
+        """
+        Yield batch data
+        """
+        assert (self.model_cfg["input_featrue_idx"] is not None) and len(self.model_cfg["input_featrue_idx"]) >= 1, "input_featrue_idx must be a list of int"
+        _, all_timesetps = model_input_data.shape[0], model_input_data.shape[1]-1  # the graph of last "t" can't be used as train data
+        selected_feature_idx = self.model_cfg["input_featrue_idx"]
+        input_arr = model_input_data[selected_feature_idx, ::].T
+        target_arr = target_data[selected_feature_idx, ::].T
+        for batch_start_t in range(0, all_timesetps, batch_size):
+            cur_batch_size = batch_size if batch_start_t+batch_size <= all_timesetps-seq_len else all_timesetps-seq_len-batch_start_t
+            if cur_batch_size <= 0:
+                break
+            batch_x = torch.empty((cur_batch_size, seq_len, len(selected_feature_idx))).fill_(np.nan)
+            batch_y = torch.empty((cur_batch_size, len(selected_feature_idx))).fill_(np.nan)
+            for data_batch_idx in range(cur_batch_size):
+                begin_t, end_t = batch_start_t+data_batch_idx, batch_start_t+data_batch_idx+seq_len
+                batch_x[data_batch_idx] = torch.tensor(input_arr[begin_t:end_t])
+                batch_y[data_batch_idx] = torch.tensor(target_arr[end_t])
+
+            assert not torch.isnan(batch_x).any() or not torch.isnan(batch_y).any(), "batch_x or batch_y contains nan"
+
+            yield batch_x, batch_y
+
 
 
 class GRUCorrCoefPred(GRUCorrClass):
