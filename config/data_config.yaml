@@ -27,7 +27,7 @@ DATASETS:
         ALL_SET: *sp500_20082017_all_set
         TRAIN_SET: *sp500_20082017_train_set
         OUTPUT_FILE_NAME_BASIS: "sp500_20122017"
-   SP500_20112015_CORR_MEAN_POSITIVE_KEEP:
+    SP500_20112015_CORR_MEAN_POSITIVE_KEEP:
         FILE_PATH: "{DIRS.DATASET_DIR}/is_pre_data/sp500_hold_20112015_adj_close-pre.csv"
         ALL_SET: []
         TRAIN_SET: ['ADP', 'APH', 'MDT', 'PAYX']
