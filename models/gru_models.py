@@ -385,8 +385,8 @@ class GRUCorrClass(torch.nn.Module):
             batch_y = torch.empty((cur_batch_size, num_pairs)).fill_(np.nan)
             for data_batch_idx in range(cur_batch_size):
                 begin_t, end_t = batch_start_t+data_batch_idx, batch_start_t+data_batch_idx+seq_len
-                batch_x[data_batch_idx] = torch.tensor(np.nan_to_num(input_arr[begin_t:end_t], nan=0))
-                batch_y[data_batch_idx] = torch.tensor(np.nan_to_num(target_arr[end_t], nan=0))
+                batch_x[data_batch_idx] = torch.tensor(input_arr[begin_t:end_t])
+                batch_y[data_batch_idx] = torch.tensor(target_arr[end_t])
 
             assert not torch.isnan(batch_x).any() or not torch.isnan(batch_y).any(), "batch_x or batch_y contains nan"
 
@@ -429,7 +429,6 @@ class GRUCorrClassCustomFeatures(GRUCorrClass):
             assert not torch.isnan(batch_x).any() or not torch.isnan(batch_y).any(), "batch_x or batch_y contains nan"
 
             yield batch_x, batch_y
-
 
 
 class GRUCorrCoefPred(GRUCorrClass):
