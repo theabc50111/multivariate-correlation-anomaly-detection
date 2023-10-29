@@ -222,7 +222,7 @@ if __name__ == "__main__":
 
     # setting of metric function of edge_accuracy of model
     if ARGS.custom_indices_edge_acc_metric_indices:
-        num_labels_classes = ARGS.target_mats_path.split("/")[-1].replace("bins_", "").count("_")
+        num_labels_classes = ARGS.target_mats_path.split("/")[-1].replace("bins_", "").count("_") if ARGS.target_mats_path else None
         basic_model_cfg["edge_acc_metric_fn"] = CustomIndicesEdgeAccuracy(selected_indices=ARGS.custom_indices_edge_acc_metric_indices, num_classes=num_labels_classes)
 
     # show info
@@ -288,16 +288,23 @@ if __name__ == "__main__":
             model.load_state_dict(torch.load(model_param_path, map_location=device))
             model.eval()
             loss, edge_acc, preds, y_labels = model.test(inference_data, loss_fns=loss_fns_dict, test_data_split=ARGS.inference_data_split)
-            conf_mat_save_fig_dir = current_dir/f"exploration_model_result/model_result_figs/{ARGS.inference_models[0]}/{model_param_path.stem}"
-            conf_mat_save_fig_name = f'confusion_matrix-{ARGS.inference_data_split}.png'
 
         assert preds.shape == y_labels.shape, f"preds.shape:{preds.shape} != y_labels.shape:{y_labels.shape}"
-        preds, y_labels = preds.cpu().numpy(), y_labels.cpu().numpy()
-        conf_mat_save_fig_path = conf_mat_save_fig_dir/conf_mat_save_fig_name
-        conf_mat_save_fig_dir.mkdir(parents=True, exist_ok=True)
-        plot_heatmap(preds, y_labels, pic_title=ARGS.inference_data_split, can_show_conf_mat=True, save_fig_path=conf_mat_save_fig_path)
         loss = loss.item() if isinstance(loss, torch.Tensor) else loss
         edge_acc = edge_acc.item() if isinstance(edge_acc, torch.Tensor) else edge_acc
+        if ARGS.custom_indices_edge_acc_metric_indices:
+            preds = preds[:, ARGS.custom_indices_edge_acc_metric_indices].cpu().numpy()
+            y_labels = y_labels[:, ARGS.custom_indices_edge_acc_metric_indices].cpu().numpy()
+        else:
+            preds, y_labels = preds.cpu().numpy(), y_labels.cpu().numpy()
+        if ARGS.output_type == "class_probability":
+            if len(ARGS.inference_models) == 1:
+                conf_mat_save_fig_dir = current_dir/f"exploration_model_result/model_result_figs/{ARGS.inference_models[0]}/{model_param_path.stem}"
+            conf_mat_save_fig_name = f'confusion_matrix-{ARGS.inference_data_split}.png'
+            conf_mat_save_fig_path = conf_mat_save_fig_dir/conf_mat_save_fig_name
+            num_labels_classes = ARGS.target_mats_path.split("/")[-1].replace("bins_", "").count("_")
+            conf_mat_save_fig_dir.mkdir(parents=True, exist_ok=True)
+            plot_heatmap(preds, y_labels, num_classes=num_labels_classes, pic_title=ARGS.inference_data_split, can_show_conf_mat=True, save_fig_path=conf_mat_save_fig_path)
         logger.info(f"loss_fns:{loss_fns_dict['fns']}")
         logger.info(f"metric_fn:{basic_model_cfg['edge_acc_metric_fn'] if 'edge_acc_metric_fn' in basic_model_cfg.keys() else None}")
         logger.info(f"Special args of loss_fns: {[(loss_fn, loss_args) for loss_fn, loss_args in loss_fns_dict['fn_args'].items() for arg in loss_args if arg not in ['input', 'target']]}")

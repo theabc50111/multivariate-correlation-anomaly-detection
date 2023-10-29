@@ -301,12 +301,16 @@ class GRUCorrClass(torch.nn.Module):
         ...
 
     def train(self, mode: bool = True, train_data: np.ndarray = None, val_data: np.ndarray = None, loss_fns: dict = None, epochs: int = 1000, **unused_kwargs):
+        """
+        Train model
+        """
         # In order to make original function of nn.Module.train() work, we need to override it
         super().train(mode=mode)
         if train_data is None:
             return self
         # Train on epochs
         assert self.model_cfg['output_type'] == "class_probability", "output_type must be class_probability"
+        assert self.num_labels_classes == np.unique(train_data['target']).shape[0], f"num_labels_classes must be equal to the number of unique target in {self.__class__}, but self.num_labels_classes={self.num_labels_classes} and np.unique(train_data['target']).shape[0]={np.unique(train_data['target']).shape[0]}"
         self.init_best_model_info(train_data, val_data, loss_fns, epochs)
         self.show_model_config()
         best_model = []
@@ -517,6 +521,7 @@ class GRUCorrCoefPred(GRUCorrClass):
         if train_data is None:
             return self
         assert self.model_cfg['output_type'] == "corr_coef", "output_type must be corr_coef"
+        assert self.num_labels_classes == 0, "num_labels_classes must be equal to 0 in {self.__class__}, but self.num_labels_classes={self.num_labels_classes}"
         self.init_best_model_info(train_data, val_data, loss_fns, epochs)
         self.show_model_config()
         best_model = []
