@@ -405,6 +405,12 @@ class GRUCorrClassCustomFeatures(GRUCorrClass):
     """
     GRU model for predicting correlation class with custom input features
     """
+    def __init__(self, model_cfg: dict, **unused_kwargs):
+        super(GRUCorrClassCustomFeatures, self).__init__(model_cfg, **unused_kwargs)
+        if type(self) == GRUCorrClassCustomFeatures:
+            self.init_optimizer()
+
+
     def init_best_model_info(self, train_data: dict, val_data: dict, loss_fns: dict, epochs: int):
         """
         Initialize best_model_info
