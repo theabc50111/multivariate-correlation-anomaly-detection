@@ -410,7 +410,6 @@ class GRUCorrClassCustomFeatures(GRUCorrClass):
         if type(self) == GRUCorrClassCustomFeatures:
             self.init_optimizer()
 
-
     def init_best_model_info(self, train_data: dict, val_data: dict, loss_fns: dict, epochs: int):
         """
         Initialize best_model_info
@@ -420,13 +419,13 @@ class GRUCorrClassCustomFeatures(GRUCorrClass):
 
         return self.best_model_info
 
-    def yeild_batch_data(self, model_input_data: np.ndarray, target_data: np.ndarray, seq_len: int = 10, batch_size: int = 5):
+    def yield_batch_data(self, model_input_data: np.ndarray, target_data: np.ndarray, seq_len: int = 10, batch_size: int = 5):
         """
         Yield batch data
         """
-        assert (self.model_cfg["input_featrue_idx"] is not None) and len(self.model_cfg["input_featrue_idx"]) >= 1, "input_featrue_idx must be a list of int"
+        assert (self.model_cfg["input_feature_idx"] is not None) and len(self.model_cfg["input_feature_idx"]) >= 1, "input_feature_idx must be a list of int"
         _, all_timesetps = model_input_data.shape[0], model_input_data.shape[1]-1  # the graph of last "t" can't be used as train data
-        selected_feature_idx = self.model_cfg["input_featrue_idx"]
+        selected_feature_idx = self.model_cfg["input_feature_idx"]
         input_arr = model_input_data[selected_feature_idx, ::].T
         target_arr = target_data[selected_feature_idx, ::].T
         for batch_start_t in range(0, all_timesetps, batch_size):

@@ -56,10 +56,10 @@ class ModelType(Enum):
         gru_corr_coef_cfg["gru_in_dim"] = basic_model_cfg["num_pairs"]
         gru_corr_class_cfg = gru_corr_coef_cfg.copy()
         gru_corr_class_cfg["num_labels_classes"] = basic_model_cfg["target_data_bins"].replace("bins_", "").count("_") if basic_model_cfg["target_data_bins"] else None
-        gru_corr_class_custom_feature_cfg = gru_corr_coef_cfg.copy()
+        gru_corr_class_custom_feature_cfg = gru_corr_class_cfg.copy()
         gru_corr_class_custom_feature_cfg["gru_in_dim"] = len(args.gru_input_feature_idx) if args.gru_input_feature_idx else 1
         gru_corr_class_custom_feature_cfg["input_feature_idx"] = args.gru_input_feature_idx
-        ###baseline_gru_one_feature_cfg = gru_corr_coef_cfg.copy()
+        ###baseline_gru_one_feature_cfg = gru_corr_class_cfg.copy()
         ###baseline_gru_one_feature_cfg["gru_in_dim"] = 1
         ###baseline_gru_one_feature_cfg["input_feature_idx"] = args.gru_input_feature_idx
         model_dict = {"GRUCORRCOEFPRED": GRUCorrCoefPred(gru_corr_coef_cfg),
@@ -192,7 +192,7 @@ if __name__ == "__main__":
                                        "val": ceil((val_dataset["model_input"].shape[1]-ARGS.seq_len)/ARGS.batch_size),
                                        "test": ceil((test_dataset["model_input"].shape[1]-ARGS.seq_len)/ARGS.batch_size)},
                        "seq_len": ARGS.seq_len,
-                       "num_pairs": train_dataset["model_input"].shape[0],
+                       "num_pairs": train_dataset["model_input"].shape[0] if ARGS.gru_input_feature_idx is None else len(ARGS.gru_input_feature_idx),
                        "model_input_cus_bins": '_'.join((str(f) for f in ARGS.model_input_cus_bins)).replace('.', '') if ARGS.model_input_cus_bins else None,
                        "learning_rate": ARGS.learning_rate,
                        "weight_decay": ARGS.weight_decay,
