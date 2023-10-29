@@ -40,5 +40,5 @@ DATASETS:
     SP500_20112015_CORR_MEAN_POSITIVE_NEGATIVE_KEEP:
         FILE_PATH: "{DIRS.DATASET_DIR}/is_pre_data/sp500_hold_20112015_adj_close-pre.csv"
         ALL_SET: []
-        TRAIN_SET: ['NEM', 'ETR', 'INCY', 'ADP', 'APH', 'MDT', 'PAYX']
+        TRAIN_SET: ['ADP', 'APH', 'ETR', 'INCY', 'MDT', 'NEM', 'PAYX']
         OUTPUT_FILE_NAME_BASIS: "sp500_20112015_corr_mean_positive_negative_keep"
