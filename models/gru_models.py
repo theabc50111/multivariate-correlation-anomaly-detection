@@ -48,6 +48,7 @@ class GRUCorrClass(torch.nn.Module):
         self.num_test_batches = self.model_cfg["num_batches"]['test']
         self.best_model_info = {}
         self.epoch_metrics = {}
+        self.init_epoch_metrics(loss_fns=self.model_cfg["loss_fns"])
         # set model components
         self.fc_dec_out_dim = self.model_cfg["gru_in_dim"]
         self.gru = GRU(input_size=self.model_cfg['gru_in_dim'], hidden_size=self.model_cfg['gru_h'], num_layers=self.model_cfg['gru_l'], dropout=self.model_cfg["drop_p"] if "gru" in self.model_cfg["drop_pos"] else 0, batch_first=True)
@@ -88,15 +89,17 @@ class GRUCorrClass(torch.nn.Module):
             logger.debug(name, param.shape)
         logger.debug("!"*100)
 
-    def init_best_model_info(self, train_data: dict, loss_fns: dict, epochs: int):
+    def init_best_model_info(self, train_data: dict, val_data: dict, loss_fns: dict, epochs: int):
         """
         Initialize best_model_info
         """
-        self.best_model_info = {"num_training_data": train_data['model_input'].shape[1],
+        self.best_model_info = {"num_train_data": train_data['model_input'].shape[1],
+                                "num_val_data": val_data['model_input'].shape[1],
                                 "seq_len": self.model_cfg['seq_len'],
                                 "epochs": epochs,
                                 "batch_size": self.model_cfg['batch_size'],
                                 "tr_batches_per_epoch": self.num_tr_batches,
+                                "val_batches_per_epoch": self.num_val_batches,
                                 "opt_lr": self.model_cfg['learning_rate'],
                                 "opt_weight_decay": self.model_cfg['weight_decay'],
                                 "optimizer": str(self.optimizer),
@@ -304,7 +307,7 @@ class GRUCorrClass(torch.nn.Module):
             return self
         # Train on epochs
         assert self.model_cfg['output_type'] == "class_probability", "output_type must be class_probability"
-        self.init_best_model_info(train_data, loss_fns, epochs)
+        self.init_best_model_info(train_data, val_data, loss_fns, epochs)
         self.show_model_config()
         best_model = []
         for epoch_i in tqdm(range(epochs)):
@@ -336,12 +339,17 @@ class GRUCorrClass(torch.nn.Module):
 
         return best_model, self.best_model_info
 
-    def test(self, test_data: np.ndarray = None, loss_fns: dict = None, test_data_split: str = "val"):
+    def test(self, test_data: np.ndarray, loss_fns: dict, test_data_split: str):
         assert test_data_split in ["val", "test"], "test_data_split must be 'val' or 'test'"
         self.eval()
         test_loss = 0
         test_edge_acc = 0
-        num_batches = self.num_val_batches if test_data_split == "val" else self.num_test_batches
+        if test_data_split == "train":
+            num_batches = self.num_tr_batches
+        elif test_data_split == "val":
+            num_batches = self.num_val_batches
+        elif test_data_split == "test":
+            num_batches = self.num_test_batches
         test_loader = self.yield_batch_data(model_input_data=test_data['model_input'], target_data=test_data['target'], batch_size=self.model_cfg['batch_size'], seq_len=self.model_cfg['seq_len'])
         with torch.no_grad():
             for batch_idx, batch_data in enumerate(test_loader):
@@ -397,12 +405,12 @@ class GRUCorrClassCustomFeatures(GRUCorrClass):
     """
     GRU model for predicting correlation class with custom input features
     """
-    def init_best_model_info(self, train_data: dict, loss_fns: dict, epochs: int):
+    def init_best_model_info(self, train_data: dict, val_data: dict, loss_fns: dict, epochs: int):
         """
         Initialize best_model_info
         """
-        super().init_best_model_info(train_data, loss_fns, epochs)
-        self.best_model_info.update({"input_feature_idx": self.model_cfg["input_featrue_idx"]})
+        super().init_best_model_info(train_data, val_data, loss_fns, epochs)
+        self.best_model_info.update({"input_feature_idx": self.model_cfg["input_feature_idx"]})
 
         return self.best_model_info
 
@@ -451,11 +459,11 @@ class GRUCorrCoefPred(GRUCorrClass):
 
         return batch_preds
 
-    def init_best_model_info(self, train_data: dict, loss_fns: dict, epochs: int):
+    def init_best_model_info(self, train_data: dict, val_data: dict, loss_fns: dict, epochs: int):
         """
         Initialize best_model_info
         """
-        super().init_best_model_info(train_data, loss_fns, epochs)
+        super().init_best_model_info(train_data, val_data, loss_fns, epochs)
         self.best_model_info.update({"min_val_loss": float('inf')})
         del self.best_model_info["max_val_edge_acc"]
 
@@ -504,7 +512,7 @@ class GRUCorrCoefPred(GRUCorrClass):
         if train_data is None:
             return self
         assert self.model_cfg['output_type'] == "corr_coef", "output_type must be corr_coef"
-        self.init_best_model_info(train_data, loss_fns, epochs)
+        self.init_best_model_info(train_data, val_data, loss_fns, epochs)
         self.show_model_config()
         best_model = []
         # Train on epochs
@@ -535,12 +543,17 @@ class GRUCorrCoefPred(GRUCorrClass):
 
         return best_model, self.best_model_info
 
-    def test(self, test_data: np.ndarray = None, loss_fns: dict = None, test_data_split: str = "val"):
+    def test(self, test_data: np.ndarray, loss_fns: dict, test_data_split: str):
         assert test_data_split in ["val", "test"], "test_data_split must be 'val' or 'test'"
         self.eval()
         test_loss = 0
         test_edge_acc = 0
-        num_batches = self.num_val_batches if test_data_split == "val" else self.num_test_batches
+        if test_data_split == "train":
+            num_batches = self.num_tr_batches
+        elif test_data_split == "val":
+            num_batches = self.num_val_batches
+        elif test_data_split == "test":
+            num_batches = self.num_test_batches
         test_loader = self.yield_batch_data(model_input_data=test_data['model_input'], target_data=test_data['target'], batch_size=self.model_cfg['batch_size'], seq_len=self.model_cfg['seq_len'])
         with torch.no_grad():
             for batch_idx, batch_data in enumerate(test_loader):

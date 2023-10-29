@@ -56,13 +56,20 @@ def set_plot_log_data(log_path: Path):
 
     return return_dict
 
-def plot_heatmap(preds: np.ndarray, labels: np.ndarray, save_fig_path: Path = None, can_show_conf_mat: bool = False):
-    total_data_confusion_matrix = pd.DataFrame(confusion_matrix(labels.reshape(-1), preds.reshape(-1), labels=[0, 1, 2]), columns=range(-1, 2), index=range(-1, 2))
-    plt.figure(figsize = (10, 10))
+def plot_heatmap(preds: np.ndarray, labels: np.ndarray, pic_title: str, save_fig_path: Path, can_show_conf_mat: bool = False):
+    """Plots the heatmap of the confusion matrix."""
+    assert all(np.unique(preds) == np.unique(labels)), f"the unique elements in preds and labels should be equal, and preds: {np.unique(preds)}, labels: {np.unique(labels)}"
+    assert len(np.unique(preds)) % 2 != 0, "the number of unique elements in preds should be odd"
+    num_classes = len(np.unique(preds))
+    classes_range = range(-1*(num_classes//2), (num_classes//2)+1)
+    total_data_confusion_matrix = pd.DataFrame(confusion_matrix(labels.reshape(-1), preds.reshape(-1), labels=range(num_classes)), columns=classes_range, index=classes_range)
+    plt.figure(figsize = (17, 17))
     plt.rcParams.update({'font.size': 44})
     ax = plt.gca()
     heatmap(total_data_confusion_matrix, annot=True, ax=ax, fmt='g')
-    ax.set(xlabel="Prediction", ylabel="Ground Truth", title="val")
+    ax.set(xlabel="Ground Truth", ylabel="Prediction", title=pic_title)
+    ax.xaxis.tick_top()
+    ax.xaxis.set_label_position('top')
     if can_show_conf_mat:
         logger.info(f"confusion_matrix:\n{total_data_confusion_matrix}")
     if save_fig_path:

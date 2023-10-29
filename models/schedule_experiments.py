@@ -4,13 +4,13 @@ from datetime import datetime, timedelta
 from itertools import chain, product, repeat
 from pprint import pprint
 
-data_implement_list = ["--data_implement SP500_20112015", "--data_implement SP500_20082012", "--data_implement SP500_20122017", "--data_implement SP500_20082017"]  # "--data_implement LINEAR_REG_ONE_CLUSTER_DIM_30_BKPS_0_NOISE_STD_30"
+data_implement_list = ["--data_implement SP500_20112015_CORR_MEAN_POSITIVE_NEGATIVE_KEEP"]  # "--data_implement LINEAR_REG_ONE_CLUSTER_DIM_30_BKPS_0_NOISE_STD_30"
 batch_size_list = [""]
-train_models_list = ["--train_models GRUCORRCLASS"]  # ["", "--train_models GRUCORRCLASS", "--train_models GRUCORRCLASS --train_models GRUCORRCOEFPRED"]
+train_models_list = ["--train_models GRUCORRCLASSCUSTOMFEATURES"]  # ["", "--train_models GRUCORRCLASS", "--train_models GRUCORRCLASS --train_models GRUCORRCOEFPRED"]
 corr_type_list = ["--corr_type pearson"]  # ["--corr_type pearson", "--corr_type cross_corr"]
 seq_len_list = ["--seq_len 30"]  # ["--seq_len 5", "--seq_len 10"]
 model_input_cus_bins_list = [""]  # ["", "--model_input_cus_bins -1 --model_input_cus_bins 0 --model_input_cus_bins 1", "--model_input_cus_bins -1 --model_input_cus_bins -0.25 --model_input_cus_bins 0.25 --model_input_cus_bins 1", "--model_input_cus_bins -1 --model_input_cus_bins -0.5 --model_input_cus_bins 0 --model_input_cus_bins 0.5 --model_input_cus_bins 1"]
-target_mats_path_list = ["--target_mats_path pearson/custom_discretize_corr_data/bins_-10_-07_-03_03_07_10"]  # ["", "--target_mats_path pearson/custom_discretize_corr_data/bins_-10_-025_025_10", "--target_mats_path pearson/quan_discretize_corr_data/bin3"]
+target_mats_path_list = ["--target_mats_path pearson/custom_discretize_corr_data/bins_-10_-03_03_10"]  # ["", "--target_mats_path pearson/custom_discretize_corr_data/bins_-10_-025_025_10", "--target_mats_path pearson/quan_discretize_corr_data/bin3"]
 learning_rate_list = [""]  # ["--learn_rate 0.0001", "--learn_rate 0.0005", "--learn_rate 0.001", "--learn_rate 0.005", "--learn_rate 0.01", "--learn_rate 0.05", "--learn_rate 0.1"]
 weight_decay_list = [""]  # ["--weight_decay 0.0001", "--weight_decay 0.0005", "--weight_decay 0.001", "--weight_decay 0.005", "--weight_decay 0.01", "--weight_decay 0.05", "--weight_decay 0.1"]
 use_optim_scheduler_list = [""]  # ["", "--use_optim_scheduler true"]
@@ -18,7 +18,11 @@ drop_pos_list = [""]  # ["", "--drop_pos gru", "--drop_pos decoder --drop_pos gr
 drop_p_list = [""]  # ["--drop_p 0.33", "--drop_p 0.5", "--drop_p 0.66"]
 gru_l_list = [""]  # ["--gru_l 1", "--gru_l 2", "--gru_l 3", "--gru_l 4", "--gru_l 5"]
 gru_h_list = [""]  # ["--gru_h 40", "--gru_h 80", "--gru_h 100", "--gru_h 320", "--gru_h 640"]
-gru_input_feature_idx_list = [""]  # ["--gru_input_feature_idx 0", "--gru_input_feature_idx 1", "--gru_input_feature_idx 2", "--gru_input_feature_idx 0 --gru_input_feature_idx 1 "]
+gru_input_feature_idx_list = ["--gru_input_feature_idx 0", "--gru_input_feature_idx 1", "--gru_input_feature_idx 2", "--gru_input_feature_idx 3", "--gru_input_feature_idx 4",
+                              "--gru_input_feature_idx 5", "--gru_input_feature_idx 6", "--gru_input_feature_idx 7", "--gru_input_feature_idx 8", "--gru_input_feature_idx 9",
+                              "--gru_input_feature_idx 10", "--gru_input_feature_idx 11", "--gru_input_feature_idx 12", "--gru_input_feature_idx 13", "--gru_input_feature_idx 14",
+                              "--gru_input_feature_idx 15", "--gru_input_feature_idx 16", "--gru_input_feature_idx 17", "--gru_input_feature_idx 18", "--gru_input_feature_idx 19",
+                              "--gru_input_feature_idx 20", "--gru_input_feature_idx 21"]  # ["--gru_input_feature_idx 0", "--gru_input_feature_idx 1", "--gru_input_feature_idx 2", "--gru_input_feature_idx 0 --gru_input_feature_idx 1 "]
 use_weighted_loss_list = [""]  # ["", "--use_weighted_loss true"]
 tol_edge_acc_loss_atol_list = [""]  # ["", "--tol_edge_acc_loss_atol 0.05", "--tol_edge_acc_loss_atol 0.1", "--tol_edge_acc_loss_atol 0.33"]
 output_type_list = ["--output_type class_probability"]  # ["--output_type discretize", "--output_type class_probability"]
@@ -45,7 +49,7 @@ if set(map(lambda x: x['gru_l'], args_list)) != {""}:
     model_timedelta_list = [timedelta(hours=1, minutes=20), timedelta(hours=1, minutes=20), timedelta(hours=1, minutes=25)]  # The order of elements of model_timedelta_list should comply with the order of elements of args_list
 else:
     num_models = len(args_list)
-    model_timedelta_list = [timedelta(hours=5, minutes=25)]
+    model_timedelta_list = [timedelta(hours=0, minutes=40)]
 
 model_timedelta_list = list(chain.from_iterable(repeat(x, num_models) for x in model_timedelta_list))
 model_timedelta_list = [0] + model_timedelta_list
