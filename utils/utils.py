@@ -1,11 +1,19 @@
 import logging
 from pathlib import Path
 
+import dynamic_yaml
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import yaml
 from sklearn.linear_model import LinearRegression
 from statsmodels.tsa.seasonal import seasonal_decompose
+
+current_dir = Path(__file__).parent
+data_config_path = current_dir/"../config/data_config.yaml"
+with open(data_config_path) as f:
+    data = dynamic_yaml.load(f)
+    DATA_CFG = yaml.full_load(dynamic_yaml.dump(data))
 
 logger = logging.getLogger(__name__)
 logger_console = logging.StreamHandler()
@@ -53,8 +61,11 @@ def calc_corr_ser_property(corr_dataset: pd.DataFrame, corr_property_df_path: Pa
     """
     Produce property of correlation series in form of dataframe
     """
+    corr_property_df_dir = corr_property_df_path.parent
+    corr_property_df_dir.mkdir(parents=True, exist_ok=True)
     if corr_property_df_path.exists():
         corr_property_df = pd.read_csv(corr_property_df_path).set_index("items")
+        logger.info(f"corr_property_df exists, corr_property_df loaded from {corr_property_df_path}")
     else:
         corr_mean = corr_dataset.mean(axis=1)
         corr_std = corr_dataset.std(axis=1)
@@ -136,4 +147,38 @@ def convert_str_bins_list(str_bins: str) -> list:
 
     return bins_list
 
+def load_multiple_data(data_implement: str, retrieve_items_setting: str, corr_type: str, w_l: int, s_l: int, corr_ser_clac_method: str) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    """Loads multiple data.
+
+    Args:
+      data_implement: The data implement.
+      retrieve_items_setting: The retrieve items setting.
+      corr_type: The correlation type.
+      w_l: The window length of correlation series.
+      s_l: The stride length of correlation series.
+
+    Returns:
+      The dataset dataframe, correlation dataframe, target dataframe, and correlation series property dataframe.
+    """
+    all_set = DATA_CFG["DATASETS"][data_implement]['ALL_SET']  # all items
+    train_set = DATA_CFG["DATASETS"][data_implement]['TRAIN_SET']
+    items_implement = train_set if retrieve_items_setting == "-train_train" else all_set
+    output_file_name = DATA_CFG["DATASETS"][data_implement]['OUTPUT_FILE_NAME_BASIS'] + retrieve_items_setting
+    pipeline_corr_data_dir = Path(DATA_CFG["DIRS"]["PIPELINE_DATA_DIR"])/f"{output_file_name}/{corr_type}"
+    dataset_df = pd.read_csv(DATA_CFG["DATASETS"][data_implement]['FILE_PATH'])
+    dataset_df = dataset_df.set_index('Date')
+    dataset_df = dataset_df.loc[::, items_implement]
+    corr_df = pd.read_csv(pipeline_corr_data_dir/f"corr_data/corr_s{s_l}_w{w_l}.csv", index_col=["item_pair"])
+    target_df = pd.read_csv(pipeline_corr_data_dir/f"custom_discretize_corr_data/bins_-10_-03_03_10/corr_s{s_l}_w{w_l}.csv", index_col=["item_pair"])
+    corr_property_dir = pipeline_corr_data_dir/f"corr_property/corr_s{s_l}_w{w_l}/{corr_ser_clac_method}"
+    corr_property_df_path = corr_property_dir/"corr_series_property.csv"
+    corr_property_df = calc_corr_ser_property(corr_dataset=corr_df, corr_property_df_path=corr_property_df_path)
+
+    logger.info(f"len(items_implement): {len(items_implement)} and len(all_set): {len(all_set if all_set else [])} and len(train_set): {len(train_set if train_set else [])}")
+    logger.info(f"dataset_df.shape:{dataset_df.shape}, corr_df.shape:{corr_df.shape}, target_df.shape:{target_df.shape}")
+    logger.info(f"================ In {output_file_name}-corr_s{s_l}_w{w_l} and corr_ser_clac_method:{corr_ser_clac_method} ===============")
+    logger.info(f"corr_property_df.shape: {corr_property_df.shape}")
+    logger.info(f"Min of corr_ser_mean:{corr_property_df.loc[::,'corr_ser_mean'].min()}, Max of corr_ser_mean:{corr_property_df.loc[::,'corr_ser_mean'].max()}")
+
+    return dataset_df, corr_df, target_df, corr_property_df
 

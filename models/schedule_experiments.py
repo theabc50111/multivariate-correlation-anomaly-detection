@@ -6,7 +6,7 @@ from pprint import pprint
 
 data_implement_list = ["--data_implement SP500_20112015_CORR_MEAN_POSITIVE_NEGATIVE_KEEP"]  # "--data_implement LINEAR_REG_ONE_CLUSTER_DIM_30_BKPS_0_NOISE_STD_30"
 batch_size_list = [""]
-train_models_list = ["--train_models GRUCORRCLASSCUSTOMFEATURES"]  # ["", "--train_models GRUCORRCLASS", "--train_models GRUCORRCLASS --train_models GRUCORRCOEFPRED"]
+train_models_list = ["--train_models GRUCORRCLASSCUSTOMFEATURES"]  # ["", "--train_models GRUCORRCLASS", "--train_models GRUCORRCLASS --train_models GRUCORRCLASSCUSTOMFEATURES --train_models GRUCORRCOEFPRED"]
 corr_type_list = ["--corr_type pearson"]  # ["--corr_type pearson", "--corr_type cross_corr"]
 seq_len_list = ["--seq_len 30"]  # ["--seq_len 5", "--seq_len 10"]
 model_input_cus_bins_list = [""]  # ["", "--model_input_cus_bins -1 --model_input_cus_bins 0 --model_input_cus_bins 1", "--model_input_cus_bins -1 --model_input_cus_bins -0.25 --model_input_cus_bins 0.25 --model_input_cus_bins 1", "--model_input_cus_bins -1 --model_input_cus_bins -0.5 --model_input_cus_bins 0 --model_input_cus_bins 0.5 --model_input_cus_bins 1"]
@@ -24,7 +24,7 @@ gru_input_feature_idx_list = ["--gru_input_feature_idx 1 --gru_input_feature_idx
 ###                              "--gru_input_feature_idx 10", "--gru_input_feature_idx 11", "--gru_input_feature_idx 12", "--gru_input_feature_idx 13", "--gru_input_feature_idx 14",
 ###                              "--gru_input_feature_idx 15", "--gru_input_feature_idx 16", "--gru_input_feature_idx 17", "--gru_input_feature_idx 18", "--gru_input_feature_idx 19",
 ###                              "--gru_input_feature_idx 20", "--gru_input_feature_idx 21"]  # ["--gru_input_feature_idx 0", "--gru_input_feature_idx 1", "--gru_input_feature_idx 2", "--gru_input_feature_idx 0 --gru_input_feature_idx 1 "]
-use_weighted_loss_list = [""]  # ["", "--use_weighted_loss true"]
+use_weighted_loss_list = ["--use_weighted_loss true"]  # ["", "--use_weighted_loss true"]
 tol_edge_acc_loss_atol_list = [""]  # ["", "--tol_edge_acc_loss_atol 0.05", "--tol_edge_acc_loss_atol 0.1", "--tol_edge_acc_loss_atol 0.33"]
 output_type_list = ["--output_type class_probability"]  # ["--output_type discretize", "--output_type class_probability"]
 
