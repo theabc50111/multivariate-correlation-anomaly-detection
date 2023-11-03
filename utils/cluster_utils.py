@@ -67,8 +67,9 @@ def filter_proximity_mat(proximity_mat: pd.DataFrame, filter_mask: pd.DataFrame,
         clique = sorted(clique)
         logger.debug(f"{i}th clique: {clique}")
         clique_counter[f"len_{len(clique)}_clique"] += 1
-        with open(tmp_clique_dir/"tmp_cliques.txt", "a") as f:
-            f.write(f"{clique}\n")
+        if len(clique) <= 5:
+            with open(tmp_clique_dir/"tmp_cliques.txt", "a") as f:
+                f.write(f"{clique}\n")
         if len(clique) >= len(max_clique):
             if len(clique) > len(max_clique):
                 max_clique = clique
