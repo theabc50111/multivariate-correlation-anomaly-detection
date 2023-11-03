@@ -1,19 +1,90 @@
 # Function: clustering utilities
 import logging
+import warnings
+from collections import Counter
+from itertools import combinations
 from pathlib import Path
 from time import time
 
-import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
 import pandas as pd
 import sklearn
-from matplotlib.pyplot import MultipleLocator
-from scipy.cluster.hierarchy import dendrogram
 from scipy.stats import uniform
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.metrics import silhouette_score
 from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
+
+logger = logging.getLogger(__name__)
+logger_console = logging.StreamHandler()
+logger_formatter = logging.Formatter('%(levelname)-8s [%(filename)s] %(message)s')
+logger_console.setFormatter(logger_formatter)
+logger.addHandler(logger_console)
+logger.setLevel(logging.INFO)
+warnings.simplefilter("ignore")
+
+def convert_pairs_data_to_proximity_mat(item_pairs_ser: pd.Series, item_names: tuple, fill_diag_val: float) -> pd.DataFrame:
+    """
+    Convert item pairs data to proximity matrix
+    item_pairs_ser: pd.Series, index is item pairs, value is proximity
+    item_names: tuple, item names
+    fill_diag_val: float, fill diagonal value
+    """
+    assert item_pairs_ser.index.str.split(" & ").tolist() == [[item_pair[0], item_pair[1]] for item_pair in combinations(item_names, 2)], "item_pairs_ser.index is not equal to combinations(item_names, 2)"
+    num_items = len(item_names)
+    proximity_mat = np.full((num_items, num_items), fill_value=np.nan)
+    triu_idxs = np.triu_indices(num_items, k=1)
+    tril_idxs = np.tril_indices(num_items, k=-1)
+    proximity_mat[triu_idxs[0], triu_idxs[1]] = 0
+    proximity_mat[tril_idxs[0], tril_idxs[1]] = 0
+    proximity_mat[triu_idxs[0], triu_idxs[1]] = item_pairs_ser.values
+    proximity_mat = proximity_mat+proximity_mat.T
+    np.fill_diagonal(proximity_mat, val=1)
+    assert ~np.isnan(proximity_mat).any(), "proximity_mat has nan value"
+    assert np.allclose(proximity_mat, proximity_mat.T), "proximity_mat is not symmetric"
+    proximity_df = pd.DataFrame(proximity_mat, columns=item_names, index=item_names)
+
+    return proximity_df
+
+
+def filter_proximity_mat(proximity_mat: pd.DataFrame, filter_mask: pd.DataFrame, tmp_clique_dir: Path) -> tuple[pd.DataFrame, list]:
+    """
+    Filter proximity matrix by filter mask
+    proximity_mat: pd.DataFrame, proximity matrix
+    filter_mask: pd.DataFrame, filter mask
+    tmp_clique_dir: Path, temporary clique directory
+    """
+    assert proximity_mat.shape == filter_mask.shape, "proximity_mat.shape is not equal to filter_mask.shape"
+    assert proximity_mat.index.tolist() == filter_mask.index.tolist() and proximity_mat.columns.tolist() == filter_mask.columns.tolist(), "proximity_mat.index or proximity_mat.columns is not equal to filter_mask.index or filter_mask.columns"
+    tmp_clique_dir.mkdir(parents=True, exist_ok=True)
+    ori_diag_val = np.diag(proximity_mat.values).copy()
+    proximity_mat[~filter_mask] = 0
+    G = nx.from_pandas_adjacency(proximity_mat)
+    max_clique = []
+    clique_counter = Counter()
+    train_start_t = time()
+    for i, clique in enumerate(nx.find_cliques(G)):
+        clique = sorted(clique)
+        logger.debug(f"{i}th clique: {clique}")
+        clique_counter[f"len_{len(clique)}_clique"] += 1
+        with open(tmp_clique_dir/"tmp_cliques.txt", "a") as f:
+            f.write(f"{clique}\n")
+        if len(clique) >= len(max_clique):
+            if len(clique) > len(max_clique):
+                max_clique = clique
+            elif sum(1 for c1, c2 in zip(clique, max_clique) if c1 > c2):
+                max_clique = clique
+        now_t = time()
+        if now_t - train_start_t > 10800:  # 30 minutes
+            logger.warn(f"clique search time out: {now_t - train_start_t} seconds")
+            break
+    top_3_len_cliq_cnt_key = sorted(clique_counter, key=lambda x: int(x.split('_')[1]), reverse=True)[:3]
+    top_3_len_cliq = [f"number of {clique_len}: num" for clique_len in top_3_len_cliq_cnt_key]
+    top_3_freq_cliq_len = [f"number of {clique_len}: {num}" for clique_len, num in clique_counter.most_common(3)]
+    logger.info(f"total cliques: {clique_counter.total()}, top 3 num_cliques by frequent of len: {top_3_freq_cliq_len} top 3 cliques by len: {top_3_len_cliq}")
+    proximity_mat = proximity_mat.loc[max_clique, max_clique]
+    np.fill_diagonal(proximity_mat.values, ori_diag_val)
+    return proximity_mat, max_clique
 
 
 def calc_silhouette_label_freq_std(estimator: sklearn.base.ClusterMixin, x: pd.DataFrame, silhouette_score_ratio: int = 0.1, silhouette_metric: str = "precomputed") -> float:
@@ -106,70 +177,3 @@ def hrchy_cluster_fixed_n_cluster(x: pd.DataFrame, n: int, data_mat_mode: str = 
     return hrchy_cluster
 
 
-def filter_distance_mat(distance_mat: pd.DataFrame, opposite_filter_mask: pd.DataFrame, tmp_clique_dir: Path) -> tuple[pd.DataFrame, list]:
-    if opposite_filter_mask is not None:
-        original_distance_mat_diagonal = np.diag(distance_mat.values).copy()
-        distance_mat[opposite_filter_mask] = 0
-        G = nx.from_pandas_adjacency(distance_mat)
-        max_clique = []
-        train_start_t = time()
-        for i, clique in enumerate(nx.find_cliques(G)):
-            logging.debug(f"{i}th clique: {clique}")
-            with open(tmp_clique_dir/"tmp_cliques.txt", "a") as f:
-                f.write(f"{clique}\n")
-            if len(clique) > len(max_clique):
-                max_clique = clique
-            now_t = time()
-            if now_t - train_start_t > 10800:  # 30 minutes
-                logging.warn(f"clique search time out: {now_t - train_start_t} seconds")
-                break
-        distance_mat = distance_mat.loc[max_clique, max_clique]
-        np.fill_diagonal(distance_mat.values, original_distance_mat_diagonal)
-        return distance_mat, max_clique
-    else:
-        return distance_mat, []
-
-
-def plot_cluster_labels_distribution(trained_cluster: sklearn.base.ClusterMixin, cluster_name: str, fig_title: str, save_dir: Path = None):
-    x_major_locator = MultipleLocator(1)
-    ax = plt.gca()
-    ax.xaxis.set_major_locator(x_major_locator)
-    plt.bar(np.unique(trained_cluster.labels_, return_counts=True)[0], np.unique(trained_cluster.labels_, return_counts=True)[1])
-    plt.grid()
-    plt.ylabel("instances in cluster")
-    plt.xlabel("cluster label")
-    plt.title(f"{cluster_name}\n {fig_title}")
-    if save_dir is not None:
-        plt.savefig(save_dir/f"{cluster_name}_{fig_title}.png")
-    plt.show()  # findout elbow point
-    plt.close()
-    logging.info(f"cluster of each point distribution: {np.unique(trained_cluster.labels_, return_counts=True)}")
-
-
-def plot_dendrogram(model, save_dir, **kwargs):
-    # Create linkage matrix and then plot the dendrogram
-
-    # create the counts of samples under each node
-    counts = np.zeros(model.children_.shape[0])
-    n_samples = len(model.labels_)
-    for i, merge in enumerate(model.children_):
-        current_count = 0
-        for child_idx in merge:
-            if child_idx < n_samples:
-                current_count += 1  # leaf node
-            else:
-                current_count += counts[child_idx - n_samples]
-        counts[i] = current_count
-
-    linkage_matrix = np.column_stack(
-        [model.children_, model.distances_, counts]
-    ).astype(float)
-
-    # Plot the corresponding dendrogram
-    ax = plt.gca()
-    kwargs["ax"] = ax
-    dendrogram(linkage_matrix, **kwargs)
-    if save_dir is not None:
-        plt.savefig(save_dir/"dendrogram.png")
-    plt.show()
-    plt.close()

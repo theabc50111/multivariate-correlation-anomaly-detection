@@ -8,6 +8,9 @@ import matplotlib.gridspec as gridspec
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import sklearn
+from matplotlib.pyplot import MultipleLocator
+from scipy.cluster.hierarchy import dendrogram
 from seaborn import heatmap
 from sklearn.metrics import confusion_matrix
 
@@ -137,9 +140,55 @@ def plot_gru_tr_process(main_title: str, model_struct: str, metrics_history: dic
             if t := data_plot.get("xticks"):
                 ax.set_xticks(ticks=range(0, len(t["label"])*t["intv"], t["intv"]), labels=t["label"], rotation=45)
     except Exception as e:
-        logging.error(f"Encounter error when draw figure of {data_plot['sub_title']}")
+        logger.error(f"Encounter error when draw figure of {data_plot['sub_title']}")
         raise e
 
     fig.tight_layout(rect=(0, 0, 0, 0))
+    plt.show()
+    plt.close()
+
+def plot_cluster_labels_distribution(trained_cluster_model: sklearn.base.ClusterMixin, cluster_name: str, fig_title: str, save_dir: Path = None):
+    x_major_locator = MultipleLocator(1)
+    ax = plt.gca()
+    ax.xaxis.set_major_locator(x_major_locator)
+    plt.bar(np.unique(trained_cluster_model.labels_, return_counts=True)[0], np.unique(trained_cluster_model.labels_, return_counts=True)[1])
+    plt.grid()
+    plt.ylabel("instances in cluster")
+    plt.xlabel("cluster label")
+    plt.title(f"{cluster_name}\n {fig_title}")
+    if save_dir is not None:
+        plt.savefig(save_dir/f"{cluster_name}_{fig_title}.png")
+    plt.show()  # findout elbow point
+    plt.close()
+    logger.info(f"cluster of each point distribution: {np.unique(trained_cluster_model.labels_, return_counts=True)}")
+
+
+def plot_dendrogram(trained_cluster_model: sklearn.base.ClusterMixin, save_dir: Path, **kwargs):
+    """
+    Create linkage matrix and then plot the dendrogram
+    """
+    assert hasattr(trained_cluster_model, "children_"), "trained_cluster_model must have children_ attribute"
+    # create the counts of samples under each node
+    counts = np.zeros(trained_cluster_model.children_.shape[0])
+    n_samples = len(trained_cluster_model.labels_)
+    for i, merge in enumerate(trained_cluster_model.children_):
+        current_count = 0
+        for child_idx in merge:
+            if child_idx < n_samples:
+                current_count += 1  # leaf node
+            else:
+                current_count += counts[child_idx - n_samples]
+        counts[i] = current_count
+
+    linkage_matrix = np.column_stack(
+        [trained_cluster_model.children_, trained_cluster_model.distances_, counts]
+    ).astype(float)
+
+    # Plot the corresponding dendrogram
+    ax = plt.gca()
+    kwargs["ax"] = ax
+    dendrogram(linkage_matrix, **kwargs)
+    if save_dir is not None:
+        plt.savefig(save_dir/"dendrogram.png")
     plt.show()
     plt.close()
