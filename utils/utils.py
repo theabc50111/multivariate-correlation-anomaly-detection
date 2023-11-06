@@ -9,18 +9,13 @@ import yaml
 from sklearn.linear_model import LinearRegression
 from statsmodels.tsa.seasonal import seasonal_decompose
 
-current_dir = Path(__file__).parent
-data_config_path = current_dir/"../config/data_config.yaml"
-with open(data_config_path) as f:
-    data = dynamic_yaml.load(f)
-    DATA_CFG = yaml.full_load(dynamic_yaml.dump(data))
-
 logger = logging.getLogger(__name__)
 logger_console = logging.StreamHandler()
 logger_formatter = logging.Formatter('%(levelname)-8s [%(filename)s.%(funcName)s] %(message)s')
 logger_console.setFormatter(logger_formatter)
 logger.addHandler(logger_console)
 logger.setLevel(logging.INFO)
+
 
 def stl_decompn(corr_series: "pd.Series", overview: bool = False) -> (float, float, float):
     output_resid = 100000
@@ -126,6 +121,7 @@ def find_abs_max_cross_corr(x):
     lag = np.argmax(np.absolute(cross_correlation))
     return cross_correlation[lag]
 
+
 def convert_str_bins_list(str_bins: str) -> list:
     """Converts a string of bins to a list of bins.
 
@@ -147,6 +143,19 @@ def convert_str_bins_list(str_bins: str) -> list:
 
     return bins_list
 
+
+def load_data_cfg():
+    """
+    Load data config file.
+    """
+    current_dir = Path(__file__).parent
+    data_config_path = current_dir/"../config/data_config.yaml"
+    with open(data_config_path) as f:
+        data = dynamic_yaml.load(f)
+        data_cfg = yaml.full_load(dynamic_yaml.dump(data))
+    return data_cfg
+
+
 def load_multiple_data(data_implement: str, retrieve_items_setting: str, corr_type: str, target_df_bins: str, w_l: int, s_l: int, corr_ser_clac_method: str) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """Loads multiple data.
 
@@ -160,10 +169,11 @@ def load_multiple_data(data_implement: str, retrieve_items_setting: str, corr_ty
     Returns:
       The dataset dataframe, correlation dataframe, target dataframe, and correlation series property dataframe.
     """
-    all_set = DATA_CFG["DATASETS"][data_implement]['ALL_SET']  # all items
-    train_set = DATA_CFG["DATASETS"][data_implement]['TRAIN_SET']
+    data_cfg = load_data_cfg()
+    all_set = data_cfg["DATASETS"][data_implement]['ALL_SET']  # all items
+    train_set = data_cfg["DATASETS"][data_implement]['TRAIN_SET']
     items_implement = train_set if retrieve_items_setting == "-train_train" else all_set
-    output_file_name = DATA_CFG["DATASETS"][data_implement]['OUTPUT_FILE_NAME_BASIS'] + retrieve_items_setting
+    output_file_name = data_cfg["DATASETS"][data_implement]['OUTPUT_FILE_NAME_BASIS'] + retrieve_items_setting
     pipeline_corr_data_dir, corr_dir, target_dir, corr_property_dir, cliques_dir = load_dirs(data_implement=data_implement,
                                                                 retrieve_items_setting=retrieve_items_setting,
                                                                 corr_type=corr_type, target_df_bins=target_df_bins,
@@ -177,7 +187,7 @@ def load_multiple_data(data_implement: str, retrieve_items_setting: str, corr_ty
     corr_df_path = corr_dir/f"corr_s{s_l}_w{w_l}.csv"
     target_df_path = target_dir/f"corr_s{s_l}_w{w_l}.csv"
     corr_property_df_path = corr_property_dir/"corr_series_property.csv"
-    dataset_df = pd.read_csv(DATA_CFG["DATASETS"][data_implement]['FILE_PATH'])
+    dataset_df = pd.read_csv(data_cfg["DATASETS"][data_implement]['FILE_PATH'])
     dataset_df = dataset_df.set_index('Date')
     dataset_df = dataset_df.loc[::, items_implement]
     corr_df = pd.read_csv(corr_df_path, index_col=["item_pair"])
@@ -198,8 +208,9 @@ def load_dirs(data_implement: str, retrieve_items_setting: str, corr_type: str, 
     Load directories of correlation data.
     """
 
-    output_file_name = DATA_CFG["DATASETS"][data_implement]['OUTPUT_FILE_NAME_BASIS'] + retrieve_items_setting
-    pipeline_corr_data_dir = Path(DATA_CFG["DIRS"]["PIPELINE_DATA_DIR"])/f"{output_file_name}/{corr_type}"
+    data_cfg = load_data_cfg()
+    output_file_name = data_cfg["DATASETS"][data_implement]['OUTPUT_FILE_NAME_BASIS'] + retrieve_items_setting
+    pipeline_corr_data_dir = Path(data_cfg["DIRS"]["PIPELINE_DATA_DIR"])/f"{output_file_name}/{corr_type}"
     corr_dir = pipeline_corr_data_dir/"corr_data"
     target_dir = pipeline_corr_data_dir/f"custom_discretize_corr_data/{target_df_bins}"
     corr_property_dir = pipeline_corr_data_dir/f"corr_property/corr_s{s_l}_w{w_l}/{corr_ser_clac_method}"

@@ -10,11 +10,9 @@ import numpy as np
 import pandas as pd
 import yaml
 
-current_dir = Path(__file__).parent
-data_config_path = current_dir/"../config/data_config.yaml"
-with open(data_config_path) as f:
-    data = dynamic_yaml.load(f)
-    DATA_CFG = yaml.full_load(dynamic_yaml.dump(data))
+from utils import load_data_cfg
+
+DATA_CFG = load_data_cfg()
 
 logger = logging.getLogger(__name__)
 logger_console = logging.StreamHandler()

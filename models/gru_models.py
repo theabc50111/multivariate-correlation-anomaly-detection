@@ -19,12 +19,6 @@ import yaml
 from torch.nn import GRU, Dropout, Linear, Sequential, Softmax
 from tqdm import tqdm
 
-current_dir = Path(__file__).parent
-data_config_path = current_dir/"../config/data_config.yaml"
-with open(data_config_path) as f:
-    data_cfg_yaml = dynamic_yaml.load(f)
-    data_cfg = yaml.full_load(dynamic_yaml.dump(data_cfg_yaml))
-
 logger = logging.getLogger(__name__)
 logger_console = logging.StreamHandler()
 logger_formatter = logging.Formatter('%(levelname)-8s [%(filename)s] %(message)s')

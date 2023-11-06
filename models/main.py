@@ -20,16 +20,13 @@ from torch.nn import CrossEntropyLoss, MSELoss
 sys.path.append("/workspace/multivariate-correlation-anomaly-detection/utils/")
 from metrics_utils import CustomIndicesEdgeAccuracy, TolEdgeAccuracyLoss
 from plot_utils import plot_heatmap
-from utils import split_and_norm_data
+from utils import load_data_cfg, split_and_norm_data
 
 from gru_models import (GRUCorrClass, GRUCorrClassCustomFeatures,
                         GRUCorrCoefPred)
 
-current_dir = Path(__file__).parent
-data_config_path = current_dir / "../config/data_config.yaml"
-with open(data_config_path) as f:
-    data_cfg_yaml = dynamic_yaml.load(f)
-    data_cfg = yaml.full_load(dynamic_yaml.dump(data_cfg_yaml))
+CURRENT_DIR = Path(__file__).resolve().parent
+DATA_CFG = load_data_cfg()
 
 logger = logging.getLogger(__name__)
 logger_console = logging.StreamHandler()
@@ -59,13 +56,9 @@ class ModelType(Enum):
         gru_corr_class_custom_feature_cfg = gru_corr_class_cfg.copy()
         gru_corr_class_custom_feature_cfg["gru_in_dim"] = len(args.gru_input_feature_idx) if args.gru_input_feature_idx else 1
         gru_corr_class_custom_feature_cfg["input_feature_idx"] = args.gru_input_feature_idx
-        ###baseline_gru_one_feature_cfg = gru_corr_class_cfg.copy()
-        ###baseline_gru_one_feature_cfg["gru_in_dim"] = 1
-        ###baseline_gru_one_feature_cfg["input_feature_idx"] = args.gru_input_feature_idx
         model_dict = {"GRUCORRCOEFPRED": GRUCorrCoefPred(gru_corr_coef_cfg),
                       "GRUCORRCLASS": GRUCorrClass(gru_corr_class_cfg),
                       "GRUCORRCLASSCUSTOMFEATURES": GRUCorrClassCustomFeatures(gru_corr_class_custom_feature_cfg)}
-                      ###"CLASSBASELINEONEFEATURE": ClassBaselineGRUOneFeature(baseline_gru_one_feature_cfg),
         model = model_dict[self.name]
         assert ModelType.__members__.keys() == model_dict.keys(), f"ModelType members and model_dict must be the same keys, ModelType.__members__.keys(): {ModelType.__members__.keys()}, model_dict.keys(): {model_dict.keys()}"
 
@@ -75,7 +68,6 @@ class ModelType(Enum):
         save_model_dir_base_dict = {"GRUCORRCOEFPRED": "gru_corr_coef_pred",
                                     "GRUCORRCLASS": "gru_corr_class",
                                     "GRUCORRCLASSCUSTOMFEATURES": "gru_corr_class_custom_features"}
-                                    ###"CLASSBASELINEONEFEATURE": "class_baseline_gru_one_feature",
         assert ModelType.__members__.keys() == save_model_dir_base_dict.keys(), f"ModelType members and save_model_dir_base_dict must be the same keys, ModelType.__members__.keys(): {ModelType.__members__.keys()}, save_model_dir_base_dict.keys(): {save_model_dir_base_dict.keys()}"
         model_dir = current_dir/f'save_models/{save_model_dir_base_dict[self.name]}/{output_file_name}/{corr_type}/corr_s{s_l}_w{w_l}'
         model_log_dir = current_dir/f'save_models/{save_model_dir_base_dict[self.name]}/{output_file_name}/{corr_type}/corr_s{s_l}_w{w_l}/train_logs/'
@@ -88,7 +80,7 @@ class ModelType(Enum):
 if __name__ == "__main__":
     args_parser = argparse.ArgumentParser()
     args_parser.add_argument("--data_implement", type=str, nargs='?', default="PW_CONST_DIM_70_BKPS_0_NOISE_STD_10",
-                             help="input the data implement name, watch options by operate: logger.info(data_cfg['DATASETS'].keys())")
+                             help="input the data implement name, watch options by operate: logger.info(DATA_CFG['DATASETS'].keys())")
     args_parser.add_argument("--batch_size", type=int, nargs='?', default=64,
                              help="input the number of batch size")
     args_parser.add_argument("--tr_epochs", type=int, nargs='?', default=1500,
@@ -105,7 +97,7 @@ if __name__ == "__main__":
     args_parser.add_argument("--model_input_cus_bins", type=float, nargs='*', default=None,
                              help="input the custom discrete boundaries(bins) of model input data")
     args_parser.add_argument("--target_mats_path", type=str, nargs='?', default=None,
-                             help="input the relative path of target matrices, the base directory of path is data_cfg[DIR][PIPELINE_DATA_DIR])/data_cfg[DATASETS][data_implement][OUTPUT_FILE_NAME_BASIS] + train_items_setting")
+                             help="input the relative path of target matrices, the base directory of path is DATA_CFG[DIR][PIPELINE_DATA_DIR])/DATA_CFG[DATASETS][data_implement][OUTPUT_FILE_NAME_BASIS] + train_items_setting")
     args_parser.add_argument("--cuda_device", type=int, nargs='?', default=0,
                              help="input the number of cuda device")
     args_parser.add_argument("--train_models", type=str, nargs='+', default=[],
@@ -152,10 +144,8 @@ if __name__ == "__main__":
     assert ("GRUCORRCOEFPRED" not in ARGS.train_models+ARGS.inference_models) or (ARGS.output_type == "corr_coef"), "output_type must be corr_coef when train_models|inferene_models is GRUCORRCOEFPRED"
     assert ("GRUCORRCLASS" not in ARGS.train_models+ARGS.inference_models) or ARGS.output_type == "class_probability", "output_type must be class_probability when train_models|inferene_models is GRUCORRCLASS"
     assert ("GRUCORRCLASSCUSTOMFEATURES" not in ARGS.train_models+ARGS.inference_models) or ARGS.output_type == "class_probability", "output_type must be class_probability when train_models|inferene_models is GRUCORRCLASSCUSTOMFEATURES"
-    ###assert ("CLASSBASELINEONEFEATURE" not in ARGS.train_models+ARGS.inference_models) or ARGS.output_type == "class_probability", "output_type must be class_probability when train_models|inferene_models is ClassBaselineOneFeature"
     assert "class_fc" not in ARGS.drop_pos or ARGS.output_type == "class_probability", "output_type must be class_probability when class_fc in drop_pos"
     assert ("GRUCORRCLASSCUSTOMFEATURES" not in ARGS.train_models+ARGS.inference_models) or (ARGS.gru_input_feature_idx is not None and len(ARGS.gru_input_feature_idx) >= 1), "gru_input_feature_idx must be input when train_models|inferene_models is GRUCORRCLASSCUSTOMFEATURES and len(gru_input_feature_idx) must be greater equal to 1"
-    ###assert ("CLASSBASELINEONEFEATURE" not in ARGS.train_models+ARGS.inference_models) or (ARGS.gru_input_feature_idx is not None and len(ARGS.gru_input_feature_idx) == 1), "gru_input_feature_idx must be input when train_models|inferene_models is ClassBaselineOneFeature and len(gru_input_feature_idx) must be 1"
     logger.info(pformat(f"\n{vars(ARGS)}", indent=1, width=100, compact=True))
 
     # Data implement & output setting & testset setting
@@ -164,7 +154,7 @@ if __name__ == "__main__":
     # train set setting
     train_items_setting = "-train_train"  # -train_train|-train_all
     # setting of name of output files and pictures title
-    output_file_name = data_cfg["DATASETS"][data_implement]['OUTPUT_FILE_NAME_BASIS'] + train_items_setting
+    output_file_name = DATA_CFG["DATASETS"][data_implement]['OUTPUT_FILE_NAME_BASIS'] + train_items_setting
     # setting of output files
     save_model_info = ARGS.save_model
     # set devide of pytorch
@@ -179,8 +169,8 @@ if __name__ == "__main__":
         corr_data_mode_dir = f"custom_discretize_corr_data/bins_{'_'.join((str(f) for f in ARGS.model_input_cus_bins)).replace('.', '')}"
     else:
         corr_data_mode_dir = "corr_data"
-    corr_df_dir = Path(data_cfg["DIRS"]["PIPELINE_DATA_DIR"])/f"{output_file_name}/{ARGS.corr_type}/{corr_data_mode_dir}"
-    target_df_dir = Path(data_cfg["DIRS"]["PIPELINE_DATA_DIR"])/f"{output_file_name}/{ARGS.target_mats_path}"
+    corr_df_dir = Path(DATA_CFG["DIRS"]["PIPELINE_DATA_DIR"])/f"{output_file_name}/{ARGS.corr_type}/{corr_data_mode_dir}"
+    target_df_dir = Path(DATA_CFG["DIRS"]["PIPELINE_DATA_DIR"])/f"{output_file_name}/{ARGS.target_mats_path}"
 
     # model configuration
     corr_df = pd.read_csv(corr_df_dir/f"corr_s{s_l}_w{w_l}.csv", index_col=["item_pair"])
@@ -246,7 +236,7 @@ if __name__ == "__main__":
                 try:
                     logger.info(f"===== train model:{model_type.name} =====")
                     train_count += 1
-                    model_dir, model_log_dir = model_type.set_save_model_dir(current_dir, output_file_name, ARGS.corr_type, s_l, w_l)
+                    model_dir, model_log_dir = model_type.set_save_model_dir(CURRENT_DIR, output_file_name, ARGS.corr_type, s_l, w_l)
                     model = model_type.set_model(basic_model_cfg, ARGS)
                     best_model, best_model_info = model.train(train_data=train_dataset, val_data=val_dataset, loss_fns=loss_fns_dict, epochs=ARGS.tr_epochs, show_model_info=True)
                 except AssertionError as e:
@@ -265,11 +255,11 @@ if __name__ == "__main__":
                 else:
                     is_training = False
                     if save_model_info:
-                        model_dir, model_log_dir = model_type.set_save_model_dir(current_dir, output_file_name, ARGS.corr_type, s_l, w_l)
+                        model_dir, model_log_dir = model_type.set_save_model_dir(CURRENT_DIR, output_file_name, ARGS.corr_type, s_l, w_l)
                         model.save_model(best_model, best_model_info, model_dir=model_dir, model_log_dir=model_log_dir)
     elif len(ARGS.inference_models) > 0:
         logger.info(f"===== inference model:[{ARGS.inference_models}] on {ARGS.inference_data_split} data =====")
-        logger.info(f"===== if inference_models is more than one, the inference result is ensemble result =====")
+        logger.info("===== if inference_models is more than one, the inference result is ensemble result =====")
         assert list(filter(lambda x: x in ModelType.__members__.keys(), ARGS.inference_models)), f"inference_models must be input one of {ModelType.__members__.keys()}"
         if ARGS.inference_data_split == "train":
             inference_data = train_dataset
@@ -282,7 +272,7 @@ if __name__ == "__main__":
         if len(ARGS.inference_models) == 1:
             model_type = ModelType[ARGS.inference_models[0]]
             model = model_type.set_model(basic_model_cfg, ARGS)
-            model_dir, _ = model_type.set_save_model_dir(current_dir, output_file_name, ARGS.corr_type, s_l, w_l)
+            model_dir, _ = model_type.set_save_model_dir(CURRENT_DIR, output_file_name, ARGS.corr_type, s_l, w_l)
             model_param_path = model_dir.parents[2].joinpath(ARGS.inference_model_paths[0])
             assert model_param_path.exists(), f"{model_param_path} not exists"
             model.load_state_dict(torch.load(model_param_path, map_location=device))
@@ -299,7 +289,7 @@ if __name__ == "__main__":
             preds, y_labels = preds.cpu().numpy(), y_labels.cpu().numpy()
         if ARGS.output_type == "class_probability":
             if len(ARGS.inference_models) == 1:
-                conf_mat_save_fig_dir = current_dir/f"exploration_model_result/model_result_figs/{ARGS.inference_models[0]}/{model_param_path.stem}"
+                conf_mat_save_fig_dir = CURRENT_DIR/f"exploration_model_result/model_result_figs/{ARGS.inference_models[0]}/{model_param_path.stem}"
             conf_mat_save_fig_name = f'confusion_matrix-{ARGS.inference_data_split}.png'
             conf_mat_save_fig_path = conf_mat_save_fig_dir/conf_mat_save_fig_name
             num_labels_classes = ARGS.target_mats_path.split("/")[-1].replace("bins_", "").count("_")
