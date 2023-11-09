@@ -17,15 +17,14 @@ import torch
 import yaml
 from torch.nn import CrossEntropyLoss, MSELoss
 
-sys.path.append("/workspace/multivariate-correlation-anomaly-detection/utils/")
-from metrics_utils import CustomIndicesEdgeAccuracy, TolEdgeAccuracyLoss
-from plot_utils import plot_heatmap
-from utils import load_data_cfg, split_and_norm_data
+from models.gru_models import (GRUCorrClass, GRUCorrClassCustomFeatures,
+                               GRUCorrCoefPred)
+###sys.path.append("/workspace/multivariate-correlation-anomaly-detection/utils/")
+from utils.metrics_utils import CustomIndicesEdgeAccuracy, TolEdgeAccuracyLoss
+from utils.plot_utils import plot_heatmap
+from utils.utils import load_data_cfg, split_and_norm_data
 
-from gru_models import (GRUCorrClass, GRUCorrClassCustomFeatures,
-                        GRUCorrCoefPred)
-
-CURRENT_DIR = Path(__file__).resolve().parent
+THIS_FILE_DIR = Path(__file__).resolve().parent
 DATA_CFG = load_data_cfg()
 
 logger = logging.getLogger(__name__)
@@ -64,13 +63,13 @@ class ModelType(Enum):
 
         return model
 
-    def set_save_model_dir(self, current_dir, output_file_name, corr_type, s_l, w_l):
+    def set_save_model_dir(self, save_model_base_dir, output_file_name, corr_type, s_l, w_l):
         save_model_dir_base_dict = {"GRUCORRCOEFPRED": "gru_corr_coef_pred",
                                     "GRUCORRCLASS": "gru_corr_class",
                                     "GRUCORRCLASSCUSTOMFEATURES": "gru_corr_class_custom_features"}
         assert ModelType.__members__.keys() == save_model_dir_base_dict.keys(), f"ModelType members and save_model_dir_base_dict must be the same keys, ModelType.__members__.keys(): {ModelType.__members__.keys()}, save_model_dir_base_dict.keys(): {save_model_dir_base_dict.keys()}"
-        model_dir = current_dir/f'save_models/{save_model_dir_base_dict[self.name]}/{output_file_name}/{corr_type}/corr_s{s_l}_w{w_l}'
-        model_log_dir = current_dir/f'save_models/{save_model_dir_base_dict[self.name]}/{output_file_name}/{corr_type}/corr_s{s_l}_w{w_l}/train_logs/'
+        model_dir = save_model_base_dir/f'models/save_models/{save_model_dir_base_dict[self.name]}/{output_file_name}/{corr_type}/corr_s{s_l}_w{w_l}'
+        model_log_dir = save_model_base_dir/f'models/save_models/{save_model_dir_base_dict[self.name]}/{output_file_name}/{corr_type}/corr_s{s_l}_w{w_l}/train_logs/'
         model_dir.mkdir(parents=True, exist_ok=True)
         model_log_dir.mkdir(parents=True, exist_ok=True)
 
@@ -236,7 +235,7 @@ if __name__ == "__main__":
                 try:
                     logger.info(f"===== train model:{model_type.name} =====")
                     train_count += 1
-                    model_dir, model_log_dir = model_type.set_save_model_dir(CURRENT_DIR, output_file_name, ARGS.corr_type, s_l, w_l)
+                    model_dir, model_log_dir = model_type.set_save_model_dir(THIS_FILE_DIR, output_file_name, ARGS.corr_type, s_l, w_l)
                     model = model_type.set_model(basic_model_cfg, ARGS)
                     best_model, best_model_info = model.train(train_data=train_dataset, val_data=val_dataset, loss_fns=loss_fns_dict, epochs=ARGS.tr_epochs, show_model_info=True)
                 except AssertionError as e:
@@ -255,7 +254,7 @@ if __name__ == "__main__":
                 else:
                     is_training = False
                     if save_model_info:
-                        model_dir, model_log_dir = model_type.set_save_model_dir(CURRENT_DIR, output_file_name, ARGS.corr_type, s_l, w_l)
+                        model_dir, model_log_dir = model_type.set_save_model_dir(THIS_FILE_DIR, output_file_name, ARGS.corr_type, s_l, w_l)
                         model.save_model(best_model, best_model_info, model_dir=model_dir, model_log_dir=model_log_dir)
     elif len(ARGS.inference_models) > 0:
         logger.info(f"===== inference model:[{ARGS.inference_models}] on {ARGS.inference_data_split} data =====")
@@ -272,7 +271,7 @@ if __name__ == "__main__":
         if len(ARGS.inference_models) == 1:
             model_type = ModelType[ARGS.inference_models[0]]
             model = model_type.set_model(basic_model_cfg, ARGS)
-            model_dir, _ = model_type.set_save_model_dir(CURRENT_DIR, output_file_name, ARGS.corr_type, s_l, w_l)
+            model_dir, _ = model_type.set_save_model_dir(THIS_FILE_DIR, output_file_name, ARGS.corr_type, s_l, w_l)
             model_param_path = model_dir.parents[2].joinpath(ARGS.inference_model_paths[0])
             assert model_param_path.exists(), f"{model_param_path} not exists"
             model.load_state_dict(torch.load(model_param_path, map_location=device))
@@ -289,7 +288,7 @@ if __name__ == "__main__":
             preds, y_labels = preds.cpu().numpy(), y_labels.cpu().numpy()
         if ARGS.output_type == "class_probability":
             if len(ARGS.inference_models) == 1:
-                conf_mat_save_fig_dir = CURRENT_DIR/f"exploration_model_result/model_result_figs/{ARGS.inference_models[0]}/{model_param_path.stem}"
+                conf_mat_save_fig_dir = THIS_FILE_DIR/f"models/exploration_model_result/model_result_figs/{ARGS.inference_models[0]}/{model_param_path.stem}"
             conf_mat_save_fig_name = f'confusion_matrix-{ARGS.inference_data_split}.png'
             conf_mat_save_fig_path = conf_mat_save_fig_dir/conf_mat_save_fig_name
             num_labels_classes = ARGS.target_mats_path.split("/")[-1].replace("bins_", "").count("_")

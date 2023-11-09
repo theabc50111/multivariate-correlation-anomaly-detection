@@ -148,8 +148,8 @@ def load_data_cfg():
     """
     Load data config file.
     """
-    current_dir = Path(__file__).parent
-    data_config_path = current_dir/"../config/data_config.yaml"
+    this_file_dir = Path(__file__).parent
+    data_config_path = this_file_dir/"../config/data_config.yaml"
     with open(data_config_path) as f:
         data = dynamic_yaml.load(f)
         data_cfg = yaml.full_load(dynamic_yaml.dump(data))

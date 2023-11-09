@@ -5,7 +5,8 @@ from itertools import chain, product, repeat
 from pprint import pprint
 
 data_implement_list = ["--data_implement SP500_20112015_CORR_MEAN_POSITIVE_NEGATIVE_KEEP"]  # "--data_implement LINEAR_REG_ONE_CLUSTER_DIM_30_BKPS_0_NOISE_STD_30"
-batch_size_list = [""]
+batch_size_list = ["--tr_epochs 200"]
+tr_epochs_list = [""]
 train_models_list = ["--train_models GRUCORRCLASSCUSTOMFEATURES"]  # ["", "--train_models GRUCORRCLASS", "--train_models GRUCORRCLASS --train_models GRUCORRCLASSCUSTOMFEATURES --train_models GRUCORRCOEFPRED"]
 corr_type_list = ["--corr_type pearson"]  # ["--corr_type pearson", "--corr_type cross_corr"]
 seq_len_list = ["--seq_len 30"]  # ["--seq_len 5", "--seq_len 10"]
@@ -28,11 +29,11 @@ use_weighted_loss_list = ["", "--use_weighted_loss true"]  # ["", "--use_weighte
 tol_edge_acc_loss_atol_list = [""]  # ["", "--tol_edge_acc_loss_atol 0.05", "--tol_edge_acc_loss_atol 0.1", "--tol_edge_acc_loss_atol 0.33"]
 output_type_list = ["--output_type class_probability"]  # ["--output_type discretize", "--output_type class_probability"]
 
-args_values = list(product(data_implement_list, batch_size_list, train_models_list, corr_type_list, seq_len_list, model_input_cus_bins_list,
+args_values = list(product(data_implement_list, batch_size_list, tr_epochs_list, train_models_list, corr_type_list, seq_len_list, model_input_cus_bins_list,
                            target_mats_path_list, learning_rate_list, weight_decay_list, use_optim_scheduler_list,
                            drop_pos_list, drop_p_list, gru_l_list, gru_h_list,
                            gru_input_feature_idx_list, use_weighted_loss_list, tol_edge_acc_loss_atol_list, output_type_list))
-args_keys = ["data_implement", "batch_size", "train_models", "corr_type", "seq_len", "model_input_cus_bins", "target_mats_path",
+args_keys = ["data_implement", "batch_size", "tr_epochs", "train_models", "corr_type", "seq_len", "model_input_cus_bins", "target_mats_path",
              "learning_rate", "weight_decay", "use_optim_scheduler", "drop_pos", "drop_p", "gru_l", "gru_h", "gru_input_feature_idx", "use_weighted_loss",
              "tol_edge_acc_loss_atol", "output_type"]
 args_list = []
@@ -86,4 +87,4 @@ if __name__ == "__main__":
         home_directory = os.path.expanduser("~")
         cron_args = [model_start_t.strftime("%M %H %d %m")+" *", home_directory, ARGS.script, f"--log_suffix {ARGS.log_suffix}", f"--cuda_device {ARGS.cuda_device}"] + list(model_args.values())
         args_cloze = " ".join(repeat("{}", len(model_args.values())))
-        print(("{} {}/Documents/codes/multivariate-correlation-anomaly-detection/models/{} {} {} "+args_cloze+" --save_model true").format(*cron_args))
+        print(("{} {}/Documents/codes/multivariate-correlation-anomaly-detection/utils/crontab_utils/{} {} {} "+args_cloze+" --save_model true").format(*cron_args))
