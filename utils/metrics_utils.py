@@ -7,12 +7,9 @@ import torch
 import torch_geometric
 from torch_geometric.utils import unbatch, unbatch_edge_index
 
-logger = logging.getLogger(__name__)
-logger_console = logging.StreamHandler()
-logger_formatter = logging.Formatter('%(levelname)-8s [%(filename)s] %(message)s')
-logger_console.setFormatter(logger_formatter)
-logger.addHandler(logger_console)
-logger.setLevel(logging.INFO)
+from .log_utils import Log
+
+LOGGER = Log().init_logger(logger_name=__name__)
 
 # set devide of pytorch
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')

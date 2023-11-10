@@ -1,0 +1,24 @@
+version: 1
+disable_existing_loggers: no  # 是否覆蓋以前的配置logger
+formatters:
+    simple:
+        format: "%(levelname)-8s [%(name)s.%(funcName)s] %(message)s"
+filters: 
+    errorfilter: 
+      '()' : 'utils.log_utils.DebugFilter'
+root: #默認情況下配置
+    level: INFO
+    handlers: [console]
+    propagate: no
+ 
+loggers: #如果有設定loggers的話會採用，否則採用root設定
+    ywt_jupyter:
+            level: INFO
+            handlers: [console]
+            propagate: no
+handlers:
+    console:
+            class: logging.StreamHandler
+            level: DEBUG
+            formatter: simple
+            stream: ext://sys.stdout

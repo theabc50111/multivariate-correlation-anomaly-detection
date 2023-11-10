@@ -14,17 +14,13 @@ from scipy.cluster.hierarchy import dendrogram
 from seaborn import heatmap
 from sklearn.metrics import confusion_matrix
 
+from .log_utils import Log
+
+LOGGER = Log().init_logger(logger_name=__name__)
+matplotlib_logger = logging.getLogger('matplotlib')
+matplotlib_logger.setLevel(logging.ERROR)
 mpl.rcParams[u'font.sans-serif'] = ['simhei']
 mpl.rcParams['axes.unicode_minus'] = False
-
-logger = logging.getLogger(__name__)
-logger_console = logging.StreamHandler()
-logger_formatter = logging.Formatter('%(levelname)-8s [%(filename)s.%(funcName)s] %(message)s')
-logger_console.setFormatter(logger_formatter)
-logger.addHandler(logger_console)
-logger.setLevel(logging.INFO)
-matplotlib_logger = logging.getLogger("matplotlib")
-matplotlib_logger.setLevel(logging.ERROR)
 
 def set_plot_log_data(log_path: Path):
     """Sets the data for plotting."""
@@ -74,7 +70,7 @@ def plot_heatmap(preds: np.ndarray, labels: np.ndarray, num_classes: int, pic_ti
     if can_show_conf_mat:
         total_data_confusion_matrix.index.name = 'Ground Truth'
         total_data_confusion_matrix.columns.name = 'Prediction'
-        logger.info(f"\nconfusion_matrix:\n{total_data_confusion_matrix}")
+        LOGGER.info(f"\nconfusion_matrix:\n{total_data_confusion_matrix}")
     if save_fig_path:
         plt.savefig(save_fig_path)
     plt.show()
@@ -140,7 +136,7 @@ def plot_gru_tr_process(main_title: str, model_struct: str, metrics_history: dic
             if t := data_plot.get("xticks"):
                 ax.set_xticks(ticks=range(0, len(t["label"])*t["intv"], t["intv"]), labels=t["label"], rotation=45)
     except Exception as e:
-        logger.error(f"Encounter error when draw figure of {data_plot['sub_title']}")
+        LOGGER.error(f"Encounter error when draw figure of {data_plot['sub_title']}")
         raise e
 
     fig.tight_layout(rect=(0, 0, 0, 0))
@@ -160,7 +156,7 @@ def plot_cluster_labels_distribution(trained_cluster_model: sklearn.base.Cluster
         plt.savefig(save_dir/f"{cluster_name}_{fig_title}.png")
     plt.show()  # findout elbow point
     plt.close()
-    logger.info(f"cluster of each point distribution: {np.unique(trained_cluster_model.labels_, return_counts=True)}")
+    LOGGER.info(f"cluster of each point distribution: {np.unique(trained_cluster_model.labels_, return_counts=True)}")
 
 
 def plot_dendrogram(trained_cluster_model: sklearn.base.ClusterMixin, save_dir: Path, **kwargs):

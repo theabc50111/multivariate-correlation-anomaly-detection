@@ -19,26 +19,16 @@ from torch.nn import CrossEntropyLoss, MSELoss
 
 from models.gru_models import (GRUCorrClass, GRUCorrClassCustomFeatures,
                                GRUCorrCoefPred)
-###sys.path.append("/workspace/multivariate-correlation-anomaly-detection/utils/")
+from utils.assorted_utils import load_data_cfg, split_and_norm_data
+from utils.log_utils import Log
 from utils.metrics_utils import CustomIndicesEdgeAccuracy, TolEdgeAccuracyLoss
 from utils.plot_utils import plot_heatmap
-from utils.utils import load_data_cfg, split_and_norm_data
 
 THIS_FILE_DIR = Path(__file__).resolve().parent
 DATA_CFG = load_data_cfg()
 
-logger = logging.getLogger(__name__)
-logger_console = logging.StreamHandler()
-logger_formatter = logging.Formatter('%(levelname)-8s [%(filename)s.%(funcName)s] %(message)s')
-logger_console.setFormatter(logger_formatter)
-logger.addHandler(logger_console)
-metrics_logger = logging.getLogger("metrics")
-utils_logger = logging.getLogger("utils")
-gru_model_logger = logging.getLogger("gru_models")
-logger.setLevel(logging.INFO)
-metrics_logger.setLevel(logging.INFO)
-utils_logger.setLevel(logging.INFO)
-gru_model_logger.setLevel(logging.INFO)
+LOGGER = Log().init_logger(logger_name=__name__)
+logger_list = [name for name in sorted(logging.root.manager.loggerDict)]
 warnings.simplefilter("ignore")
 
 
@@ -145,7 +135,7 @@ if __name__ == "__main__":
     assert ("GRUCORRCLASSCUSTOMFEATURES" not in ARGS.train_models+ARGS.inference_models) or ARGS.output_type == "class_probability", "output_type must be class_probability when train_models|inferene_models is GRUCORRCLASSCUSTOMFEATURES"
     assert "class_fc" not in ARGS.drop_pos or ARGS.output_type == "class_probability", "output_type must be class_probability when class_fc in drop_pos"
     assert ("GRUCORRCLASSCUSTOMFEATURES" not in ARGS.train_models+ARGS.inference_models) or (ARGS.gru_input_feature_idx is not None and len(ARGS.gru_input_feature_idx) >= 1), "gru_input_feature_idx must be input when train_models|inferene_models is GRUCORRCLASSCUSTOMFEATURES and len(gru_input_feature_idx) must be greater equal to 1"
-    logger.info(pformat(f"\n{vars(ARGS)}", indent=1, width=100, compact=True))
+    LOGGER.info(pformat(f"\n{vars(ARGS)}", indent=1, width=100, compact=True))
 
     # Data implement & output setting & testset setting
     # data implement setting
@@ -215,17 +205,17 @@ if __name__ == "__main__":
         basic_model_cfg["edge_acc_metric_fn"] = CustomIndicesEdgeAccuracy(selected_indices=ARGS.custom_indices_edge_acc_metric_indices, num_classes=num_labels_classes)
 
     # show info
-    logger.info(f"===== file_name basis:{output_file_name} =====")
-    logger.info(f"===== pytorch running on:{device} =====")
-    logger.info(f"corr_df.shape:{corr_df.shape}, target_df.shape:{target_df.shape if target_df is not None else None}")
-    logger.info(f"corr_df.max:{corr_df.max().max()}, corr_df.min:{corr_df.min().min()}")
-    logger.info(f"train_dataset['model_input'].max:{train_dataset['model_input'].max()}, train_dataset['model_input'].min:{train_dataset['model_input'].min()}")
-    logger.info(f"val_dataset['model_input'].max:{val_dataset['model_input'].max()}, val_dataset['model_input'].min:{val_dataset['model_input'].min()}")
-    logger.info(f"test_dataset['model_input'].max:{test_dataset['model_input'].max()}, test_dataset['model_input'].min:{test_dataset['model_input'].min()}")
-    logger.info(f'Training set   = {train_dataset["model_input"].shape[1]} timesteps')
-    logger.info(f'Validation set = {val_dataset["model_input"].shape[1]} timesteps')
-    logger.info(f'Test set       = {test_dataset["model_input"].shape[1]} timesteps')
-    logger.info("="*80)
+    LOGGER.info(f"===== file_name basis:{output_file_name} =====")
+    LOGGER.info(f"===== pytorch running on:{device} =====")
+    LOGGER.info(f"corr_df.shape:{corr_df.shape}, target_df.shape:{target_df.shape if target_df is not None else None}")
+    LOGGER.info(f"corr_df.max:{corr_df.max().max()}, corr_df.min:{corr_df.min().min()}")
+    LOGGER.info(f"train_dataset['model_input'].max:{train_dataset['model_input'].max()}, train_dataset['model_input'].min:{train_dataset['model_input'].min()}")
+    LOGGER.info(f"val_dataset['model_input'].max:{val_dataset['model_input'].max()}, val_dataset['model_input'].min:{val_dataset['model_input'].min()}")
+    LOGGER.info(f"test_dataset['model_input'].max:{test_dataset['model_input'].max()}, test_dataset['model_input'].min:{test_dataset['model_input'].min()}")
+    LOGGER.info(f'Training set   = {train_dataset["model_input"].shape[1]} timesteps')
+    LOGGER.info(f'Validation set = {val_dataset["model_input"].shape[1]} timesteps')
+    LOGGER.info(f'Test set       = {test_dataset["model_input"].shape[1]} timesteps')
+    LOGGER.info("="*80)
 
     if len(ARGS.train_models) > 0:
         assert list(filter(lambda x: x in ModelType.__members__.keys(), ARGS.train_models)), f"train_models must be input one of {ModelType.__members__.keys()}"
@@ -233,13 +223,13 @@ if __name__ == "__main__":
             is_training, train_count = True, 0
             while (model_type.name in ARGS.train_models) and (is_training is True) and (train_count < 100):
                 try:
-                    logger.info(f"===== train model:{model_type.name} =====")
+                    LOGGER.info(f"===== train model:{model_type.name} =====")
                     train_count += 1
                     model_dir, model_log_dir = model_type.set_save_model_dir(THIS_FILE_DIR, output_file_name, ARGS.corr_type, s_l, w_l)
                     model = model_type.set_model(basic_model_cfg, ARGS)
                     best_model, best_model_info = model.train(train_data=train_dataset, val_data=val_dataset, loss_fns=loss_fns_dict, epochs=ARGS.tr_epochs, show_model_info=True)
                 except AssertionError as e:
-                    logger.error(f"\n{e}")
+                    LOGGER.error(f"\n{e}")
                 except Exception as e:
                     error_class = e.__class__.__name__  # 取得錯誤類型
                     detail = e.args[0]  # 取得詳細內容
@@ -249,16 +239,16 @@ if __name__ == "__main__":
                     line_num = last_call_stack[1]  # 取得發生的行號
                     func_name = last_call_stack[2]  # 取得發生的函數名稱
                     err_msg = "File \"{}\", line {}, in {}: [{}] {}".format(file_name, line_num, func_name, error_class, detail)
-                    logger.error(f"===\n{err_msg}")
-                    logger.error(f"===\n{traceback.extract_tb(tb)}")
+                    LOGGER.error(f"===\n{err_msg}")
+                    LOGGER.error(f"===\n{traceback.extract_tb(tb)}")
                 else:
                     is_training = False
                     if save_model_info:
                         model_dir, model_log_dir = model_type.set_save_model_dir(THIS_FILE_DIR, output_file_name, ARGS.corr_type, s_l, w_l)
                         model.save_model(best_model, best_model_info, model_dir=model_dir, model_log_dir=model_log_dir)
     elif len(ARGS.inference_models) > 0:
-        logger.info(f"===== inference model:[{ARGS.inference_models}] on {ARGS.inference_data_split} data =====")
-        logger.info("===== if inference_models is more than one, the inference result is ensemble result =====")
+        LOGGER.info(f"===== inference model:[{ARGS.inference_models}] on {ARGS.inference_data_split} data =====")
+        LOGGER.info("===== if inference_models is more than one, the inference result is ensemble result =====")
         assert list(filter(lambda x: x in ModelType.__members__.keys(), ARGS.inference_models)), f"inference_models must be input one of {ModelType.__members__.keys()}"
         if ARGS.inference_data_split == "train":
             inference_data = train_dataset
@@ -294,7 +284,7 @@ if __name__ == "__main__":
             num_labels_classes = ARGS.target_mats_path.split("/")[-1].replace("bins_", "").count("_")
             conf_mat_save_fig_dir.mkdir(parents=True, exist_ok=True)
             plot_heatmap(preds, y_labels, num_classes=num_labels_classes, pic_title=ARGS.inference_data_split, can_show_conf_mat=True, save_fig_path=conf_mat_save_fig_path)
-        logger.info(f"loss_fns:{loss_fns_dict['fns']}")
-        logger.info(f"metric_fn:{basic_model_cfg['edge_acc_metric_fn'] if 'edge_acc_metric_fn' in basic_model_cfg.keys() else None}")
-        logger.info(f"Special args of loss_fns: {[(loss_fn, loss_args) for loss_fn, loss_args in loss_fns_dict['fn_args'].items() for arg in loss_args if arg not in ['input', 'target']]}")
-        logger.info(f"loss:{loss}, edge_acc:{edge_acc}")
+        LOGGER.info(f"loss_fns:{loss_fns_dict['fns']}")
+        LOGGER.info(f"metric_fn:{basic_model_cfg['edge_acc_metric_fn'] if 'edge_acc_metric_fn' in basic_model_cfg.keys() else None}")
+        LOGGER.info(f"Special args of loss_fns: {[(loss_fn, loss_args) for loss_fn, loss_args in loss_fns_dict['fn_args'].items() for arg in loss_args if arg not in ['input', 'target']]}")
+        LOGGER.info(f"loss:{loss}, edge_acc:{edge_acc}")

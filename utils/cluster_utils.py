@@ -15,12 +15,9 @@ from sklearn.cluster import AgglomerativeClustering
 from sklearn.metrics import silhouette_score
 from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
 
-logger = logging.getLogger(__name__)
-logger_console = logging.StreamHandler()
-logger_formatter = logging.Formatter('%(levelname)-8s [%(filename)s] %(message)s')
-logger_console.setFormatter(logger_formatter)
-logger.addHandler(logger_console)
-logger.setLevel(logging.INFO)
+from .log_utils import Log
+
+LOGGER = Log().init_logger(logger_name=__name__)
 warnings.simplefilter("ignore")
 
 def convert_pairs_data_to_proximity_mat(item_pairs_ser: pd.Series, item_names: tuple, fill_diag_val: float) -> pd.DataFrame:
@@ -65,7 +62,7 @@ def filter_proximity_mat(proximity_mat: pd.DataFrame, filter_mask: pd.DataFrame,
     train_start_t = time()
     for i, clique in enumerate(nx.find_cliques(G)):
         clique = sorted(clique)
-        logger.debug(f"{i}th clique: {clique}")
+        LOGGER.debug(f"{i}th clique: {clique}")
         clique_counter[f"len_{len(clique)}_clique"] += 1
         if len(clique) <= 5:
             with open(tmp_clique_dir/"tmp_cliques.txt", "a") as f:
@@ -77,12 +74,12 @@ def filter_proximity_mat(proximity_mat: pd.DataFrame, filter_mask: pd.DataFrame,
                 max_clique = clique
         now_t = time()
         if now_t - train_start_t > 10800:  # 30 minutes
-            logger.warn(f"clique search time out: {now_t - train_start_t} seconds")
+            LOGGER.warn(f"clique search time out: {now_t - train_start_t} seconds")
             break
     top_3_len_cliq_cnt_key = sorted(clique_counter, key=lambda x: int(x.split('_')[1]), reverse=True)[:3]
-    top_3_len_cliq = [f"number of {clique_len}: num" for clique_len in top_3_len_cliq_cnt_key]
+    top_3_len_cliq = [f"number of {cnt_key}: {clique_counter[cnt_key]}" for cnt_key in top_3_len_cliq_cnt_key]
     top_3_freq_cliq_len = [f"number of {clique_len}: {num}" for clique_len, num in clique_counter.most_common(3)]
-    logger.info(f"total cliques: {clique_counter.total()}, top 3 num_cliques by frequent of len: {top_3_freq_cliq_len} top 3 cliques by len: {top_3_len_cliq}")
+    LOGGER.info(f"total cliques: {clique_counter.total()}, top 3 num_cliques by frequent of len: {top_3_freq_cliq_len} top 3 cliques by len: {top_3_len_cliq}")
     proximity_mat = proximity_mat.loc[max_clique, max_clique]
     np.fill_diagonal(proximity_mat.values, ori_diag_val)
     return proximity_mat, max_clique

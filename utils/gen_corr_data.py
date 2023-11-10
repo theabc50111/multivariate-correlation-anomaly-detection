@@ -1,5 +1,6 @@
 import argparse
 import logging
+import sys
 import warnings
 from itertools import combinations
 from pathlib import Path
@@ -10,16 +11,12 @@ import numpy as np
 import pandas as pd
 import yaml
 
-from utils import load_data_cfg
+sys.path.append(str(Path(__file__).parent.parent))
+from utils.assorted_utils import load_data_cfg
+from utils.log_utils import Log
 
 DATA_CFG = load_data_cfg()
-
-logger = logging.getLogger(__name__)
-logger_console = logging.StreamHandler()
-logger_formatter = logging.Formatter('%(levelname)-8s [%(filename)s] %(message)s')
-logger_console.setFormatter(logger_formatter)
-logger.addHandler(logger_console)
-logger.setLevel(logging.INFO)
+LOGGER = Log().init_logger(logger_name=__name__)
 warnings.simplefilter("ignore")
 
 def set_corr_data(data_implement, data_cfg: dict, data_gen_cfg: dict, corr_data_dir: Path, train_items_setting: str = "train_train", save_corr_data: bool = False):
@@ -38,8 +35,8 @@ def set_corr_data(data_implement, data_cfg: dict, data_gen_cfg: dict, corr_data_
     train_set = data_cfg["DATASETS"][data_implement]['TRAIN_SET']
     items_implement = train_set if train_items_setting == "train_train" else all_set
     dataset_df = dataset_df.loc[::, items_implement]
-    logger.info(f"\n===== len(all_set): {len(all_set)}, len(train_set): {len(train_set)}, len(items_implement): {len(items_implement)} =====")
-    logger.info(f"\n===== overview dataset_df =====\n{dataset_df}")
+    LOGGER.info(f"\n===== len(all_set): {len(all_set)}, len(train_set): {len(train_set)}, len(items_implement): {len(items_implement)} =====")
+    LOGGER.info(f"\n===== overview dataset_df =====\n{dataset_df}")
 
     # Load or Create Correlation Data
     s_l, w_l = data_gen_cfg["CORR_STRIDE"], data_gen_cfg["CORR_WINDOW"]
@@ -58,7 +55,7 @@ def set_corr_data(data_implement, data_cfg: dict, data_gen_cfg: dict, corr_data_
     if save_corr_data:
         corr_dataset.to_csv(corr_df_path)
 
-    logger.info(f"\n===== overview corr_dataset =====\n{corr_dataset.head()}")
+    LOGGER.info(f"\n===== overview corr_dataset =====\n{corr_dataset.head()}")
     return corr_dataset
 
 def gen_custom_discretize_corr(src_dir: Path, data_gen_cfg: dict, bins: list, save_dir: Path = None):
@@ -80,7 +77,7 @@ def gen_custom_discretize_corr(src_dir: Path, data_gen_cfg: dict, bins: list, sa
         discretize_data[discretize_data == discretize_tag] = discretize_value
     discretize_corr_dataset = pd.DataFrame(discretize_data, index=corr_data.index, columns=corr_data.columns)
 
-    logger.info(f"\nReturn discretize_corr_dataset.shape:{discretize_corr_dataset.shape}"
+    LOGGER.info(f"\nReturn discretize_corr_dataset.shape:{discretize_corr_dataset.shape}"
                 f"\nThe customized boundary of discretize matrices:\n{bins}"
                 f"\nUnique values and correspond counts of discretize_corr_dataset:\n{np.unique(discretize_corr_dataset, return_counts=True)}")
     if save_dir:
@@ -107,7 +104,7 @@ if __name__ == "__main__":
     data_args_parser.add_argument("--save_corr_data", type=bool, default=False, action=argparse.BooleanOptionalAction,  # setting of output files
                                   help="input --save_corr_data to save correlation data")
     args = data_args_parser.parse_args()
-    logger.info(pformat(vars(args), indent=1, width=100, compact=True))
+    LOGGER.info(pformat(vars(args), indent=1, width=100, compact=True))
 
     # generate correlation matrix across time
     DATA_GEN_CFG = {}

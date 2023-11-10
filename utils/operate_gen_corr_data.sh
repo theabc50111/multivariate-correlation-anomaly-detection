@@ -26,7 +26,8 @@ do
                     for custom_discrete_bins in "${custom_discrete_bins_list[@]}"
                     do
                         echo "start generate data with $dataset $train_items_setting $corr_type $corr_win $corr_str $custom_discrete_bins"
-                        python ./gen_corr_data.py $dataset $train_items_setting $corr_type $corr_win $corr_str $custom_discrete_bins --save_corr_data
+                        ###python ./gen_corr_data.py $dataset $train_items_setting $corr_type $corr_win $corr_str $custom_discrete_bins --save_corr_data
+                        python ./gen_corr_data.py $dataset $train_items_setting $corr_type $corr_win $corr_str $custom_discrete_bins
                     done
                 done
             done

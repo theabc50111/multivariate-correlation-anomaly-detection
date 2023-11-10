@@ -9,13 +9,9 @@ import yaml
 from sklearn.linear_model import LinearRegression
 from statsmodels.tsa.seasonal import seasonal_decompose
 
-logger = logging.getLogger(__name__)
-logger_console = logging.StreamHandler()
-logger_formatter = logging.Formatter('%(levelname)-8s [%(filename)s.%(funcName)s] %(message)s')
-logger_console.setFormatter(logger_formatter)
-logger.addHandler(logger_console)
-logger.setLevel(logging.INFO)
+from .log_utils import Log
 
+LOGGER = Log().init_logger(logger_name=__name__)
 
 def stl_decompn(corr_series: "pd.Series", overview: bool = False) -> (float, float, float):
     output_resid = 100000
@@ -60,7 +56,7 @@ def calc_corr_ser_property(corr_dataset: pd.DataFrame, corr_property_df_path: Pa
     corr_property_df_dir.mkdir(parents=True, exist_ok=True)
     if corr_property_df_path.exists():
         corr_property_df = pd.read_csv(corr_property_df_path).set_index("items")
-        logger.info(f"corr_property_df exists, corr_property_df loaded from {corr_property_df_path}")
+        LOGGER.info(f"corr_property_df exists, corr_property_df loaded from {corr_property_df_path}")
     else:
         corr_mean = corr_dataset.mean(axis=1)
         corr_std = corr_dataset.std(axis=1)
@@ -101,8 +97,8 @@ def split_and_norm_data(model_input_df: pd.DataFrame, batch_size: int, target_df
         val_dataset["target"] = val_dataset["model_input"]
         test_dataset["target"] = test_dataset["model_input"]
 
-    logger.info(f"split ratio: train:{train_pct}, val:{val_pct-train_pct}, test {1-val_pct}")
-    logger.info("="*80)
+    LOGGER.info(f"split ratio: train:{train_pct}, val:{val_pct-train_pct}, test {1-val_pct}")
+    LOGGER.info("="*80)
 
     return train_dataset, val_dataset, test_dataset
 
@@ -194,11 +190,11 @@ def load_multiple_data(data_implement: str, retrieve_items_setting: str, corr_ty
     target_df = pd.read_csv(target_df_path, index_col=["item_pair"])
     corr_property_df = calc_corr_ser_property(corr_dataset=corr_df, corr_property_df_path=corr_property_df_path)
 
-    logger.info(f"len(items_implement): {len(items_implement)} and len(all_set): {len(all_set if all_set else [])} and len(train_set): {len(train_set if train_set else [])}")
-    logger.info(f"dataset_df.shape:{dataset_df.shape}, corr_df.shape:{corr_df.shape}, target_df.shape:{target_df.shape}")
-    logger.info(f"================ In {output_file_name}-corr_s{s_l}_w{w_l} and corr_ser_clac_method:{corr_ser_clac_method} ===============")
-    logger.info(f"corr_property_df.shape: {corr_property_df.shape}")
-    logger.info(f"Min of corr_ser_mean:{corr_property_df.loc[::,'corr_ser_mean'].min()}, Max of corr_ser_mean:{corr_property_df.loc[::,'corr_ser_mean'].max()}")
+    LOGGER.info(f"len(items_implement): {len(items_implement)} and len(all_set): {len(all_set if all_set else [])} and len(train_set): {len(train_set if train_set else [])}")
+    LOGGER.info(f"dataset_df.shape:{dataset_df.shape}, corr_df.shape:{corr_df.shape}, target_df.shape:{target_df.shape}")
+    LOGGER.info(f"================ In {output_file_name}-corr_s{s_l}_w{w_l} and corr_ser_clac_method:{corr_ser_clac_method} ===============")
+    LOGGER.info(f"corr_property_df.shape: {corr_property_df.shape}")
+    LOGGER.info(f"Min of corr_ser_mean:{corr_property_df.loc[::,'corr_ser_mean'].min()}, Max of corr_ser_mean:{corr_property_df.loc[::,'corr_ser_mean'].max()}")
 
     return dataset_df, corr_df, target_df, corr_property_df
 
