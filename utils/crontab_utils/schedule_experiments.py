@@ -4,8 +4,8 @@ from datetime import datetime, timedelta
 from itertools import chain, product, repeat
 from pprint import pprint
 
-data_implement_list = ["--data_implement SP500_20112015_CORR_MEAN_POSITIVE_NEGATIVE_KEEP"]  # "--data_implement LINEAR_REG_ONE_CLUSTER_DIM_30_BKPS_0_NOISE_STD_30"
-batch_size_list = ["--tr_epochs 200"]
+data_implement_list = ["--data_implement SP500_20112015_PCA_CLUSTER_1_PCA_CLUSTER_2"]  # "--data_implement LINEAR_REG_ONE_CLUSTER_DIM_30_BKPS_0_NOISE_STD_30"
+batch_size_list = [""]
 tr_epochs_list = [""]
 train_models_list = ["--train_models GRUCORRCLASSCUSTOMFEATURES"]  # ["", "--train_models GRUCORRCLASS", "--train_models GRUCORRCLASS --train_models GRUCORRCLASSCUSTOMFEATURES --train_models GRUCORRCOEFPRED"]
 corr_type_list = ["--corr_type pearson"]  # ["--corr_type pearson", "--corr_type cross_corr"]
@@ -19,13 +19,17 @@ drop_pos_list = [""]  # ["", "--drop_pos gru", "--drop_pos decoder --drop_pos gr
 drop_p_list = [""]  # ["--drop_p 0.33", "--drop_p 0.5", "--drop_p 0.66"]
 gru_l_list = [""]  # ["--gru_l 1", "--gru_l 2", "--gru_l 3", "--gru_l 4", "--gru_l 5"]
 gru_h_list = [""]  # ["--gru_h 40", "--gru_h 80", "--gru_h 100", "--gru_h 320", "--gru_h 640"]
-gru_input_feature_idx_list = ["--gru_input_feature_idx 2 --gru_input_feature_idx 4 --gru_input_feature_idx 5 --gru_input_feature_idx 7 --gru_input_feature_idx 9 --gru_input_feature_idx 10 --gru_input_feature_idx 11 --gru_input_feature_idx 13 --gru_input_feature_idx 14 --gru_input_feature_idx 15 --gru_input_feature_idx 18 --gru_input_feature_idx 19"]  # ["--gru_input_feature_idx 0", "--gru_input_feature_idx 1", "--gru_input_feature_idx 2", "--gru_input_feature_idx 0 --gru_input_feature_idx 1 "]
-###gru_input_feature_idx_list = ["--gru_input_feature_idx 0", "--gru_input_feature_idx 1", "--gru_input_feature_idx 2", "--gru_input_feature_idx 3", "--gru_input_feature_idx 4",
-###                              "--gru_input_feature_idx 5", "--gru_input_feature_idx 6", "--gru_input_feature_idx 7", "--gru_input_feature_idx 8", "--gru_input_feature_idx 9",
-###                              "--gru_input_feature_idx 10", "--gru_input_feature_idx 11", "--gru_input_feature_idx 12", "--gru_input_feature_idx 13", "--gru_input_feature_idx 14",
-###                              "--gru_input_feature_idx 15", "--gru_input_feature_idx 16", "--gru_input_feature_idx 17", "--gru_input_feature_idx 18", "--gru_input_feature_idx 19",
-###                              "--gru_input_feature_idx 20", "--gru_input_feature_idx 21"]  # ["--gru_input_feature_idx 0", "--gru_input_feature_idx 1", "--gru_input_feature_idx 2", "--gru_input_feature_idx 0 --gru_input_feature_idx 1 "]
-use_weighted_loss_list = ["", "--use_weighted_loss true"]  # ["", "--use_weighted_loss true"]
+gru_input_feature_idx_list = ['--gru_input_feature_idx 0', '--gru_input_feature_idx 1', '--gru_input_feature_idx 2', '--gru_input_feature_idx 3', '--gru_input_feature_idx 4',
+                              '--gru_input_feature_idx 5', '--gru_input_feature_idx 6', '--gru_input_feature_idx 7', '--gru_input_feature_idx 8', '--gru_input_feature_idx 9',
+                              '--gru_input_feature_idx 10', '--gru_input_feature_idx 11', '--gru_input_feature_idx 12', '--gru_input_feature_idx 13', '--gru_input_feature_idx 14',
+                              '--gru_input_feature_idx 15', '--gru_input_feature_idx 16', '--gru_input_feature_idx 17', '--gru_input_feature_idx 18', '--gru_input_feature_idx 19',
+                              '--gru_input_feature_idx 20', '--gru_input_feature_idx 21', '--gru_input_feature_idx 22', '--gru_input_feature_idx 23', '--gru_input_feature_idx 24',
+                              '--gru_input_feature_idx 25', '--gru_input_feature_idx 26', '--gru_input_feature_idx 27', '--gru_input_feature_idx 28', '--gru_input_feature_idx 29',
+                              '--gru_input_feature_idx 30', '--gru_input_feature_idx 31', '--gru_input_feature_idx 32', '--gru_input_feature_idx 33', '--gru_input_feature_idx 34',
+                              '--gru_input_feature_idx 35', '--gru_input_feature_idx 36', '--gru_input_feature_idx 37', '--gru_input_feature_idx 38', '--gru_input_feature_idx 39',
+                              '--gru_input_feature_idx 40', '--gru_input_feature_idx 41', '--gru_input_feature_idx 42', '--gru_input_feature_idx 43', '--gru_input_feature_idx 44'] # ["--gru_input_feature_idx 0", "--gru_input_feature_idx 1", "--gru_input_feature_idx 2", "--gru_input_feature_idx 0 --gru_input_feature_idx 1 --gru_input_feature_idx 2 --gru_input_feature_idx 3"]
+###gru_input_feature_idx_list = ["--gru_input_feature_idx 2 --gru_input_feature_idx 4 --gru_input_feature_idx 5 --gru_input_feature_idx 7 --gru_input_feature_idx 9 --gru_input_feature_idx 10 --gru_input_feature_idx 11 --gru_input_feature_idx 13 --gru_input_feature_idx 14 --gru_input_feature_idx 15 --gru_input_feature_idx 18 --gru_input_feature_idx 19"]  # ["--gru_input_feature_idx 0", "--gru_input_feature_idx 1", "--gru_input_feature_idx 2", "--gru_input_feature_idx 0 --gru_input_feature_idx 1 --gru_input_feature_idx 2 --gru_input_feature_idx 3"]
+use_weighted_loss_list = [""]  # ["", "--use_weighted_loss true"]
 tol_edge_acc_loss_atol_list = [""]  # ["", "--tol_edge_acc_loss_atol 0.05", "--tol_edge_acc_loss_atol 0.1", "--tol_edge_acc_loss_atol 0.33"]
 output_type_list = ["--output_type class_probability"]  # ["--output_type discretize", "--output_type class_probability"]
 
@@ -51,7 +55,7 @@ if set(map(lambda x: x['gru_l'], args_list)) != {""}:
     model_timedelta_list = [timedelta(hours=1, minutes=20), timedelta(hours=1, minutes=20), timedelta(hours=1, minutes=25)]  # The order of elements of model_timedelta_list should comply with the order of elements of args_list
 else:
     num_models = len(args_list)
-    model_timedelta_list = [timedelta(hours=0, minutes=50)]
+    model_timedelta_list = [timedelta(hours=0, minutes=45)]
 
 model_timedelta_list = list(chain.from_iterable(repeat(x, num_models) for x in model_timedelta_list))
 model_timedelta_list = [0] + model_timedelta_list

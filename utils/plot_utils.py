@@ -4,7 +4,6 @@ from math import sqrt
 from pathlib import Path
 
 import matplotlib as mpl
-import matplotlib.gridspec as gridspec
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -89,21 +88,21 @@ def plot_gru_tr_process(main_title: str, model_struct: str, metrics_history: dic
                        "xticks": None,
                        "xlabel": "epochs",
                        "double_y": True},
-                      {"sub_title": f"model structure",
+                      {"sub_title": "model structure",
                        "data": str(model_struct)}]
 
     # figrue settings
     line_style = {"linewidth": 2, "alpha": 0.5}
     axvline_style = {"color": 'k', "linewidth": 5, "linestyle": '--', "alpha": 0.3}
-    fig, axs = plt.subplot_mosaic("""
-                                  ab
-                                  cc
-                                  """,
-                                  figsize=(30, 20), gridspec_kw={'hspace': 0.2, 'wspace': 0.3})
+    fig, axes = plt.subplot_mosaic("""
+                                   ab
+                                   cc
+                                   """,
+                                   figsize=(30, 20), gridspec_kw={'hspace': 0.2, 'wspace': 0.3})
     fig.suptitle(main_title, fontsize=30)
 
     try:
-        for ax, data_plot in zip(axs.values(), data_info_dict):
+        for ax, data_plot in zip(axes.values(), data_info_dict):
             ax.set_title(data_plot["sub_title"], fontsize=30)
             ax.yaxis.offsetText.set_fontsize(18)
             ax.tick_params(axis='both', which='major', labelsize=24)
@@ -149,7 +148,7 @@ def plot_cluster_labels_distribution(trained_cluster_model: sklearn.base.Cluster
     ax.xaxis.set_major_locator(x_major_locator)
     plt.bar(np.unique(trained_cluster_model.labels_, return_counts=True)[0], np.unique(trained_cluster_model.labels_, return_counts=True)[1])
     plt.grid()
-    plt.ylabel("instances in cluster")
+    plt.ylabel("samples in cluster")
     plt.xlabel("cluster label")
     plt.title(f"{cluster_name}\n {fig_title}")
     if save_dir is not None:
@@ -186,5 +185,82 @@ def plot_dendrogram(trained_cluster_model: sklearn.base.ClusterMixin, save_dir: 
     dendrogram(linkage_matrix, **kwargs)
     if save_dir is not None:
         plt.savefig(save_dir/"dendrogram.png")
+    plt.show()
+    plt.close()
+
+
+
+def plot_silhouette(ax: mpl.axes._axes.Axes, n_clusters: int, data: np.ndarray, silhouette_avg: float, sample_silhouette_values: np.ndarray, each_sample_cluster_labels: np.ndarray):
+    """Plot silhouette coefficient for each sample"""
+    cmp = mpl.colormaps['rainbow']
+    ax.set_xlim([-1, 1])  # The silhouette coefficient can range from -1, 1
+    ax.set_ylim([0, len(data) + (n_clusters + 1) * 10])  # The (n_clusters+1)*10 is for inserting blank space between silhouette plots of individual clusters, to demarcate them clearly.
+    y_lower = 10
+    for i in range(n_clusters):
+        # Aggregate the silhouette scores for samples belonging to cluster i, and sort them
+        ith_cluster_silhouette_values = sample_silhouette_values[each_sample_cluster_labels == i]
+        ith_cluster_silhouette_values.sort()
+        size_cluster_i = ith_cluster_silhouette_values.shape[0]
+        y_upper = y_lower + size_cluster_i
+        color = cmp(float(i)/n_clusters)
+        ax.fill_betweenx(y=np.arange(y_lower, y_upper), x1=0, x2=ith_cluster_silhouette_values, facecolor=color, edgecolor=color, alpha=0.7)
+        ax.text(-0.05, y_lower + 0.5 * size_cluster_i, f"cluster_{i}")  # Label the silhouette plots with their cluster numbers at the middle
+        y_lower = y_upper + 10  # Compute the new y_lower for next plot, and 10 for the 0 samples
+    ax.set_title(f"For n_clusters={n_clusters}, The average silhouette_score is: {silhouette_avg}", fontsize=14)
+    ax.set_xlabel("The silhouette coefficient values")
+    ax.set_ylabel("Cluster label")
+    ax.axvline(x=silhouette_avg, color="red", linestyle="--")  # The vertical line for average silhouette score of all the values
+    ax.set_yticks([])  # Clear the yaxis labels / ticks
+    ax.set_xticks(np.linspace(-1, 1, 11))
+
+
+def plot_cluster_scatters(ax: mpl.axes._axes.Axes, n_clusters: int, data: np.ndarray, each_sample_cluster_labels: np.ndarray, centers: np.ndarray):
+    """Plot the cluster scatters"""
+    cmp = mpl.colormaps['rainbow']
+    color_each_data = cmp(each_sample_cluster_labels.astype(float)/n_clusters)
+    if data.shape[1] > 1:
+        ax.scatter(x=data[:, 0], y=data[:, 1], marker=".", s=30, lw=0, alpha=0.7, c=color_each_data, edgecolor="k")
+        ax.scatter(centers[:, 0], centers[:, 1], marker="o", c="white", alpha=1, s=200, edgecolor="k")  # Draw white circles at cluster centers
+        for i, c in enumerate(centers):
+            ax.scatter(c[0], c[1], marker="$%d$" % i, alpha=1, s=50, edgecolor="k")
+    else:
+        ax.scatter(x=data[:, 0], y=np.zeros_like(data[:, 0]), marker=".", s=30, lw=0, alpha=0.7, c=color_each_data, edgecolor="k")
+        ax.scatter(x=centers[:, 0], y=np.zeros_like(centers[:, 0]), marker="o", c="white", alpha=1, s=200, edgecolor="k")
+        for i, c in enumerate(centers):
+            ax.scatter(x=c[0], y=np.zeros_like(c[0]), marker="$%d$" % i, alpha=1, s=50, edgecolor="k")
+
+    ax.set_title("The visualization of the clustered data.", fontsize=14)
+    ax.set_xlabel("Feature space for the 1st feature")
+    ax.set_ylabel("Feature space for the 2nd feature")
+
+
+def plot_table(ax: mpl.axes._axes.Axes, df: pd.DataFrame):
+    """Plot the table"""
+    n_rows, n_cols = df.shape
+    table = ax.table(cellText=df.values, colLabels=df.columns, rowLabels=df.index, colColours=["palegreen"]*n_cols, rowColours=["palegreen"]*n_rows, bbox=[0, 0, 1, 1])
+    # modify table
+    table.set_fontsize(14)
+    table.scale(1, 1.5)
+    ax.axis('off')
+
+def plot_cluster_info(data: np.ndarray, each_sample_cluster_labels: np.ndarray, cluster_centers: np.ndarray,
+                      n_clusters: int, linkage: str, cluster_metric: str,
+                      sample_silhouette_values: np.ndarray, silhouette_avg: float, clusters_info_df: pd.DataFrame):
+    """Plot the cluster info"""
+    mosaic_str = """ab"""
+    df_row_len_20_quotient = (clusters_info_df.shape[0]-1)//20  # 20 is the number of rows of each column, and -2 is for excluding the title row and the last row
+    fig_row = df_row_len_20_quotient+2
+    varied_figsize = (32, 10*(fig_row))
+    for i in range(df_row_len_20_quotient+1):
+        mosaic_str += f"\n{chr(ord('c')+i)}{chr(ord('c')+i)}"
+    fig, axes = plt.subplot_mosaic(mosaic_str, figsize=varied_figsize, gridspec_kw={'hspace': 0.1, 'wspace': 0.2})
+    fig.suptitle(f"Silhouette analysis for Hierarchy clustering on sample data with n_clusters={n_clusters} linkage={linkage} metric={cluster_metric}", fontsize=20, fontweight="bold", y=0.91)
+    plot_silhouette(ax=axes['a'], n_clusters=n_clusters, data=data, silhouette_avg=silhouette_avg, sample_silhouette_values=sample_silhouette_values, each_sample_cluster_labels=each_sample_cluster_labels)
+    plot_cluster_scatters(ax=axes['b'], n_clusters=n_clusters, data=data, each_sample_cluster_labels=each_sample_cluster_labels, centers=cluster_centers)
+    after_2_axes = list(axes.values())[2:]
+    splitted_dfs = [clusters_info_df.iloc[i*20:(i+1)*20, :] for i in range(df_row_len_20_quotient+1)]
+    for ax, splitted_df in zip(after_2_axes, splitted_dfs):
+        display_df = splitted_df.iloc[::, :10]  # display the first 10 columns
+        plot_table(ax=ax, df=display_df)
     plt.show()
     plt.close()

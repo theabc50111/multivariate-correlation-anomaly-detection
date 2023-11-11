@@ -1,21 +1,25 @@
 # Function: clustering utilities
-import logging
 import warnings
 from collections import Counter
 from itertools import combinations
 from pathlib import Path
 from time import time
 
+import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
 import pandas as pd
 import sklearn
-from scipy.stats import uniform
 from sklearn.cluster import AgglomerativeClustering
-from sklearn.metrics import silhouette_score
-from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
+from sklearn.decomposition import PCA
+from sklearn.metrics import (pairwise_distances, silhouette_samples,
+                             silhouette_score)
+from sklearn.model_selection import GridSearchCV
+from sklearn.neighbors import NearestCentroid
+from sklearn.preprocessing import MinMaxScaler
 
 from .log_utils import Log
+from .plot_utils import plot_cluster_info
 
 LOGGER = Log().init_logger(logger_name=__name__)
 warnings.simplefilter("ignore")
@@ -85,93 +89,119 @@ def filter_proximity_mat(proximity_mat: pd.DataFrame, filter_mask: pd.DataFrame,
     return proximity_mat, max_clique
 
 
-def calc_silhouette_label_freq_std(estimator: sklearn.base.ClusterMixin, x: pd.DataFrame, silhouette_score_ratio: int = 0.1, silhouette_metric: str = "precomputed") -> float:
-    estimator.fit(x)
-    cluster_labels = estimator.labels_
-    num_labels = len(set(cluster_labels))
-    num_samples = len(x.index)
-    labels_symbol, label_freq = np.unique(cluster_labels, return_counts=True)
-    if num_labels in (1, num_samples):
-        return -1
+def calc_pca(data: pd.DataFrame, n_samples: int, variance_thres: float) -> tuple[np.ndarray, np.ndarray]:
+    """
+    Calculate PCA
+      data: pd.DataFrame, data
+      n_samples: int, number of samples
+      variance_thres: float, variance threshold
+    """
+    pca = PCA(n_components=None, whiten=True)
+    scaler = MinMaxScaler()
+    norm_data = scaler.fit_transform(data)
+    pca.fit(norm_data)
+    assert pca.n_samples_ == n_samples, "pca.n_samples_ is not equal to n_samples, pca.n_samples_: {pca.n_samples_}, n_samples: {n_samples}"
+    reducted_data = pca.transform(norm_data)
+    pca_info_df = pd.DataFrame({"singular_values": pca.singular_values_, "variance_ratio": pca.explained_variance_ratio_,
+                                "pri_components": [f"pc_{i}" for i in range(pca.n_components_)]}).set_index(["pri_components"])
+    num_over_thres_pri_components = sum(pca.explained_variance_ratio_ > variance_thres)
+    selected_reducted_data = reducted_data[::, :num_over_thres_pri_components]
+    selected_reducted_df = pd.DataFrame(selected_reducted_data, columns=[f"pc_{i}" for i in range(num_over_thres_pri_components)], index=data.index)
+    selected_pri_components = pca.components_[:num_over_thres_pri_components, ::]
+    selected_pri_components_info_df = pca_info_df.iloc[:num_over_thres_pri_components, ::]
+    LOGGER.info(f"\n{selected_pri_components_info_df}")
 
-    return silhouette_score_ratio * silhouette_score(x, cluster_labels, metric=silhouette_metric) + (1 - silhouette_score_ratio) * (1 / np.array(label_freq).std())
-
-
-def hrchy_clustering_distance_threshold_rs(x: pd.DataFrame, data_mat_mode: str = "precomputed", verbose: int = 0):
-    param_dict = {"n_clusters": [None], "affinity": [data_mat_mode],
-                  "linkage": ["single", "complete", "average"],
-                  "distance_threshold": uniform(loc=0.55, scale=0.6),
-                  "compute_distances": True}
-    cv = [(slice(None), slice(None))]
-    hrchy_clustering_rs = RandomizedSearchCV(estimator=AgglomerativeClustering(), param_distributions=param_dict,
-                                             n_iter=100000, scoring=calc_silhouette_label_freq_std, cv=cv, n_jobs=-1)
-    hrchy_clustering_rs.fit(x)
-
-    if verbose == 1:
-        print(f"hrchy_clustering_rs.best_estimator_: {hrchy_clustering_rs.best_estimator_}")
-        print(f"hrchy_clustering_rs.best_params_: {hrchy_clustering_rs.best_params_}")
-        print(f"hrchy_clustering_rs.best_score_: {hrchy_clustering_rs.best_score_}")
-        print(f"hrchy_clustering_rs.best_estimator_.n_leaves_: {hrchy_clustering_rs.best_estimator_.n_leaves_}")
-        print(f"hrchy_clustering_rs.best_estimator_.n_clusters_: {hrchy_clustering_rs.best_estimator_.n_clusters_}")
-        print(f"np.unique(hrchy_clustering_rs.best_estimator_.labels_): {np.unique(hrchy_clustering_rs.best_estimator_.labels_, return_counts=True)}")
-        print(f"hrchy_clustering_rs.best_estimator_.labels_: {hrchy_clustering_rs.best_estimator_.labels_}")
-        print(f"hrchy_clustering_rs.n_features_in_: {hrchy_clustering_rs.n_features_in_}")
-        print(f"hrchy_clustering_rs.feature_names_in_: {hrchy_clustering_rs.feature_names_in_}")
-        print("-"*50)
-
-    return hrchy_clustering_rs.best_estimator_
+    ###return selected_reducted_data, selected_pri_components
+    return selected_reducted_df, selected_pri_components
 
 
-def hrchy_clustering_n_cluster_gs(x: pd.DataFrame, data_mat_mode: str = "precomputed", verbose: int = 0):
-    param_dict = {"n_clusters": range(2, 20), "affinity": [data_mat_mode],
-                  "linkage": ["single", "complete", "average"],
-                  "compute_distances": True}
-    cv = [(slice(None), slice(None))]
-    hrchy_clustering_gs = GridSearchCV(estimator=AgglomerativeClustering(), param_grid=param_dict,
-                                       scoring=calc_silhouette_label_freq_std, cv=cv, n_jobs=-1)
-    hrchy_clustering_gs.fit(x)
+def calc_hrchy_cluster_given_n_clusters(n_clusters: int, data: pd.DataFrame, cluster_conds: dict):
+    """
+    Calculate hierarchical clustering
+        n_clusters: int, number of clusters
+        cluster_linkage: str, linkage
+        cluster_metric: str, metric
+        data: pd.DataFrame, data
+        cluster_conds: dict, cluster conditions
+    """
+    cluster_linkage = cluster_conds["linkage"]
+    cluster_metric = cluster_conds["cluster_metric"]
+    clusterer = AgglomerativeClustering(n_clusters=n_clusters, linkage=cluster_linkage, metric=cluster_metric, compute_distances=True)
+    nc_clf = NearestCentroid()
+    # calculate cluster info
+    each_sample_cluster_labels = clusterer.fit_predict(data)
+    cluster_labels, cluster_n_samples = np.unique(each_sample_cluster_labels, return_counts=True)
+    nc_clf.fit(data, each_sample_cluster_labels)
+    cluster_centers = nc_clf.centroids_
+    assert clusterer.n_clusters_ == n_clusters and clusterer.n_features_in_ == cluster_conds["n_features"] and len(clusterer.labels_) == cluster_conds["n_samples"], "clusterer.n_clusters_ is not equal to n_clusters or clusterer.n_features_in_ is not equal to n_features or len(clusterer.labels_) is not equal to n_samples"
+    assert cluster_centers.shape[0] == n_clusters and cluster_centers.shape[1] == cluster_conds["n_features"], "cluster_centers.shape is not equal to (n_clusters, n_features)"
 
-    if verbose == 1:
-        print(f"hrchy_clustering_gs.best_estimator_: {hrchy_clustering_gs.best_estimator_}")
-        print(f"hrchy_clustering_gs.best_params_: {hrchy_clustering_gs.best_params_}")
-        print(f"hrchy_clustering_gs.best_score_: {hrchy_clustering_gs.best_score_}")
-        print(f"hrchy_clustering_gs.best_estimator_.n_leaves_: {hrchy_clustering_gs.best_estimator_.n_leaves_}")
-        print(f"hrchy_clustering_gs.best_estimator_.n_clusters_: {hrchy_clustering_gs.best_estimator_.n_clusters_}")
-        print(f"np.unique(hrchy_clustering_gs.best_estimator_.labels_): {np.unique(hrchy_clustering_gs.best_estimator_.labels_, return_counts=True)}")
-        print(f"hrchy_clustering_gs.best_estimator_.labels_: {hrchy_clustering_gs.best_estimator_.labels_}")
-        print(f"hrchy_clustering_gs.n_features_in_: {hrchy_clustering_gs.n_features_in_}")
-        print(f"hrchy_clustering_gs.feature_names_in_: {hrchy_clustering_gs.feature_names_in_}")
-        print("-"*50)
+    silhouette_avg = silhouette_score(data, each_sample_cluster_labels)  # The silhouette_score gives the average value for all the samples. This gives a perspective into the density and separation of the formed clusters
+    sample_silhouette_values = silhouette_samples(data, each_sample_cluster_labels)  # Compute the silhouette scores for each sample
+    pair_cluster_center_dist = pairwise_distances(cluster_centers)  # Compute the diatance between center of clusters
+    dist_dict = {f"dist_to_cluster_{i}": pair_cluster_center_dist[::, i] for i in range(n_clusters)}
+    cluster_data_dict = {"cluster_label": cluster_labels, "cluster_n_samples": cluster_n_samples,
+                         "cluster_silhouette_avg": [sample_silhouette_values[each_sample_cluster_labels == i].mean() for i in range(n_clusters)],
+                         "cluster_silhouette_min": [sample_silhouette_values[each_sample_cluster_labels == i].min() for i in range(n_clusters)],
+                         "cluster_silhouette_max": [sample_silhouette_values[each_sample_cluster_labels == i].max() for i in range(n_clusters)]}
+    cluster_data_dict.update(dist_dict)
+    clusters_info_df = pd.DataFrame(cluster_data_dict)
 
-    return hrchy_clustering_gs.best_estimator_
-
-
-def obs_hrchy_cluster_instances(x: pd.DataFrame, data_mat_mode: str = "precomputed", verbose: int = 1):
-    for n in range(2, 20):
-        hrchy_cluster = AgglomerativeClustering(n_clusters=n, linkage="complete", affinity=data_mat_mode, compute_distances=True)
-        hrchy_cluster.fit(x)
-
-        if verbose == 1:
-            print(f"hrchy_cluste.n_clusters_: {hrchy_cluster.n_clusters_}")
-            print(f"hrchy_cluste.labels and whose number of instances: {np.unique(hrchy_cluster.labels_, return_counts=True)}")
-            # print(f"(ticker, cluster label): {list(zip(X.index, hrchy_cluster.labels_))}")
-            # print(f"The estimated number of connected components:{hrchy_cluster.n_connected_components_}")
-            # print(f"hrchy_cluster.n_leaves_: {hrchy_cluster.n_leaves_}")
-            # print(f"hrchy_cluster.n_features_in_: {hrchy_cluster.n_features_in_}")
-            print("-"*50)
+    return each_sample_cluster_labels, cluster_centers, silhouette_avg, sample_silhouette_values, clusters_info_df
 
 
-def hrchy_cluster_fixed_n_cluster(x: pd.DataFrame, n: int, data_mat_mode: str = "precomputed", verbose: int = 1):
-    hrchy_cluster = AgglomerativeClustering(n_clusters=n, linkage="complete", affinity=data_mat_mode, compute_distances=True)
-    hrchy_cluster.fit(x)
+def obs_various_n_clusters_hrchy_cluster(data: pd.DataFrame, cluster_conds: dict, can_plot_each_cluster_info: bool = False):
+    """
+    Observe various n_clusters hierarchical clustering
+    """
+    n_clusters_list = cluster_conds["n_clusters_list"]
+    linkage = cluster_conds["linkage"]
+    cluster_metric = cluster_conds["cluster_metric"]
+    assert data.shape[0] == cluster_conds["n_samples"] and data.shape[1] == cluster_conds["n_features"], "data.shape is not equal to (n_samples, n_features)"
+    various_n_clusters_model_info_df = pd.DataFrame()
+    for n_clusters in n_clusters_list:
+        hrchy_ret = calc_hrchy_cluster_given_n_clusters(n_clusters=n_clusters, data=data, cluster_conds=cluster_conds)
+        each_sample_cluster_labels, cluster_centers, silhouette_avg, sample_silhouette_values, clusters_info_df = hrchy_ret
+        various_n_clusters_model_info_df = pd.concat([various_n_clusters_model_info_df, pd.DataFrame({"n_clusters": n_clusters, "cluster_linkage": linkage, "cluster_metric": cluster_metric, "silhouette_avg": silhouette_avg}, index=[0])], axis=0)
+        if can_plot_each_cluster_info:
+            LOGGER.info(f"Plotting Hierarchical Clustering with n_clusters={n_clusters} linkage={linkage} cluster_metric={cluster_metric}")
+            plot_cluster_info(data=data.values, each_sample_cluster_labels=each_sample_cluster_labels, cluster_centers=cluster_centers,
+                              n_clusters=n_clusters, linkage=linkage, cluster_metric=cluster_metric,
+                              sample_silhouette_values=sample_silhouette_values, silhouette_avg=silhouette_avg, clusters_info_df=clusters_info_df)
 
-    if verbose == 1:
-        print(f"hrchy_cluste.n_clusters_: {hrchy_cluster.n_clusters_}")
-        print(f"hrchy_cluste.labels and whose instances: {np.unique(hrchy_cluster.labels_, return_counts=True)}")
-        print(f"hrchy_cluster.n_leaves_: {hrchy_cluster.n_leaves_}")
-        print(f"hrchy_cluster.n_features_in_: {hrchy_cluster.n_features_in_}")
-        print("-"*50)
-
-    return hrchy_cluster
+    various_n_clusters_model_info_df.loc[::, ["n_clusters", "silhouette_avg"]].plot(title="silhouette_avg vs n_clusters", x="n_clusters", y="silhouette_avg", kind="line", grid=True, figsize=(10, 6))
+    various_n_clusters_model_info_df = various_n_clusters_model_info_df.set_index("n_clusters")
+    LOGGER.info(f"\n{various_n_clusters_model_info_df}")
 
 
+def filtered_small_n_samples_and_silhouette_min_cluster(clusters_info_df: pd.DataFrame, min_cluster_n_samples: int, min_cluster_silhouette: float):
+    """
+    Filtered small n_samples and silhouette min cluster
+    """
+    cluster_n_samples_mask = clusters_info_df.loc[::, 'cluster_n_samples'] > min_cluster_n_samples
+    cluster_silhouette_min_mask = clusters_info_df.loc[::, 'cluster_silhouette_min'] > min_cluster_silhouette
+    row_mask = cluster_n_samples_mask & cluster_silhouette_min_mask
+    filtered_1_clusters_info_df = clusters_info_df.loc[row_mask, ::]
+    filtered_cluster_labels = filtered_1_clusters_info_df.loc[::, "cluster_label"]
+    dist_to_cluster_mask = filtered_1_clusters_info_df.columns.isin([f"dist_to_cluster_{label}" for label in filtered_cluster_labels])
+    not_dist_to_cluster_mask = ~filtered_1_clusters_info_df.columns.str.contains("dist_to_cluster")
+    col_mask = not_dist_to_cluster_mask | dist_to_cluster_mask
+    final_filtered_clusters_info_df = clusters_info_df.loc[row_mask, col_mask]
+
+    return final_filtered_clusters_info_df
+
+
+def select_cluster_labels_with_max_dist(clusters_info_df: pd.DataFrame):
+    """
+    Select cluster labels with max distance
+    """
+    dist_to_cluster_mask = clusters_info_df.columns.str.contains("dist_to_cluster")
+    clusters_dist_df = clusters_info_df.loc[::, dist_to_cluster_mask]
+    not_clusters_dist_df = clusters_info_df.loc[::, ~dist_to_cluster_mask]
+    max_cluster_dist = clusters_dist_df.max().max()
+    col_mask = (clusters_dist_df == max_cluster_dist).sum(axis=0).astype(bool)
+    row_mask = (clusters_dist_df == max_cluster_dist).sum(axis=1).astype(bool)
+    final_filtered_clusters_info_df = pd.concat([not_clusters_dist_df.loc[row_mask, ::], clusters_dist_df.loc[row_mask, col_mask]], axis=1)
+    selected_cluter_labels = final_filtered_clusters_info_df.loc[::, "cluster_label"].tolist()
+
+    return selected_cluter_labels, max_cluster_dist, final_filtered_clusters_info_df
