@@ -22,6 +22,7 @@ from .log_utils import Log
 from .plot_utils import plot_cluster_info
 
 LOGGER = Log().init_logger(logger_name=__name__)
+DF_LOGGER = Log().init_logger(logger_name="df_logger")
 warnings.simplefilter("ignore")
 
 def convert_pairs_data_to_proximity_mat(item_pairs_ser: pd.Series, item_names: tuple, fill_diag_val: float) -> pd.DataFrame:
@@ -78,18 +79,18 @@ def filter_proximity_mat(proximity_mat: pd.DataFrame, filter_mask: pd.DataFrame,
                 max_clique = clique
         now_t = time()
         if now_t - train_start_t > 10800:  # 30 minutes
-            LOGGER.warn(f"clique search time out: {now_t - train_start_t} seconds")
+            LOGGER.warning(f"clique search time out: {now_t - train_start_t} seconds")
             break
     top_3_len_cliq_cnt_key = sorted(clique_counter, key=lambda x: int(x.split('_')[1]), reverse=True)[:3]
     top_3_len_cliq = [f"number of {cnt_key}: {clique_counter[cnt_key]}" for cnt_key in top_3_len_cliq_cnt_key]
     top_3_freq_cliq_len = [f"number of {clique_len}: {num}" for clique_len, num in clique_counter.most_common(3)]
-    LOGGER.info(f"total cliques: {clique_counter.total()}, top 3 num_cliques by frequent of len: {top_3_freq_cliq_len} top 3 cliques by len: {top_3_len_cliq}")
+    LOGGER.info(f" : \ \ntotal cliques: {clique_counter.total()}, top 3 num_cliques by frequent of len: {top_3_freq_cliq_len} top 3 cliques by len: {top_3_len_cliq}")
     proximity_mat = proximity_mat.loc[max_clique, max_clique]
     np.fill_diagonal(proximity_mat.values, ori_diag_val)
     return proximity_mat, max_clique
 
 
-def calc_pca(data: pd.DataFrame, n_samples: int, variance_thres: float) -> tuple[np.ndarray, np.ndarray]:
+def calc_pca(data: pd.DataFrame, n_samples: int, variance_thres: float, verbose: int = 0) -> tuple[np.ndarray, np.ndarray]:
     """
     Calculate PCA
       data: pd.DataFrame, data
@@ -105,13 +106,31 @@ def calc_pca(data: pd.DataFrame, n_samples: int, variance_thres: float) -> tuple
     pca_info_df = pd.DataFrame({"singular_values": pca.singular_values_, "variance_ratio": pca.explained_variance_ratio_,
                                 "pri_components": [f"pc_{i}" for i in range(pca.n_components_)]}).set_index(["pri_components"])
     num_over_thres_pri_components = sum(pca.explained_variance_ratio_ > variance_thres)
+    num_under_thres_pri_components = pca.n_components_ - num_over_thres_pri_components
     selected_reducted_data = reducted_data[::, :num_over_thres_pri_components]
     selected_reducted_df = pd.DataFrame(selected_reducted_data, columns=[f"pc_{i}" for i in range(num_over_thres_pri_components)], index=data.index)
     selected_pri_components = pca.components_[:num_over_thres_pri_components, ::]
     selected_pri_components_info_df = pca_info_df.iloc[:num_over_thres_pri_components, ::]
-    LOGGER.info(f"\n{selected_pri_components_info_df}")
 
-    ###return selected_reducted_data, selected_pri_components
+    LOGGER.info("="*80)
+    LOGGER.info(f"pca_explanation_variance_thres:{variance_thres}, num_over_thres_pri_components:{num_over_thres_pri_components}, num_under_thres_pri_components:{num_under_thres_pri_components}")
+    DF_LOGGER.info("==================== Principle Components info ====================")
+    DF_LOGGER.info(selected_pri_components_info_df)
+    DF_LOGGER.info("==================== selected_reducted_df ====================")
+    DF_LOGGER.info(selected_reducted_df)
+
+    if verbose == 1:
+        pca_input_data_samples = data.index
+        pca_input_data_featues = data.columns
+        ori_logger_level = LOGGER.getEffectiveLevel()
+        LOGGER.setLevel(10)
+        LOGGER.debug("####################### check pca precessing #######################")
+        LOGGER.debug(f"pca_input_data.shape:{data.shape}, len(pca_input_data_samples):{len(pca_input_data_samples)}, len(pca_input_data_featues):{len(pca_input_data_featues)}")
+        LOGGER.debug(f"pca_input_data_samples[:3]:{pca_input_data_samples[:3]}")
+        LOGGER.debug(f"pca_input_data_featues[:3]:{pca_input_data_featues[:3]}")
+        LOGGER.debug("####################### check pca precessing #######################")
+        LOGGER.setLevel(ori_logger_level)
+
     return selected_reducted_df, selected_pri_components
 
 
@@ -171,7 +190,8 @@ def obs_various_n_clusters_hrchy_cluster(data: pd.DataFrame, cluster_conds: dict
 
     various_n_clusters_model_info_df.loc[::, ["n_clusters", "silhouette_avg"]].plot(title="silhouette_avg vs n_clusters", x="n_clusters", y="silhouette_avg", kind="line", grid=True, figsize=(10, 6))
     various_n_clusters_model_info_df = various_n_clusters_model_info_df.set_index("n_clusters")
-    LOGGER.info(f"\n{various_n_clusters_model_info_df}")
+    DF_LOGGER.info("==================== various_n_clusters_model_info_df ====================")
+    DF_LOGGER.info(various_n_clusters_model_info_df)
 
 
 def filtered_small_n_samples_and_silhouette_min_cluster(clusters_info_df: pd.DataFrame, min_cluster_n_samples: int, min_cluster_silhouette: float):

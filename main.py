@@ -1,20 +1,17 @@
 #!/usr/bin/env python
 # coding: utf-8
 import argparse
-import logging
 import sys
 import traceback
 import warnings
 from enum import Enum, auto
-from math import ceil, sqrt
+from math import ceil
 from pathlib import Path
 from pprint import pformat
 
-import dynamic_yaml
 import numpy as np
 import pandas as pd
 import torch
-import yaml
 from torch.nn import CrossEntropyLoss, MSELoss
 
 from models.gru_models import (GRUCorrClass, GRUCorrClassCustomFeatures,
@@ -28,7 +25,6 @@ THIS_FILE_DIR = Path(__file__).resolve().parent
 DATA_CFG = load_data_cfg()
 
 LOGGER = Log().init_logger(logger_name=__name__)
-logger_list = [name for name in sorted(logging.root.manager.loggerDict)]
 warnings.simplefilter("ignore")
 
 

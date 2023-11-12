@@ -18,15 +18,9 @@ import torch
 import yaml
 from torch.nn import GRU, Dropout, Linear, Sequential, Softmax
 from tqdm import tqdm
+from utils.log_utils import Log
 
-logger = logging.getLogger(__name__)
-logger_console = logging.StreamHandler()
-logger_formatter = logging.Formatter('%(levelname)-8s [%(filename)s] %(message)s')
-logger_console.setFormatter(logger_formatter)
-logger.addHandler(logger_console)
-logger.setLevel(logging.INFO)
-
-
+LOGGER = Log().init_logger(logger_name=__name__)
 
 class GRUCorrClass(torch.nn.Module):
     """
@@ -77,11 +71,11 @@ class GRUCorrClass(torch.nn.Module):
         self.optimizer = torch.optim.Adam(self.parameters(), lr=0.001)
         if self.model_cfg['can_use_optim_scheduler']:
             self.scheduler = torch.optim.lr_scheduler.StepLR(self.optimizer, step_size=self.num_tr_batches*50, gamma=0.5)
-        logger.debug("!"*100)
-        logger.debug(f"{self.__class__} parameters:")
+        LOGGER.debug("!"*100)
+        LOGGER.debug(f"{self.__class__} parameters:")
         for name, param in self.named_parameters():
-            logger.debug(name, param.shape)
-        logger.debug("!"*100)
+            LOGGER.debug(name, param.shape)
+        LOGGER.debug("!"*100)
 
     def init_best_model_info(self, train_data: dict, val_data: dict, loss_fns: dict, epochs: int):
         """
@@ -261,10 +255,10 @@ class GRUCorrClass(torch.nn.Module):
                 observe_model_cfg['scheduler'] = {"scheduler_name": str(self.scheduler.__class__.__name__), "milestones": self.scheduler._milestones+list(self.scheduler._schedulers[1].milestones), "gamma": self.scheduler._schedulers[1].gamma}
             else:
                 observe_model_cfg['scheduler'] = {"scheduler_name": str(self.scheduler.__class__.__name__)}
-        logger.info(f"\nModel Configuration of {self.__class__}: \n{pformat(observe_model_cfg, indent=1, width=200, compact=True)}")
-        logger.info("-"*30)
-        logger.info(f"\nInital best_model_info of {self.__class__}: \n{pformat(self.best_model_info, indent=1, width=200, compact=True)}")
-        logger.info("="*80)
+        LOGGER.info(f"\nModel Configuration of {self.__class__}: \n{pformat(observe_model_cfg, indent=1, width=200, compact=True)}")
+        LOGGER.info("-"*30)
+        LOGGER.info(f"\nInital best_model_info of {self.__class__}: \n{pformat(self.best_model_info, indent=1, width=200, compact=True)}")
+        LOGGER.info("="*80)
 
     def show_training_process(self, epoch_i: int, batch_idx: int, last_batch_data: list, last_batch_output: dict):
         """
@@ -272,19 +266,19 @@ class GRUCorrClass(torch.nn.Module):
         """
         epoch_metrics = self.epoch_metrics
         if epoch_i == 0:
-            logger.info(f"\nModel Structure: \n{self}")
+            LOGGER.info(f"\nModel Structure: \n{self}")
         if epoch_i % 10 == 0:  # show metrics every 10 epochs
             epoch_metric_log_msgs = " | ".join([f"{k}: {v.item():.8f}" for k, v in epoch_metrics.items() if v.dim() < 2])
-            logger.info(f"In Epoch {epoch_i:>3} | {epoch_metric_log_msgs} | lr: {self.optimizer.param_groups[0]['lr']:.9f}")
+            LOGGER.info(f"In Epoch {epoch_i:>3} | {epoch_metric_log_msgs} | lr: {self.optimizer.param_groups[0]['lr']:.9f}")
         if epoch_i % 100 == 0:  # show oredictive and real adjacency matrix every 500 epochs
             x, y = last_batch_data[0], last_batch_data[1]
             preds, y = last_batch_output['tr_preds'], last_batch_output['tr_labels']
             seq_len = self.model_cfg['seq_len']
-            logger.info("="*50)
-            logger.info(f"epoch_i: {epoch_i:>3}, batch_idx: {batch_idx:>3}, data_batch_idx:0")
-            logger.info(f"x.shape: {x.shape}, y.shape: {y.shape}, preds.shape: {preds.shape}")
-            logger.info(f"\nIn Epoch {epoch_i:>3}, batch_idx:{batch_idx}, data_batch_idx:0, input_corr_data_seq_len:{seq_len} \ninput_corr_data[0, {seq_len-1}, :5]:\n{x[0, seq_len-1, :5]}\npred_corr_data[0, :5]:\n{preds[0, :5]}\ny_labels[0, :5]:\n{y[0, :5]}")
-            logger.info("="*50)
+            LOGGER.info("="*50)
+            LOGGER.info(f"epoch_i: {epoch_i:>3}, batch_idx: {batch_idx:>3}, data_batch_idx:0")
+            LOGGER.info(f"x.shape: {x.shape}, y.shape: {y.shape}, preds.shape: {preds.shape}")
+            LOGGER.info(f"\nIn Epoch {epoch_i:>3}, batch_idx:{batch_idx}, data_batch_idx:0, input_corr_data_seq_len:{seq_len} \ninput_corr_data[0, {seq_len-1}, :5]:\n{x[0, seq_len-1, :5]}\npred_corr_data[0, :5]:\n{preds[0, :5]}\ny_labels[0, :5]:\n{y[0, :5]}")
+            LOGGER.info("="*50)
 
     @overload
     def train(self, mode: bool = True) -> torch.nn.Module:
@@ -373,7 +367,7 @@ class GRUCorrClass(torch.nn.Module):
         with open(model_log_dir/f"epoch_{e_i}-{t_stamp}.json", "w") as f:
             json_str = json.dumps(model_info)
             f.write(json_str)
-        logger.info(f"model has been saved in:{model_dir}")
+        LOGGER.info(f"model has been saved in:{model_dir}")
 
     @staticmethod
     def yield_batch_data(model_input_data: np.ndarray, target_data: np.ndarray, seq_len: int = 10, batch_size: int = 5):

@@ -42,20 +42,21 @@ DATASETS:
         ALL_SET: []
         TRAIN_SET: ['ADP', 'APH', 'MDT', 'NEM', 'PAYX', 'SCHW', 'WEC']
         TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_CORR_MEAN_POSITIVE_KEEP", "SP500_20112015_CORR_MEAN_NEGATIVE_KEEP"]
+        CORSS_ITEM_PAIRS: ['ADP & NEM', 'ADP & SCHW', 'ADP & WEC', 'APH & NEM', 'APH & SCHW', 'APH & WEC', 'MDT & NEM', 'MDT & SCHW', 'MDT & WEC', 'NEM & PAYX', 'PAYX & SCHW', 'PAYX & WEC']
         CORSS_ITEM_PAIRS_IDXS: [2, 4, 5, 7, 9, 10, 11, 13, 14, 15, 18, 19]
         OUTPUT_FILE_NAME_BASIS: "sp500_20112015_corr_mean_positive_negative_keep"
     SP500_20112015_PCA_CLUSTER_1:
         FILE_PATH: *sp500_20112015_file_path
         ALL_SET: []
         TRAIN_SET: ['AIV', 'AMD', 'BRK', 'HBAN', 'NVDA', 'RF']
-        PCA_SETTINGS: {pca_explanation_variance_thres: 0.1, n_samples: 389, n_featues: 1258}
+        PCA_SETTINGS: {n_samples: 389, n_featues: 1258, pca_explanation_variance_thres: 0.1}
         CLUSTER_SETTINGS: {n_samples: 389, n_features: 1, n_clusters_list: 35, linkage: 'complete', cluster_metric: 'euclidean', max_cluster_dist: 2.707608360527332, selected_cluter_label: 2}
         OUTPUT_FILE_NAME_BASIS: "sp500_20112015_pca_cluster_1"
     SP500_20112015_PCA_CLUSTER_2:
         FILE_PATH: *sp500_20112015_file_path
         ALL_SET: []
         TRAIN_SET: ['ESS', 'IBM', 'MCK', 'ORLY']
-        PCA_SETTINGS: {pca_explanation_variance_thres: 0.1, n_samples: 389, n_featues: 1258}
+        PCA_SETTINGS: {n_samples: 389, n_featues: 1258, pca_explanation_variance_thres: 0.1}
         CLUSTER_SETTINGS: {n_samples: 389, n_features: 1, n_clusters_list: 35, linkage: 'complete', cluster_metric: 'euclidean', max_cluster_dist: 2.707608360527332, selected_cluter_label: 19}
         OUTPUT_FILE_NAME_BASIS: "sp500_20112015_pca_cluster_2"
     SP500_20112015_PCA_CLUSTER_1_PCA_CLUSTER_2:
@@ -63,5 +64,6 @@ DATASETS:
         ALL_SET: []
         TRAIN_SET: ['AIV', 'AMD', 'BRK', 'ESS', 'HBAN', 'IBM', 'MCK', 'NVDA', 'ORLY', 'RF']
         TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_PCA_CLUSTER_1", "SP500_20112015_PCA_CLUSTER_2"]
-        CORSS_ITEM_PAIRS_IDXS: []
+        CORSS_ITEM_PAIRS: ['AIV & ESS', 'AIV & IBM', 'AIV & MCK', 'AIV & ORLY', 'AMD & ESS', 'AMD & IBM', 'AMD & MCK', 'AMD & ORLY', 'BRK & ESS', 'BRK & IBM', 'BRK & MCK', 'BRK & ORLY', 'ESS & HBAN', 'ESS & NVDA', 'ESS & RF', 'HBAN & IBM', 'HBAN & MCK', 'HBAN & ORLY', 'IBM & NVDA', 'IBM & RF', 'MCK & NVDA', 'MCK & RF', 'NVDA & ORLY', 'ORLY & RF']
+        CORSS_ITEM_PAIRS_IDXS: [2, 4, 5, 7, 10, 12, 13, 15, 17, 19, 20, 22, 24, 27, 29, 30, 31, 33, 36, 38, 39, 41, 42, 44]
         OUTPUT_FILE_NAME_BASIS: "sp500_20112015_pca_cluster_1_pca_cluster_2"

@@ -17,6 +17,7 @@ from utils.log_utils import Log
 
 DATA_CFG = load_data_cfg()
 LOGGER = Log().init_logger(logger_name=__name__)
+DF_LOGGER = Log().init_logger(logger_name="df_logger")
 warnings.simplefilter("ignore")
 
 def set_corr_data(data_implement, data_cfg: dict, data_gen_cfg: dict, corr_data_dir: Path, train_items_setting: str = "train_train", save_corr_data: bool = False):
@@ -35,8 +36,9 @@ def set_corr_data(data_implement, data_cfg: dict, data_gen_cfg: dict, corr_data_
     train_set = data_cfg["DATASETS"][data_implement]['TRAIN_SET']
     items_implement = train_set if train_items_setting == "train_train" else all_set
     dataset_df = dataset_df.loc[::, items_implement]
-    LOGGER.info(f"\n===== len(all_set): {len(all_set)}, len(train_set): {len(train_set)}, len(items_implement): {len(items_implement)} =====")
-    LOGGER.info(f"\n===== overview dataset_df =====\n{dataset_df}")
+    LOGGER.info(f"===== len(all_set): {len(all_set)}, len(train_set): {len(train_set)}, len(items_implement): {len(items_implement)} =====")
+    DF_LOGGER.info("========== overview dataset_df ==========")
+    DF_LOGGER.info(dataset_df)
 
     # Load or Create Correlation Data
     s_l, w_l = data_gen_cfg["CORR_STRIDE"], data_gen_cfg["CORR_WINDOW"]
@@ -55,7 +57,8 @@ def set_corr_data(data_implement, data_cfg: dict, data_gen_cfg: dict, corr_data_
     if save_corr_data:
         corr_dataset.to_csv(corr_df_path)
 
-    LOGGER.info(f"\n===== overview corr_dataset =====\n{corr_dataset.head()}")
+    DF_LOGGER.info(f"========== overview corr_dataset ==========")
+    DF_LOGGER.info(corr_dataset.head())
     return corr_dataset
 
 def gen_custom_discretize_corr(src_dir: Path, data_gen_cfg: dict, bins: list, save_dir: Path = None):
@@ -77,7 +80,7 @@ def gen_custom_discretize_corr(src_dir: Path, data_gen_cfg: dict, bins: list, sa
         discretize_data[discretize_data == discretize_tag] = discretize_value
     discretize_corr_dataset = pd.DataFrame(discretize_data, index=corr_data.index, columns=corr_data.columns)
 
-    LOGGER.info(f"\nReturn discretize_corr_dataset.shape:{discretize_corr_dataset.shape}"
+    LOGGER.info(f"Return discretize_corr_dataset.shape:{discretize_corr_dataset.shape}"
                 f"\nThe customized boundary of discretize matrices:\n{bins}"
                 f"\nUnique values and correspond counts of discretize_corr_dataset:\n{np.unique(discretize_corr_dataset, return_counts=True)}")
     if save_dir:

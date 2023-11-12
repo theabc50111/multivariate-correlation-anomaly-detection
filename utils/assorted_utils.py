@@ -1,4 +1,5 @@
 import logging
+from itertools import combinations
 from pathlib import Path
 
 import dynamic_yaml
@@ -12,6 +13,7 @@ from statsmodels.tsa.seasonal import seasonal_decompose
 from .log_utils import Log
 
 LOGGER = Log().init_logger(logger_name=__name__)
+DF_LOGGER = Log().init_logger(logger_name="df_logger")
 
 def stl_decompn(corr_series: "pd.Series", overview: bool = False) -> (float, float, float):
     output_resid = 100000
@@ -56,7 +58,7 @@ def calc_corr_ser_property(corr_dataset: pd.DataFrame, corr_property_df_path: Pa
     corr_property_df_dir.mkdir(parents=True, exist_ok=True)
     if corr_property_df_path.exists():
         corr_property_df = pd.read_csv(corr_property_df_path).set_index("items")
-        LOGGER.info(f"corr_property_df exists, corr_property_df loaded from {corr_property_df_path}")
+        LOGGER.info(f" : \ \ncorr_property_df exists, corr_property_df loaded from {corr_property_df_path}")
     else:
         corr_mean = corr_dataset.mean(axis=1)
         corr_std = corr_dataset.std(axis=1)
@@ -118,6 +120,39 @@ def find_abs_max_cross_corr(x):
     return cross_correlation[lag]
 
 
+def find_cross_items_pairs(items_1_data_implement: str, items_2_data_implement: str, integrate_two_items: list, integrate_two_items_corr_df: pd.DataFrame) -> tuple[list, list, pd.DataFrame]:
+    """Finds the cross items pairs."""
+    data_cfg = load_data_cfg()
+    items_1 = data_cfg["DATASETS"][items_1_data_implement]['TRAIN_SET']
+    items_2 = data_cfg["DATASETS"][items_2_data_implement]['TRAIN_SET']
+    assert integrate_two_items == sorted(items_1+items_2)
+
+
+    items_1_pairs = [f"{pair[0]} & {pair[1]}" for pair in combinations(items_1, r=2)]
+    items_2_pairs = [f"{pair[0]} & {pair[1]}" for pair in combinations(items_2, r=2)]
+    merge_two_pairs = items_1_pairs+items_2_pairs
+    integrate_two_items_pairs = [f"{pair[0]} & {pair[1]}" for pair in combinations(sorted(items_1+items_2), r=2)]
+    comparison_df = pd.DataFrame({"corr_df_pairs": integrate_two_items_corr_df.index.tolist(), "integrate_two_items_pairs": integrate_two_items_pairs})
+    assert all(comparison_df["corr_df_pairs"] == comparison_df["integrate_two_items_pairs"])
+    comparison_df["items_1_pairs"] = comparison_df["integrate_two_items_pairs"].where(cond=comparison_df["integrate_two_items_pairs"].isin(items_1_pairs))
+    comparison_df["items_2_pairs"] = comparison_df["integrate_two_items_pairs"].where(cond=comparison_df["integrate_two_items_pairs"].isin(items_2_pairs))
+    comparison_df["merge_two_pairs"] = comparison_df["integrate_two_items_pairs"].where(cond=comparison_df["integrate_two_items_pairs"].isin(merge_two_pairs))
+    comparison_df["cross_items_pairs"] =  comparison_df["integrate_two_items_pairs"].where(cond=~comparison_df["integrate_two_items_pairs"].isin(merge_two_pairs))
+    cross_items_pairs = comparison_df["cross_items_pairs"].dropna().tolist()
+    cross_items_pairs_idx = comparison_df.index.where(cond=comparison_df["cross_items_pairs"].notnull()).dropna().astype(int).tolist()
+    assert len(cross_items_pairs) == len(cross_items_pairs_idx)
+
+    LOGGER.info(f"integrate_two_items: {integrate_two_items}")
+    LOGGER.info(f"items_1: {items_1}")
+    LOGGER.info(f"items_2: {items_2}")
+    LOGGER.info(f"len(items_1): {len(items_1)}, len(items_1_pairs): {len(items_1_pairs)}, len(items_2): {len(items_2)}, len(items_2_pairs): {len(items_2_pairs)}")
+    LOGGER.info(f"len(merge_two_pairs): {len(merge_two_pairs)}, len(integrate_two_items_pairs): {len(integrate_two_items_pairs)}, len(cross_items_pairs): {len(cross_items_pairs)}")
+    DF_LOGGER.info("==============================Info of comparison_df ==============================")
+    DF_LOGGER.info(comparison_df)
+
+    return cross_items_pairs, cross_items_pairs_idx, comparison_df
+
+
 def convert_str_bins_list(str_bins: str) -> list:
     """Converts a string of bins to a list of bins.
 
@@ -171,10 +206,10 @@ def load_multiple_data(data_implement: str, retrieve_items_setting: str, corr_ty
     items_implement = train_set if retrieve_items_setting == "-train_train" else all_set
     output_file_name = data_cfg["DATASETS"][data_implement]['OUTPUT_FILE_NAME_BASIS'] + retrieve_items_setting
     pipeline_corr_data_dir, corr_dir, target_dir, corr_property_dir, cliques_dir = load_dirs(data_implement=data_implement,
-                                                                retrieve_items_setting=retrieve_items_setting,
-                                                                corr_type=corr_type, target_df_bins=target_df_bins,
-                                                                w_l=w_l, s_l=s_l,
-                                                                corr_ser_clac_method=corr_ser_clac_method)
+                                                                                             retrieve_items_setting=retrieve_items_setting,
+                                                                                             corr_type=corr_type, target_df_bins=target_df_bins,
+                                                                                             w_l=w_l, s_l=s_l,
+                                                                                             corr_ser_clac_method=corr_ser_clac_method)
     _, corr_dir, target_dir, corr_property_dir, _ = load_dirs(data_implement=data_implement,
                                                               retrieve_items_setting=retrieve_items_setting,
                                                               corr_type=corr_type, target_df_bins=target_df_bins,
@@ -189,10 +224,12 @@ def load_multiple_data(data_implement: str, retrieve_items_setting: str, corr_ty
     corr_df = pd.read_csv(corr_df_path, index_col=["item_pair"])
     target_df = pd.read_csv(target_df_path, index_col=["item_pair"])
     corr_property_df = calc_corr_ser_property(corr_dataset=corr_df, corr_property_df_path=corr_property_df_path)
+    assert all(corr_df.index == target_df.index) and all(corr_df.index == corr_property_df.index), "Check the whether the index of corr_df, target_df, and corr_property_df are the same."
 
+    LOGGER.info("=========================================== Info of Datasets ===========================================")
     LOGGER.info(f"len(items_implement): {len(items_implement)} and len(all_set): {len(all_set if all_set else [])} and len(train_set): {len(train_set if train_set else [])}")
+    LOGGER.info(f"output_file_name: {output_file_name}, corr_s{s_l}_w{w_l} and corr_ser_clac_method:{corr_ser_clac_method}")
     LOGGER.info(f"dataset_df.shape:{dataset_df.shape}, corr_df.shape:{corr_df.shape}, target_df.shape:{target_df.shape}")
-    LOGGER.info(f"================ In {output_file_name}-corr_s{s_l}_w{w_l} and corr_ser_clac_method:{corr_ser_clac_method} ===============")
     LOGGER.info(f"corr_property_df.shape: {corr_property_df.shape}")
     LOGGER.info(f"Min of corr_ser_mean:{corr_property_df.loc[::,'corr_ser_mean'].min()}, Max of corr_ser_mean:{corr_property_df.loc[::,'corr_ser_mean'].max()}")
 

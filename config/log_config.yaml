@@ -1,11 +1,15 @@
 version: 1
 disable_existing_loggers: no  # 是否覆蓋以前的配置logger
 formatters:
-    simple:
+    basic_format:
         format: "%(levelname)-8s [%(name)s.%(funcName)s] %(message)s"
+    jupyter_format:
+        format: "[%(name)s.%(levelname)s] %(message)s"
+    df_format:
+        format: "\n%(message)s"
 filters: 
     errorfilter: 
-      '()' : 'utils.log_utils.DebugFilter'
+        '()' : 'utils.log_utils.DebugFilter'
 root: #默認情況下配置
     level: INFO
     handlers: [console]
@@ -13,12 +17,26 @@ root: #默認情況下配置
  
 loggers: #如果有設定loggers的話會採用，否則採用root設定
     ywt_jupyter:
-            level: INFO
-            handlers: [console]
-            propagate: no
+         level: INFO
+         handlers: [jpy_console]
+         propagate: no
+    df_logger:
+         level: DEBUG
+         handlers: [df_console]
+         propagate: no
 handlers:
     console:
-            class: logging.StreamHandler
-            level: DEBUG
-            formatter: simple
-            stream: ext://sys.stdout
+        class: logging.StreamHandler
+        level: DEBUG
+        formatter: basic_format
+        stream: ext://sys.stdout
+    jpy_console:
+        class: logging.StreamHandler
+        level: DEBUG
+        formatter: jupyter_format
+        stream: ext://sys.stdout
+    df_console:
+        class: logging.StreamHandler
+        level: DEBUG
+        formatter: df_format
+        stream: ext://sys.stdout
