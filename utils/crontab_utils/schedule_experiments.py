@@ -19,17 +19,9 @@ drop_pos_list = [""]  # ["", "--drop_pos gru", "--drop_pos decoder --drop_pos gr
 drop_p_list = [""]  # ["--drop_p 0.33", "--drop_p 0.5", "--drop_p 0.66"]
 gru_l_list = [""]  # ["--gru_l 1", "--gru_l 2", "--gru_l 3", "--gru_l 4", "--gru_l 5"]
 gru_h_list = [""]  # ["--gru_h 40", "--gru_h 80", "--gru_h 100", "--gru_h 320", "--gru_h 640"]
-gru_input_feature_idx_list = ['--gru_input_feature_idx 0', '--gru_input_feature_idx 1', '--gru_input_feature_idx 2', '--gru_input_feature_idx 3', '--gru_input_feature_idx 4',
-                              '--gru_input_feature_idx 5', '--gru_input_feature_idx 6', '--gru_input_feature_idx 7', '--gru_input_feature_idx 8', '--gru_input_feature_idx 9',
-                              '--gru_input_feature_idx 10', '--gru_input_feature_idx 11', '--gru_input_feature_idx 12', '--gru_input_feature_idx 13', '--gru_input_feature_idx 14',
-                              '--gru_input_feature_idx 15', '--gru_input_feature_idx 16', '--gru_input_feature_idx 17', '--gru_input_feature_idx 18', '--gru_input_feature_idx 19',
-                              '--gru_input_feature_idx 20', '--gru_input_feature_idx 21', '--gru_input_feature_idx 22', '--gru_input_feature_idx 23', '--gru_input_feature_idx 24',
-                              '--gru_input_feature_idx 25', '--gru_input_feature_idx 26', '--gru_input_feature_idx 27', '--gru_input_feature_idx 28', '--gru_input_feature_idx 29',
-                              '--gru_input_feature_idx 30', '--gru_input_feature_idx 31', '--gru_input_feature_idx 32', '--gru_input_feature_idx 33', '--gru_input_feature_idx 34',
-                              '--gru_input_feature_idx 35', '--gru_input_feature_idx 36', '--gru_input_feature_idx 37', '--gru_input_feature_idx 38', '--gru_input_feature_idx 39',
-                              '--gru_input_feature_idx 40', '--gru_input_feature_idx 41', '--gru_input_feature_idx 42', '--gru_input_feature_idx 43', '--gru_input_feature_idx 44'] # ["--gru_input_feature_idx 0", "--gru_input_feature_idx 1", "--gru_input_feature_idx 2", "--gru_input_feature_idx 0 --gru_input_feature_idx 1 --gru_input_feature_idx 2 --gru_input_feature_idx 3"]
+gru_input_feature_idx_list = ["--input_idx 2 --input_idx 4 --input_idx 5 --input_idx 7 --input_idx 10 --input_idx 12 --input_idx 13 --input_idx 15 --input_idx 17 --input_idx 19 --input_idx 20 --input_idx 22 --input_idx 24 --input_idx 27 --input_idx 29 --input_idx 30 --input_idx 31 --input_idx 33 --input_idx 36 --input_idx 38 --input_idx 39 --input_idx 41 --input_idx 42 --input_idx 44"]
 ###gru_input_feature_idx_list = ["--gru_input_feature_idx 2 --gru_input_feature_idx 4 --gru_input_feature_idx 5 --gru_input_feature_idx 7 --gru_input_feature_idx 9 --gru_input_feature_idx 10 --gru_input_feature_idx 11 --gru_input_feature_idx 13 --gru_input_feature_idx 14 --gru_input_feature_idx 15 --gru_input_feature_idx 18 --gru_input_feature_idx 19"]  # ["--gru_input_feature_idx 0", "--gru_input_feature_idx 1", "--gru_input_feature_idx 2", "--gru_input_feature_idx 0 --gru_input_feature_idx 1 --gru_input_feature_idx 2 --gru_input_feature_idx 3"]
-use_weighted_loss_list = [""]  # ["", "--use_weighted_loss true"]
+use_weighted_loss_list = ["", "--use_weighted_loss true"]  # ["", "--use_weighted_loss true"]
 tol_edge_acc_loss_atol_list = [""]  # ["", "--tol_edge_acc_loss_atol 0.05", "--tol_edge_acc_loss_atol 0.1", "--tol_edge_acc_loss_atol 0.33"]
 output_type_list = ["--output_type class_probability"]  # ["--output_type discretize", "--output_type class_probability"]
 

@@ -23,7 +23,7 @@ ARGUMENT_LIST=(
   "drop_p"
   "gru_l"
   "gru_h"
-  "gru_input_feature_idx"
+  "input_idx"
   "use_weighted_loss"
   "tol_edge_acc_loss_atol"
   "output_type"
@@ -49,7 +49,7 @@ drop_pos=()
 drop_p=""
 gru_l=""
 gru_h=""
-gru_input_feature_idx=""
+input_idx=""
 use_weighted_loss=""
 tol_edge_acc_loss_atol=""
 output_type=""
@@ -174,7 +174,7 @@ while [[ $# -gt 0 ]]; do
       shift 2
       ;;
 
-    --gru_input_feature_idx)
+    --input_idx)
       gru_input_feature_idx_args+=("$2")
       gru_input_feature_idx="--gru_input_feature_idx ${gru_input_feature_idx_args[@]}"
       shift 2

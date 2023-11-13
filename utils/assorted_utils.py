@@ -125,7 +125,7 @@ def find_cross_items_pairs(items_1_data_implement: str, items_2_data_implement: 
     data_cfg = load_data_cfg()
     items_1 = data_cfg["DATASETS"][items_1_data_implement]['TRAIN_SET']
     items_2 = data_cfg["DATASETS"][items_2_data_implement]['TRAIN_SET']
-    assert integrate_two_items == sorted(items_1+items_2)
+    assert integrate_two_items == sorted(items_1+items_2), f"integrate_two_items != sorted(items_1+items_2), integrate_two_items: {integrate_two_items}, sorted(items_1+items_2): {sorted(items_1+items_2)}"
 
 
     items_1_pairs = [f"{pair[0]} & {pair[1]}" for pair in combinations(items_1, r=2)]
@@ -140,7 +140,8 @@ def find_cross_items_pairs(items_1_data_implement: str, items_2_data_implement: 
     comparison_df["cross_items_pairs"] =  comparison_df["integrate_two_items_pairs"].where(cond=~comparison_df["integrate_two_items_pairs"].isin(merge_two_pairs))
     cross_items_pairs = comparison_df["cross_items_pairs"].dropna().tolist()
     cross_items_pairs_idx = comparison_df.index.where(cond=comparison_df["cross_items_pairs"].notnull()).dropna().astype(int).tolist()
-    assert len(cross_items_pairs) == len(cross_items_pairs_idx)
+    assert len(cross_items_pairs) == len(cross_items_pairs_idx), "len(cross_items_pairs) != len(cross_items_pairs_idx)"
+    assert len(cross_items_pairs)+len(merge_two_pairs) == len(integrate_two_items_pairs), "len(cross_items_pairs)+len(merge_two_pairs) != len(integrate_two_items_pairs)"
 
     LOGGER.info(f"integrate_two_items: {integrate_two_items}")
     LOGGER.info(f"items_1: {items_1}")
@@ -205,16 +206,11 @@ def load_multiple_data(data_implement: str, retrieve_items_setting: str, corr_ty
     train_set = data_cfg["DATASETS"][data_implement]['TRAIN_SET']
     items_implement = train_set if retrieve_items_setting == "-train_train" else all_set
     output_file_name = data_cfg["DATASETS"][data_implement]['OUTPUT_FILE_NAME_BASIS'] + retrieve_items_setting
-    pipeline_corr_data_dir, corr_dir, target_dir, corr_property_dir, cliques_dir = load_dirs(data_implement=data_implement,
-                                                                                             retrieve_items_setting=retrieve_items_setting,
-                                                                                             corr_type=corr_type, target_df_bins=target_df_bins,
-                                                                                             w_l=w_l, s_l=s_l,
-                                                                                             corr_ser_clac_method=corr_ser_clac_method)
-    _, corr_dir, target_dir, corr_property_dir, _ = load_dirs(data_implement=data_implement,
-                                                              retrieve_items_setting=retrieve_items_setting,
-                                                              corr_type=corr_type, target_df_bins=target_df_bins,
-                                                              w_l=w_l, s_l=s_l,
-                                                              corr_ser_clac_method=corr_ser_clac_method)
+    _, corr_dir, target_dir, corr_property_dir, _, _ = load_dirs(data_implement=data_implement,
+                                                                 retrieve_items_setting=retrieve_items_setting,
+                                                                 corr_type=corr_type, target_df_bins=target_df_bins,
+                                                                 w_l=w_l, s_l=s_l,
+                                                                 corr_ser_clac_method=corr_ser_clac_method)
     corr_df_path = corr_dir/f"corr_s{s_l}_w{w_l}.csv"
     target_df_path = target_dir/f"corr_s{s_l}_w{w_l}.csv"
     corr_property_df_path = corr_property_dir/"corr_series_property.csv"
@@ -248,5 +244,6 @@ def load_dirs(data_implement: str, retrieve_items_setting: str, corr_type: str, 
     target_dir = pipeline_corr_data_dir/f"custom_discretize_corr_data/{target_df_bins}"
     corr_property_dir = pipeline_corr_data_dir/f"corr_property/corr_s{s_l}_w{w_l}/{corr_ser_clac_method}"
     cliques_dir = pipeline_corr_data_dir/f"cliques/corr_s{s_l}_w{w_l}/{corr_ser_clac_method}"
+    clusters_dir = pipeline_corr_data_dir/f"clusters/corr_s{s_l}_w{w_l}"
 
-    return pipeline_corr_data_dir, corr_dir, target_dir, corr_property_dir, cliques_dir
+    return pipeline_corr_data_dir, corr_dir, target_dir, corr_property_dir, cliques_dir, clusters_dir

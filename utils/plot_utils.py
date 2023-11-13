@@ -189,7 +189,6 @@ def plot_dendrogram(trained_cluster_model: sklearn.base.ClusterMixin, save_dir: 
     plt.close()
 
 
-
 def plot_silhouette(ax: mpl.axes._axes.Axes, n_clusters: int, data: np.ndarray, silhouette_avg: float, sample_silhouette_values: np.ndarray, each_sample_cluster_labels: np.ndarray):
     """Plot silhouette coefficient for each sample"""
     cmp = mpl.colormaps['rainbow']

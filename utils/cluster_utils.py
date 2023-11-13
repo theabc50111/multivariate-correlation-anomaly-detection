@@ -9,12 +9,11 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
 import pandas as pd
-import sklearn
+from scipy.linalg import issymmetric
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.decomposition import PCA
 from sklearn.metrics import (pairwise_distances, silhouette_samples,
                              silhouette_score)
-from sklearn.model_selection import GridSearchCV
 from sklearn.neighbors import NearestCentroid
 from sklearn.preprocessing import MinMaxScaler
 
@@ -24,6 +23,7 @@ from .plot_utils import plot_cluster_info
 LOGGER = Log().init_logger(logger_name=__name__)
 DF_LOGGER = Log().init_logger(logger_name="df_logger")
 warnings.simplefilter("ignore")
+
 
 def convert_pairs_data_to_proximity_mat(item_pairs_ser: pd.Series, item_names: tuple, fill_diag_val: float) -> pd.DataFrame:
     """
@@ -111,6 +111,9 @@ def calc_pca(data: pd.DataFrame, n_samples: int, variance_thres: float, verbose:
     selected_reducted_df = pd.DataFrame(selected_reducted_data, columns=[f"pc_{i}" for i in range(num_over_thres_pri_components)], index=data.index)
     selected_pri_components = pca.components_[:num_over_thres_pri_components, ::]
     selected_pri_components_info_df = pca_info_df.iloc[:num_over_thres_pri_components, ::]
+    sum_selected_pri_components_info_df = selected_pri_components_info_df.sum(axis=0).to_frame().T
+    sum_selected_pri_components_info_df.index = ["sum"]
+    selected_pri_components_info_df = pd.concat([selected_pri_components_info_df, sum_selected_pri_components_info_df], axis=0)
 
     LOGGER.info("="*80)
     LOGGER.info(f"pca_explanation_variance_thres:{variance_thres}, num_over_thres_pri_components:{num_over_thres_pri_components}, num_under_thres_pri_components:{num_under_thres_pri_components}")
@@ -169,7 +172,7 @@ def calc_hrchy_cluster_given_n_clusters(n_clusters: int, data: pd.DataFrame, clu
     return each_sample_cluster_labels, cluster_centers, silhouette_avg, sample_silhouette_values, clusters_info_df
 
 
-def obs_various_n_clusters_hrchy_cluster(data: pd.DataFrame, cluster_conds: dict, can_plot_each_cluster_info: bool = False):
+def obs_various_n_clusters_hrchy_cluster(data: pd.DataFrame, cluster_conds: dict, save_fig_path: Path = None, can_plot_each_cluster_info: bool = False):
     """
     Observe various n_clusters hierarchical clustering
     """
@@ -188,7 +191,12 @@ def obs_various_n_clusters_hrchy_cluster(data: pd.DataFrame, cluster_conds: dict
                               n_clusters=n_clusters, linkage=linkage, cluster_metric=cluster_metric,
                               sample_silhouette_values=sample_silhouette_values, silhouette_avg=silhouette_avg, clusters_info_df=clusters_info_df)
 
-    various_n_clusters_model_info_df.loc[::, ["n_clusters", "silhouette_avg"]].plot(title="silhouette_avg vs n_clusters", x="n_clusters", y="silhouette_avg", kind="line", grid=True, figsize=(10, 6))
+    ax = various_n_clusters_model_info_df.loc[::, ["n_clusters", "silhouette_avg"]].plot(title="silhouette_avg vs n_clusters", x="n_clusters", y="silhouette_avg", kind="line", grid=True, figsize=(10, 6))
+    if save_fig_path is not None:
+        fig = ax.get_figure()
+        fig.savefig(save_fig_path)
+        plt.show()
+        plt.close()
     various_n_clusters_model_info_df = various_n_clusters_model_info_df.set_index("n_clusters")
     DF_LOGGER.info("==================== various_n_clusters_model_info_df ====================")
     DF_LOGGER.info(various_n_clusters_model_info_df)
@@ -217,11 +225,26 @@ def select_cluster_labels_with_max_dist(clusters_info_df: pd.DataFrame):
     """
     dist_to_cluster_mask = clusters_info_df.columns.str.contains("dist_to_cluster")
     clusters_dist_df = clusters_info_df.loc[::, dist_to_cluster_mask]
+    assert issymmetric(clusters_dist_df.values, atol=1e-14), "clusters_dist_df is not symmetric"
     not_clusters_dist_df = clusters_info_df.loc[::, ~dist_to_cluster_mask]
     max_cluster_dist = clusters_dist_df.max().max()
-    col_mask = (clusters_dist_df == max_cluster_dist).sum(axis=0).astype(bool)
-    row_mask = (clusters_dist_df == max_cluster_dist).sum(axis=1).astype(bool)
-    final_filtered_clusters_info_df = pd.concat([not_clusters_dist_df.loc[row_mask, ::], clusters_dist_df.loc[row_mask, col_mask]], axis=1)
+    max_cluster_dist_mask = np.isclose(clusters_dist_df, max_cluster_dist).sum(axis=0).astype(bool)
+    final_filtered_clusters_info_df = pd.concat([not_clusters_dist_df.loc[max_cluster_dist_mask, ::], clusters_dist_df.loc[max_cluster_dist_mask, max_cluster_dist_mask]], axis=1)
     selected_cluter_labels = final_filtered_clusters_info_df.loc[::, "cluster_label"].tolist()
+    assert len(selected_cluter_labels) == 2, "len(selected_cluter_labels) is not equal to 2"
+    assert final_filtered_clusters_info_df.shape[0] == 2, "final_filtered_clusters_info_df.shape[0] is not equal to 2"
 
     return selected_cluter_labels, max_cluster_dist, final_filtered_clusters_info_df
+
+
+def pca_cluster(pca_input_data: pd.DataFrame, pca_kwargs: dict, cluster_kwargs: dict):
+    reducted_data_df, pri_components = calc_pca(data=pca_input_data, n_samples=pca_kwargs["n_samples"],
+                                                variance_thres=pca_kwargs["pca_explanation_variance_thres"], verbose=0)
+    cluster_conditions = {"n_samples": pca_kwargs["n_samples"], "n_features": len(pri_components),
+                          "linkage": cluster_kwargs["linkage"], "cluster_metric": cluster_kwargs["cluster_metric"]}
+    hrchy_ret = calc_hrchy_cluster_given_n_clusters(n_clusters=cluster_kwargs["n_clusters"], data=reducted_data_df, cluster_conds=cluster_conditions)
+    each_sample_cluster_labels, cluster_centers, silhouette_avg, sample_silhouette_values, clusters_info_df = hrchy_ret
+    filtered_1_clusters_info_df = filtered_small_n_samples_and_silhouette_min_cluster(clusters_info_df=clusters_info_df, min_cluster_n_samples=3, min_cluster_silhouette=0)
+    selected_cluter_labels, max_cluster_dist, filtered_2_clusters_info_df = select_cluster_labels_with_max_dist(filtered_1_clusters_info_df)
+
+    return selected_cluter_labels, max_cluster_dist, filtered_1_clusters_info_df, filtered_2_clusters_info_df, each_sample_cluster_labels
