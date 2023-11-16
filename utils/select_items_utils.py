@@ -5,6 +5,7 @@ from pprint import pformat
 
 import pandas as pd
 
+from .assorted_utils import load_data_cfg
 from .cluster_utils import (convert_pairs_data_to_proximity_mat,
                             filter_proximity_mat, pca_cluster)
 from .log_utils import Log
@@ -13,12 +14,16 @@ LOGGER = Log().init_logger(logger_name=__name__)
 DF_LOGGER = Log().init_logger(logger_name="df_logger")
 
 
-def gen_random_items(all_items: list, ret_items_len: int = 100, verbose: int = 0):
+def gen_random_items(all_items: list, ret_items_len: int = 100, verbose: int = 0, rand_seed: int = None):
     """
     Randon pick items for training # Not always necessary to operate
     """
-    random.seed(10)
+    data_cfg = load_data_cfg()
+    default_seed = data_cfg["RANDOM_SEEDS"]["DEFAUTL_SEED"]
+    random.seed(rand_seed if rand_seed is not None else default_seed)
     ret_items = sorted(random.sample(all_items, ret_items_len))
+
+    LOGGER.info(f"random seed: {rand_seed if rand_seed is not None else default_seed}")
     if verbose == 1:
         ori_logger_level = LOGGER.getEffectiveLevel()
         LOGGER.setLevel(10)
