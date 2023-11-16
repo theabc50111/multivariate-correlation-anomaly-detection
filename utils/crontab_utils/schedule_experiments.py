@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from itertools import chain, product, repeat
 from pprint import pprint
 
-data_implement_list = ["--data_implement SP500_20112015_RAND_1"]  # "--data_implement LINEAR_REG_ONE_CLUSTER_DIM_30_BKPS_0_NOISE_STD_30"
+data_implement_list = ["--data_implement SP500_20112015_PCA_CLUSTER_MIX"]  # "--data_implement LINEAR_REG_ONE_CLUSTER_DIM_30_BKPS_0_NOISE_STD_30"
 batch_size_list = [""]
 tr_epochs_list = [""]  # ["", "--tr_epochs 200"]
 train_models_list = ["--train_models GRUCORRCLASSCUSTOMFEATURES"]  # ["", "--train_models GRUCORRCLASS", "--train_models GRUCORRCLASS --train_models GRUCORRCLASSCUSTOMFEATURES --train_models GRUCORRCOEFPRED"]

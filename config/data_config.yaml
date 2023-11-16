@@ -85,4 +85,5 @@ DATASETS:
         TRAIN_SET: ['NVDA', 'AAP', 'MLM', 'BAC', 'WDC', 'SRCL', 'AVB', 'ESS', 'SLB', 'CCI']
         PCA_SETTINGS: {n_samples: 389, n_featues: 1258, pca_explanation_variance_thres: 0.1}
         CLUSTER_SETTINGS: {n_samples: 389, n_features: 1, n_clusters: 35, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_labels: [2, 4, 5, 6, 9, 12, 15, 19, 29, 32], selected_cluter_sample: {'cluster_label_2': ['NVDA'], 'cluster_label_4': ['AAP'], 'cluster_label_5': ['MLM'], 'cluster_label_6': ['BAC'], 'cluster_label_9': ['WDC'], 'cluster_label_12': ['SRCL'], 'cluster_label_15': ['AVB'], 'cluster_label_19': ['ESS'], 'cluster_label_29': ['SLB'], 'cluster_label_32': ['CCI']}}
+        OUTPUT_FILE_NAME_BASIS: "sp500_20112015_pca_cluster_mix"
     
