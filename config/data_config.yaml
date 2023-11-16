@@ -62,14 +62,14 @@ DATASETS:
         ALL_SET: *sp500_20082017_all_set
         TRAIN_SET: ['AIV', 'AMD', 'BRK', 'HBAN', 'NVDA', 'RF']
         PCA_SETTINGS: {n_samples: 389, n_featues: 1258, pca_explanation_variance_thres: 0.1}
-        CLUSTER_SETTINGS: {n_samples: 389, n_features: 1, n_clusters_list: 35, linkage: 'complete', cluster_metric: 'euclidean', max_cluster_dist: 2.707608360527332, selected_cluter_label: 2}
+        CLUSTER_SETTINGS: {n_samples: 389, n_features: 1, n_clusters: 35, linkage: 'complete', cluster_metric: 'euclidean', max_cluster_dist: 2.707608360527332, selected_cluter_label: 2}
         OUTPUT_FILE_NAME_BASIS: "sp500_20112015_pca_cluster_1"
     SP500_20112015_PCA_CLUSTER_2:
         FILE_PATH: *sp500_20112015_file_path
         ALL_SET: *sp500_20082017_all_set
         TRAIN_SET: ['ESS', 'IBM', 'MCK', 'ORLY']
         PCA_SETTINGS: {n_samples: 389, n_featues: 1258, pca_explanation_variance_thres: 0.1}
-        CLUSTER_SETTINGS: {n_samples: 389, n_features: 1, n_clusters_list: 35, linkage: 'complete', cluster_metric: 'euclidean', max_cluster_dist: 2.707608360527332, selected_cluter_label: 19}
+        CLUSTER_SETTINGS: {n_samples: 389, n_features: 1, n_clusters: 35, linkage: 'complete', cluster_metric: 'euclidean', max_cluster_dist: 2.707608360527332, selected_cluter_label: 19}
         OUTPUT_FILE_NAME_BASIS: "sp500_20112015_pca_cluster_2"
     SP500_20112015_PCA_CLUSTER_1_PCA_CLUSTER_2:
         FILE_PATH: *sp500_20112015_file_path
@@ -79,3 +79,10 @@ DATASETS:
         CORSS_ITEM_PAIRS: ['AIV & ESS', 'AIV & IBM', 'AIV & MCK', 'AIV & ORLY', 'AMD & ESS', 'AMD & IBM', 'AMD & MCK', 'AMD & ORLY', 'BRK & ESS', 'BRK & IBM', 'BRK & MCK', 'BRK & ORLY', 'ESS & HBAN', 'ESS & NVDA', 'ESS & RF', 'HBAN & IBM', 'HBAN & MCK', 'HBAN & ORLY', 'IBM & NVDA', 'IBM & RF', 'MCK & NVDA', 'MCK & RF', 'NVDA & ORLY', 'ORLY & RF']
         CORSS_ITEM_PAIRS_IDXS: [2, 4, 5, 7, 10, 12, 13, 15, 17, 19, 20, 22, 24, 27, 29, 30, 31, 33, 36, 38, 39, 41, 42, 44]
         OUTPUT_FILE_NAME_BASIS: "sp500_20112015_pca_cluster_1_pca_cluster_2"
+    SP500_20112015_PCA_CLUSTER_MIX:
+        FILE_PATH: *sp500_20112015_file_path
+        ALL_SET: *sp500_20082017_all_set
+        TRAIN_SET: ['NVDA', 'AAP', 'MLM', 'BAC', 'WDC', 'SRCL', 'AVB', 'ESS', 'SLB', 'CCI']
+        PCA_SETTINGS: {n_samples: 389, n_featues: 1258, pca_explanation_variance_thres: 0.1}
+        CLUSTER_SETTINGS: {n_samples: 389, n_features: 1, n_clusters: 35, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_labels: [2, 4, 5, 6, 9, 12, 15, 19, 29, 32], selected_cluter_sample: {'cluster_label_2': ['NVDA'], 'cluster_label_4': ['AAP'], 'cluster_label_5': ['MLM'], 'cluster_label_6': ['BAC'], 'cluster_label_9': ['WDC'], 'cluster_label_12': ['SRCL'], 'cluster_label_15': ['AVB'], 'cluster_label_19': ['ESS'], 'cluster_label_29': ['SLB'], 'cluster_label_32': ['CCI']}}
+    

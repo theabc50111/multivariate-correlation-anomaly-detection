@@ -42,7 +42,7 @@ def gen_corr_prop_filtered_items(item_pairs_ser: pd.Series, corr_prop_cond: str,
     corr_prop_filtered_proximity_df, _ = filter_proximity_mat(proximity_mat=corr_prop_proximity_df.copy(), filter_mask=corr_prop_mask, tmp_clique_dir=cliques_dir)
     corr_prop_filtered_items = corr_prop_filtered_proximity_df.columns.tolist()
     if len(corr_prop_filtered_items) > ret_items_len:
-        ret_items = gen_random_items(corr_prop_filtered_items, ret_items_len, verbose=0)
+        ret_items = gen_random_items(all_items=corr_prop_filtered_items, ret_items_len=ret_items_len, verbose=0)
     else:
         ret_items = corr_prop_filtered_items
     if can_check_filtering_proc:
@@ -63,7 +63,10 @@ def gen_corr_prop_filtered_items(item_pairs_ser: pd.Series, corr_prop_cond: str,
     return ret_items
 
 
-def gen_pca_cluster_filtered_items_each_cluster(pca_input_data: pd.DataFrame, pca_kwargs: dict, cluster_kwargs: dict):
+def gen_pca_cluster_filtered_items_two_max_dist_clusters(pca_input_data: pd.DataFrame, pca_kwargs: dict, cluster_kwargs: dict):
+    """
+    Generate filtered items by pca_cluster(), and return items in two clusters with max distance
+    """
     pca_cluster_ret = pca_cluster(pca_input_data=pca_input_data, pca_kwargs=pca_kwargs, cluster_kwargs=cluster_kwargs)
     selected_cluter_labels, max_cluster_dist, filtered_1_clusters_info_df, filtered_2_clusters_info_df, each_sample_cluster_labels = pca_cluster_ret
     ret_items_each_cluster = dict()
@@ -72,7 +75,7 @@ def gen_pca_cluster_filtered_items_each_cluster(pca_input_data: pd.DataFrame, pc
     for cluster_label in selected_cluter_labels:
         ret_items_each_cluster.update({f"cluster_label_{cluster_label}": all_input_items[each_sample_cluster_labels == cluster_label].tolist()})
 
-    LOGGER.info("================================= Info of pca_cluster_filtered_items_each_cluster  =================================")
+    LOGGER.info("================================= Info of pca_cluster_filtered_items_two_max_dist_clusters =================================")
     LOGGER.info(f"max_cluster_dist: {max_cluster_dist}")
     LOGGER.info(f"selected_cluter_labels: {selected_cluter_labels}")
     DF_LOGGER.info("========== filtered_1_clusters_info_df ==========")
@@ -83,7 +86,10 @@ def gen_pca_cluster_filtered_items_each_cluster(pca_input_data: pd.DataFrame, pc
     return ret_items_each_cluster
 
 
-def gen_pca_cluster_filtered_pairs_each_cluster(pca_input_data: pd.DataFrame, pca_kwargs: dict, cluster_kwargs: dict):
+def gen_pca_cluster_filtered_pairs_two_max_dist_clusters(pca_input_data: pd.DataFrame, pca_kwargs: dict, cluster_kwargs: dict):
+    """
+    Generate filtered item_pairs by pca_cluster(), and return item_pairs in two clusters with max distance
+    """
     pca_cluster_ret = pca_cluster(pca_input_data=pca_input_data, pca_kwargs=pca_kwargs, cluster_kwargs=cluster_kwargs)
     selected_cluter_labels, max_cluster_dist, filtered_1_clusters_info_df, filtered_2_clusters_info_df, each_sample_cluster_labels = pca_cluster_ret
     ret_pairs_each_cluster = {}
@@ -102,7 +108,7 @@ def gen_pca_cluster_filtered_pairs_each_cluster(pca_input_data: pd.DataFrame, pc
     ret_items = sorted(set([item for pair in all_ret_pairs for item in pair]))
     display_comparison_df = pd.concat([comparison_df.head(5), comparison_df.dropna(axis=0, thresh=2), comparison_df.tail(5)])
 
-    LOGGER.info("================================= Info of pca_cluster_filtered_items_each_cluster  =================================")
+    LOGGER.info("================================= Info of pca_cluster_filtered_pairs_two_max_dist_clusters =================================")
     LOGGER.info(f"max_cluster_dist: {max_cluster_dist}")
     LOGGER.info(f"selected_cluter_labels: {selected_cluter_labels}")
     DF_LOGGER.info("========== filtered_1_clusters_info_df ==========")
@@ -113,3 +119,32 @@ def gen_pca_cluster_filtered_pairs_each_cluster(pca_input_data: pd.DataFrame, pc
     DF_LOGGER.info(display_comparison_df)
 
     return ret_pairs_each_cluster, ret_pairs_idx_each_cluster, ret_items
+
+
+def gen_pca_cluster_filtered_items_each_cluster(pca_input_data: pd.DataFrame, num_selected_clusters, pca_kwargs: dict, cluster_kwargs: dict):
+    """
+    Generate filtered items by pca_cluster(), and return items in each cluster
+    """
+    _, _, filtered_1_clusters_info_df, _, each_sample_cluster_labels = pca_cluster(pca_input_data=pca_input_data, pca_kwargs=pca_kwargs, cluster_kwargs=cluster_kwargs)
+    filtered_cluster_labels = filtered_1_clusters_info_df.loc[::, 'cluster_label'].tolist()
+    selected_cluter_labels = gen_random_items(all_items=filtered_cluster_labels, ret_items_len=num_selected_clusters, verbose=0)
+    ret_items_each_cluster = dict()
+    pca_input_data_samples = pca_input_data.index
+    all_input_items = pca_input_data_samples
+    selected_cluter_samples_df = pd.DataFrame()
+    for cluster_label in selected_cluter_labels:
+        selected_cluster_items = all_input_items[each_sample_cluster_labels == cluster_label].tolist()
+        selected_cluter_samples_df = pd.concat([selected_cluter_samples_df, pd.DataFrame({f"cluster_{cluster_label}_samples": selected_cluster_items})], axis=1)
+        ret_items_each_cluster.update({f"cluster_label_{cluster_label}": gen_random_items(all_items=selected_cluster_items, ret_items_len=1, verbose=0)})
+
+    LOGGER.info("================================= Info of pca_cluster_filtered_items_each_cluster  =================================")
+    LOGGER.info(f"selected_cluter_labels: {selected_cluter_labels}")
+    DF_LOGGER.info("========== filtered_1_clusters_info_df ==========")
+    DF_LOGGER.info(filtered_1_clusters_info_df)
+    DF_LOGGER.info("========== selected_cluter_samples_df ==========")
+    DF_LOGGER.info(selected_cluter_samples_df)
+
+    return ret_items_each_cluster
+
+
+
