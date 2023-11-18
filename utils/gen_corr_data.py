@@ -57,9 +57,39 @@ def set_corr_data(data_implement, data_cfg: dict, data_gen_cfg: dict, corr_data_
     if save_corr_data:
         corr_dataset.to_csv(corr_df_path)
 
-    DF_LOGGER.info(f"========== overview corr_dataset ==========")
+    DF_LOGGER.info("========== overview corr_dataset ==========")
     DF_LOGGER.info(corr_dataset.head())
     return corr_dataset
+
+
+def set_certain_pairs_corr_data(data_implement, data_cfg: dict, data_gen_cfg: dict, corr_data_dir: Path, save_corr_data: bool = False):
+
+    # data loading & implement setting
+    ori_corr_df = pd.read_csv(data_cfg["DATASETS"][data_implement]['FILE_PATH'], index_col=['item_pair']).sort_index(axis=1).sort_index(axis=0)
+    pairs_implement = data_cfg["DATASETS"][data_implement]['TRAIN_PAIRS_SET']
+    LOGGER.info(f"===== ori_corr_df.shape: {ori_corr_df.shape}, len(pairs_implement): {len(pairs_implement)} =====")
+    DF_LOGGER.info("========== overview ori_corr_df ==========")
+    DF_LOGGER.info(ori_corr_df)
+
+    # Load or Create Correlation Data
+    s_l, w_l = data_gen_cfg["CORR_STRIDE"], data_gen_cfg["CORR_WINDOW"]
+    corr_df_path = corr_data_dir/f"corr_s{s_l}_w{w_l}.csv"
+    if corr_df_path.exists():
+        corr_dataset = pd.read_csv(corr_df_path, index_col=["item_pair"])
+        corr_dataset.columns = pd.DatetimeIndex(corr_dataset.columns)
+    else:
+        corr_dataset = ori_corr_df.loc[pairs_implement, ::]
+        corr_dataset.columns = pd.DatetimeIndex(corr_dataset.columns)
+    assert corr_dataset.shape[0] == len(pairs_implement), f"corr_dataset.shape[0]:{corr_dataset.shape[0]} != len(pairs_implement):{len(pairs_implement)}"
+    if save_corr_data:
+        corr_dataset.to_csv(corr_df_path)
+
+    DF_LOGGER.info("========== overview corr_dataset ==========")
+    DF_LOGGER.info(corr_dataset.head())
+    return corr_dataset
+
+
+
 
 def gen_custom_discretize_corr(src_dir: Path, data_gen_cfg: dict, bins: list, save_dir: Path = None):
     """
@@ -123,5 +153,8 @@ if __name__ == "__main__":
     corr_data_dir.mkdir(parents=True, exist_ok=True)
     custom_discretize_corr_dir.mkdir(parents=True, exist_ok=True)
 
-    corr_dataset = set_corr_data(args.data_implement, DATA_CFG, DATA_GEN_CFG, corr_data_dir, args.train_items_setting, args.save_corr_data)
+    if DATA_CFG["DATASETS"][args.data_implement].get("TRAIN_PAIRS_SET"):
+        corr_dataset = set_certain_pairs_corr_data(args.data_implement, DATA_CFG, DATA_GEN_CFG, corr_data_dir, args.save_corr_data)
+    elif DATA_CFG["DATASETS"][args.data_implement].get("TRAIN_SET"):
+        corr_dataset = set_corr_data(args.data_implement, DATA_CFG, DATA_GEN_CFG, corr_data_dir, args.train_items_setting, args.save_corr_data)
     discretize_corr_dataset = gen_custom_discretize_corr(src_dir=corr_data_dir, data_gen_cfg=DATA_GEN_CFG, bins=args.custom_discrete_bins, save_dir=custom_discretize_corr_dir if args.save_corr_data else None)

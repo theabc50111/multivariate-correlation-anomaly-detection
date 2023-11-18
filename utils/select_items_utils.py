@@ -3,9 +3,11 @@ from itertools import combinations
 from pathlib import Path
 from pprint import pformat
 
+import numpy as np
 import pandas as pd
 
-from .assorted_utils import load_data_cfg
+from .assorted_utils import (get_certain_level_dict_values_given_key,
+                             load_data_cfg)
 from .cluster_utils import (convert_pairs_data_to_proximity_mat,
                             filter_proximity_mat, pca_cluster)
 from .log_utils import Log
@@ -23,10 +25,10 @@ def gen_random_items(all_items: list, ret_items_len: int = 100, verbose: int = 0
     random.seed(rand_seed if rand_seed is not None else default_seed)
     ret_items = sorted(random.sample(all_items, ret_items_len))
 
-    LOGGER.info(f"random seed: {rand_seed if rand_seed is not None else default_seed}")
     if verbose == 1:
         ori_logger_level = LOGGER.getEffectiveLevel()
         LOGGER.setLevel(10)
+        LOGGER.debug(f"random seed: {rand_seed if rand_seed is not None else default_seed}")
         LOGGER.debug(f"len(ret_items):{len(ret_items)}")
         LOGGER.debug(f"ret_items:\n{pformat(ret_items, width=500, compact=True)}")
         LOGGER.setLevel(ori_logger_level)
@@ -63,52 +65,27 @@ def gen_corr_prop_filtered_items(item_pairs_ser: pd.Series, corr_prop_cond: str,
     return ret_items
 
 
-def gen_pca_cluster_filtered_items_two_max_dist_clusters(pca_input_data: pd.DataFrame, pca_kwargs: dict, cluster_kwargs: dict):
+def gen_pca_cluster_filtered_samples_two_max_dist_clusters(pca_input_data: pd.DataFrame, pca_kwargs: dict, cluster_kwargs: dict, filter_on: str):
     """
-    Generate filtered items by pca_cluster(), and return items in two clusters with max distance
-    """
-    pca_cluster_ret = pca_cluster(pca_input_data=pca_input_data, pca_kwargs=pca_kwargs, cluster_kwargs=cluster_kwargs)
-    selected_cluter_labels, max_cluster_dist, filtered_1_clusters_info_df, filtered_2_clusters_info_df, each_sample_cluster_labels = pca_cluster_ret
-    ret_items_each_cluster = dict()
-    pca_input_data_samples = pca_input_data.index
-    all_input_items = pca_input_data_samples
-    for cluster_label in selected_cluter_labels:
-        ret_items_each_cluster.update({f"cluster_label_{cluster_label}": all_input_items[each_sample_cluster_labels == cluster_label].tolist()})
-
-    LOGGER.info("================================= Info of pca_cluster_filtered_items_two_max_dist_clusters =================================")
-    LOGGER.info(f"max_cluster_dist: {max_cluster_dist}")
-    LOGGER.info(f"selected_cluter_labels: {selected_cluter_labels}")
-    DF_LOGGER.info("========== filtered_1_clusters_info_df ==========")
-    DF_LOGGER.info(filtered_1_clusters_info_df)
-    DF_LOGGER.info("========== filtered_2_clusters_info_df ==========")
-    DF_LOGGER.info(filtered_2_clusters_info_df)
-
-    return ret_items_each_cluster
-
-
-def gen_pca_cluster_filtered_pairs_two_max_dist_clusters(pca_input_data: pd.DataFrame, pca_kwargs: dict, cluster_kwargs: dict):
-    """
-    Generate filtered item_pairs by pca_cluster(), and return item_pairs in two clusters with max distance
+    Generate filtered samples by pca_cluster(), and return samples in two clusters with max distance
     """
     pca_cluster_ret = pca_cluster(pca_input_data=pca_input_data, pca_kwargs=pca_kwargs, cluster_kwargs=cluster_kwargs)
-    selected_cluter_labels, max_cluster_dist, filtered_1_clusters_info_df, filtered_2_clusters_info_df, each_sample_cluster_labels = pca_cluster_ret
-    ret_pairs_each_cluster = {}
-    ret_pairs_idx_each_cluster = {}
+    selected_cluter_labels, max_cluster_dist, _, filtered_1_clusters_info_df, filtered_2_clusters_info_df, each_sample_cluster_labels = pca_cluster_ret
+    ret_samples_two_max_dist_cluster = {}
     pca_input_data_samples = pca_input_data.index
-    all_input_items = pca_input_data_samples
     comparison_df = pd.DataFrame({"pca_input_data_samples": pca_input_data_samples})
     for cluster_label in selected_cluter_labels:
         cl_key = f"cluster_label_{cluster_label}"
-        ret_pairs_each_cluster.update({cl_key: all_input_items[each_sample_cluster_labels == cluster_label].tolist()})
-        comparison_df[f"{cl_key}_pairs"] = comparison_df["pca_input_data_samples"].where(comparison_df["pca_input_data_samples"].isin(ret_pairs_each_cluster[cl_key]))
-        ret_pairs_idx_each_cluster.update({cl_key: comparison_df[f"{cl_key}_pairs"].dropna().index.tolist()})
-        assert len(ret_pairs_each_cluster) == len(ret_pairs_idx_each_cluster), "len(ret_pairs_each_cluster) != len(ret_pairs_idx_each_cluster)"
-        assert len(ret_pairs_each_cluster[cl_key]) == len(ret_pairs_idx_each_cluster[cl_key]), f"len(ret_pairs_each_cluster[{cl_key}]) != len(ret_pairs_idx_each_cluster[{cl_key}])"
-    all_ret_pairs = list(ret_pairs_each_cluster.values())
-    ret_items = sorted(set([item for pair in all_ret_pairs for item in pair]))
+        selected_cluster_samples = pca_input_data_samples[each_sample_cluster_labels == cluster_label].tolist()
+        selected_cluster_samples_idx = (each_sample_cluster_labels == cluster_label).nonzero()[0].tolist()
+        ret_samples_two_max_dist_cluster.update({cl_key: {"samples": selected_cluster_samples,
+                                                          "samples_idx": selected_cluster_samples_idx}})
+        comparison_df[f"{cl_key}_items"] = comparison_df["pca_input_data_samples"].where(comparison_df["pca_input_data_samples"].isin(ret_samples_two_max_dist_cluster[cl_key]["samples"]))
     display_comparison_df = pd.concat([comparison_df.head(5), comparison_df.dropna(axis=0, thresh=2), comparison_df.tail(5)])
+    integrated_samples_each_cluster = sorted(get_certain_level_dict_values_given_key(nested_dict=ret_samples_two_max_dist_cluster, lvl=2, key="samples"))
+    integrated_samples_idx_each_cluster = sorted(get_certain_level_dict_values_given_key(nested_dict=ret_samples_two_max_dist_cluster, lvl=2, key="samples_idx"))
 
-    LOGGER.info("================================= Info of pca_cluster_filtered_pairs_two_max_dist_clusters =================================")
+    LOGGER.info("================================= Info of pca_cluster_filtered_samples_two_max_dist_clusters =================================")
     LOGGER.info(f"max_cluster_dist: {max_cluster_dist}")
     LOGGER.info(f"selected_cluter_labels: {selected_cluter_labels}")
     DF_LOGGER.info("========== filtered_1_clusters_info_df ==========")
@@ -117,34 +94,85 @@ def gen_pca_cluster_filtered_pairs_two_max_dist_clusters(pca_input_data: pd.Data
     DF_LOGGER.info(filtered_2_clusters_info_df)
     DF_LOGGER.info("========== display_comparison_df ==========")
     DF_LOGGER.info(display_comparison_df)
+    if filter_on == "items":
+        assert pca_input_data_samples[0].count(" & ") == 0, f"pca_input_data_samples[0] should not contains ' & ', pca_input_data_samples[0]: {pca_input_data_samples[0]}"
+        integrated_items = {"items": integrated_samples_each_cluster, "items_idx": integrated_samples_idx_each_cluster}
 
-    return ret_pairs_each_cluster, ret_pairs_idx_each_cluster, ret_items
+        return ret_samples_two_max_dist_cluster, integrated_items
+    elif filter_on == "pairs":
+        assert pca_input_data_samples[0].count(" & ") == 1, f"pca_input_data_samples[0] should contains ' & ', pca_input_data_samples[0]: {pca_input_data_samples[0]}"
+        integrated_items_each_cluster = sorted(set([item for pair in integrated_samples_each_cluster for item in pair.split(" & ")]))
+        integrated_pairs = {"pairs": integrated_samples_each_cluster, "pairs_idx": integrated_samples_idx_each_cluster, "items": integrated_items_each_cluster}
+
+        return ret_samples_two_max_dist_cluster, integrated_pairs
 
 
-def gen_pca_cluster_filtered_items_each_cluster(pca_input_data: pd.DataFrame, num_selected_clusters, pca_kwargs: dict, cluster_kwargs: dict):
+def gen_pca_cluster_filtered_samples_each_cluster(pca_input_data: pd.DataFrame, num_selected_clusters: int, num_samples_each_cluster: int, pca_kwargs: dict, cluster_kwargs: dict, filter_on: str):
     """
     Generate filtered items by pca_cluster(), and return items in each cluster
     """
-    _, _, filtered_1_clusters_info_df, _, each_sample_cluster_labels = pca_cluster(pca_input_data=pca_input_data, pca_kwargs=pca_kwargs, cluster_kwargs=cluster_kwargs)
+    _, _, _, filtered_1_clusters_info_df, _, each_sample_cluster_labels = pca_cluster(pca_input_data=pca_input_data, pca_kwargs=pca_kwargs, cluster_kwargs=cluster_kwargs)
     filtered_cluster_labels = filtered_1_clusters_info_df.loc[::, 'cluster_label'].tolist()
     selected_cluter_labels = gen_random_items(all_items=filtered_cluster_labels, ret_items_len=num_selected_clusters, verbose=0)
-    ret_items_each_cluster = dict()
+    ret_samples_each_cluster = {}
     pca_input_data_samples = pca_input_data.index
-    all_input_items = pca_input_data_samples
-    selected_cluter_samples_df = pd.DataFrame()
+    selected_clusters_samples_df = pd.DataFrame()
     for cluster_label in selected_cluter_labels:
-        selected_cluster_items = all_input_items[each_sample_cluster_labels == cluster_label].tolist()
-        selected_cluter_samples_df = pd.concat([selected_cluter_samples_df, pd.DataFrame({f"cluster_{cluster_label}_samples": selected_cluster_items})], axis=1)
-        ret_items_each_cluster.update({f"cluster_label_{cluster_label}": gen_random_items(all_items=selected_cluster_items, ret_items_len=1, verbose=0)})
+        cl_key = f"cluster_label_{cluster_label}"
+        selected_cluster_samples = pca_input_data_samples[each_sample_cluster_labels == cluster_label].tolist()
+        selected_samples = gen_random_items(all_items=selected_cluster_samples, ret_items_len=num_samples_each_cluster, verbose=0)
+        selected_samples_idx = pca_input_data_samples.isin(selected_samples).nonzero()[0].tolist()
+        ret_samples_each_cluster.update({cl_key: {"samples": selected_samples,
+                                                  "samples_idx": selected_samples_idx}})
+        selected_clusters_samples_df = pd.concat([selected_clusters_samples_df, pd.DataFrame({f"{cl_key}_samples": selected_cluster_samples})], axis=1)
+    integrated_samples_each_cluster = sorted(get_certain_level_dict_values_given_key(nested_dict=ret_samples_each_cluster, lvl=2, key="samples"))
+    integrated_samples_idx_each_cluster = sorted(get_certain_level_dict_values_given_key(nested_dict=ret_samples_each_cluster, lvl=2, key="samples_idx"))
 
-    LOGGER.info("================================= Info of pca_cluster_filtered_items_each_cluster  =================================")
+    LOGGER.info("================================= Info of pca_cluster_filtered_samples_each_cluster  =================================")
     LOGGER.info(f"selected_cluter_labels: {selected_cluter_labels}")
     DF_LOGGER.info("========== filtered_1_clusters_info_df ==========")
     DF_LOGGER.info(filtered_1_clusters_info_df)
-    DF_LOGGER.info("========== selected_cluter_samples_df ==========")
-    DF_LOGGER.info(selected_cluter_samples_df)
-
-    return ret_items_each_cluster
+    DF_LOGGER.info("========== selected_clusters_samples_df ==========")
+    DF_LOGGER.info(selected_clusters_samples_df)
 
 
+    if filter_on == "items":
+        assert pca_input_data_samples[0].count(" & ") == 0, f"pca_input_data_samples[0] should not contains ' & ', pca_input_data_samples[0]: {pca_input_data_samples[0]}"
+        integrated_items = {"items": integrated_samples_each_cluster, "items_idx": integrated_samples_idx_each_cluster}
 
+        return ret_samples_each_cluster, integrated_items
+    elif filter_on == "pairs":
+        assert pca_input_data_samples[0].count(" & ") == 1, f"pca_input_data_samples[0] should contains ' & ', pca_input_data_samples[0]: {pca_input_data_samples[0]}"
+        integrated_items_each_cluster = sorted(set([item for pair in integrated_samples_each_cluster for item in pair.split(" & ")]))
+        integrated_pairs = {"pairs": integrated_samples_each_cluster, "pairs_idx": integrated_samples_idx_each_cluster, "items": integrated_items_each_cluster}
+
+        return ret_samples_each_cluster, integrated_pairs
+
+
+
+def gen_pca_cluster_pairs_with_given_pair(pca_input_data: pd.DataFrame, selected_pair: str, pca_kwargs: dict, cluster_kwargs: dict):
+    """
+    Generate filtered items by pca_cluster(), and return items in each cluster
+    """
+    assert pca_input_data.index[0].count(" & ") == 1 and selected_pair.count(" & ") == 1, f"pca_input_data.index and selected_pair should contains ' & ', selected_pair: {selected_pair}, pca_input_data.index[0]: {pca_input_data.index[0]}"
+    pca_input_data_samples = pca_input_data.index
+    selected_pair_mask = pca_input_data_samples == selected_pair
+    selected_pair_idx = selected_pair_mask.nonzero()[0][0]
+    _, _, clusters_info_df, _, _, each_sample_cluster_labels = pca_cluster(pca_input_data=pca_input_data, pca_kwargs=pca_kwargs, cluster_kwargs=cluster_kwargs)
+    selected_pair_cluster_label = each_sample_cluster_labels[selected_pair_idx]
+    all_input_pairs = pca_input_data_samples
+    ret_cluster_pairs = {f"cluster_label_{selected_pair_cluster_label}": {"pairs": all_input_pairs[each_sample_cluster_labels == selected_pair_cluster_label].tolist(),
+                                                                          "pairs_idx": (each_sample_cluster_labels == selected_pair_cluster_label).nonzero()}}
+
+    print("#"*50)
+    print("#"*50)
+    print("#"*50)
+    print(f"selected_pair: {selected_pair}, selected_pair_idx: {selected_pair_idx}, pca_input_data_samples[selected_pair_idx]: {pca_input_data_samples[selected_pair_idx]}, selected_pair_cluster_label: {selected_pair_cluster_label}")
+    print(f"ret_cluster_pairs: {ret_cluster_pairs}")
+    tmp = all_input_pairs[ret_cluster_pairs[f'cluster_label_{selected_pair_cluster_label}']['pairs_idx']]
+    print(f"all_input_pairs[ret_cluster_pairs[cluster_label_{selected_pair_cluster_label}][pairs_idx]]: {tmp}")
+    print("#"*50)
+    print("#"*50)
+    print("#"*50)
+    
+    return ret_cluster_pairs

@@ -188,6 +188,33 @@ def load_data_cfg():
     return data_cfg
 
 
+def get_certain_level_dict_items(nested_dict: dict, lvl: int):
+    """
+    Get the items of certain level of nested dict
+    """
+    if lvl == 1:
+        return nested_dict.items()
+    elif all(isinstance(sub_dict, dict) for sub_dict in nested_dict.values()):
+        return [item for sub_dict in nested_dict.values() for item in get_certain_level_dict_items(nested_dict=sub_dict, lvl=lvl-1)]
+    else:
+        LOGGER.error("input_dict is not nested_dict")
+
+
+def get_certain_level_dict_values_given_key(nested_dict: dict, lvl: int, key: str):
+    """
+    Get the values of certain level of nested dict given key
+    """
+    lvl_items = get_certain_level_dict_items(nested_dict=nested_dict, lvl=lvl)
+    ret_values = []
+    for item in lvl_items:
+        if item[0] == key and isinstance(item[1], list):
+            ret_values.extend(item[1])
+        elif item[0] == key and not isinstance(item[1], list):
+            LOGGER.error(f"item[1] is not list, item[0]: {item[0]}, key: {key}, item[1]: {item[1]}")
+
+    return ret_values
+
+
 def load_multiple_data(data_implement: str, retrieve_items_setting: str, corr_type: str, target_df_bins: str, w_l: int, s_l: int, corr_ser_clac_method: str) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """Loads multiple data.
 

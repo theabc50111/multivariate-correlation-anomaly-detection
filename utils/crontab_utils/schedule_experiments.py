@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from itertools import chain, product, repeat
 from pprint import pprint
 
-data_implement_list = ["--data_implement SP500_20112015_PCA_CLUSTER_MIX"]  # "--data_implement LINEAR_REG_ONE_CLUSTER_DIM_30_BKPS_0_NOISE_STD_30"
+data_implement_list = ["--data_implement SP500_20112015_PCA_CLUSTER_PAIRS_1_PCA_CLUSTER_PAIRS_2"]  # "--data_implement LINEAR_REG_ONE_CLUSTER_DIM_30_BKPS_0_NOISE_STD_30"
 batch_size_list = [""]
 tr_epochs_list = [""]  # ["", "--tr_epochs 200"]
 train_models_list = ["--train_models GRUCORRCLASSCUSTOMFEATURES"]  # ["", "--train_models GRUCORRCLASS", "--train_models GRUCORRCLASS --train_models GRUCORRCLASSCUSTOMFEATURES --train_models GRUCORRCOEFPRED"]
@@ -20,14 +20,7 @@ drop_p_list = [""]  # ["--drop_p 0.33", "--drop_p 0.5", "--drop_p 0.66"]
 gru_l_list = [""]  # ["--gru_l 1", "--gru_l 2", "--gru_l 3", "--gru_l 4", "--gru_l 5"]
 gru_h_list = [""]  # ["--gru_h 40", "--gru_h 80", "--gru_h 100", "--gru_h 320", "--gru_h 640"]
 gru_input_feature_idx_list = ['--input_idx 0', '--input_idx 1', '--input_idx 2', '--input_idx 3', '--input_idx 4',
-                              '--input_idx 5', '--input_idx 6', '--input_idx 7', '--input_idx 8', '--input_idx 9',
-                              '--input_idx 10', '--input_idx 11', '--input_idx 12', '--input_idx 13', '--input_idx 14',
-                              '--input_idx 15', '--input_idx 16', '--input_idx 17', '--input_idx 18', '--input_idx 19',
-                              '--input_idx 20', '--input_idx 21', '--input_idx 22', '--input_idx 23', '--input_idx 24',
-                              '--input_idx 25', '--input_idx 26', '--input_idx 27', '--input_idx 28', '--input_idx 29',
-                              '--input_idx 30', '--input_idx 31', '--input_idx 32', '--input_idx 33', '--input_idx 34',
-                              '--input_idx 35', '--input_idx 36', '--input_idx 37', '--input_idx 38', '--input_idx 39',
-                              '--input_idx 40', '--input_idx 41', '--input_idx 42', '--input_idx 43', '--input_idx 44']  # ["--input_idx 0", "--input_idx 1", "--input_idx 2", "--input_idx 0 --input_idx 1 --input_idx 2 --input_idx 3"]
+                              '--input_idx 5', '--input_idx 6', '--input_idx 7', '--input_idx 8']  # ["--input_idx 0", "--input_idx 1", "--input_idx 2", "--input_idx 0 --input_idx 1 --input_idx 2 --input_idx 3"]
 use_weighted_loss_list = [""]  # ["", "--use_weighted_loss true"]
 tol_edge_acc_loss_atol_list = [""]  # ["", "--tol_edge_acc_loss_atol 0.05", "--tol_edge_acc_loss_atol 0.1", "--tol_edge_acc_loss_atol 0.33"]
 output_type_list = ["--output_type class_probability"]  # ["--output_type discretize", "--output_type class_probability"]

@@ -4,7 +4,7 @@
 # Define the list of items
 
 
-dataset_list=("--data_implement SP500_20112015_PCA_CLUSTER_MIX")
+dataset_list=("--data_implement SP500_20112015_PCA_CLUSTER_PAIRS_1_PCA_CLUSTER_PAIRS_2")
 train_items_setting_list=("--train_items_setting train_train")  # ("--train_items_setting train_train" "--train_items_setting train_all")
 corr_type_list=("--corr_type pearson")  # ("--corr_type pearson" "--corr_type cross_corr")
 corr_win_list=("--corr_window 50")  # ("--corr_window 10" "--corr_window 30" "--corr_window 50")
