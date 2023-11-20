@@ -85,25 +85,34 @@ DATASETS:
         TRAIN_SET: ['AAP', 'AVB', 'BAC', 'CCI', 'ESS', 'MLM', 'NVDA', 'SLB', 'SRCL', 'WDC']
         PCA_SETTINGS: {n_samples: 389, n_featues: 1258, pca_explanation_variance_thres: 0.1, scaler: 'MinMaxScaler'}
         CLUSTER_SETTINGS: {n_samples: 389, n_features: 1, n_clusters: 35, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_labels: [2, 4, 5, 6, 9, 12, 15, 19, 29, 32], selected_cluter_sample: {'cluster_label_2': ['NVDA'], 'cluster_label_4': ['AAP'], 'cluster_label_5': ['MLM'], 'cluster_label_6': ['BAC'], 'cluster_label_9': ['WDC'], 'cluster_label_12': ['SRCL'], 'cluster_label_15': ['AVB'], 'cluster_label_19': ['ESS'], 'cluster_label_29': ['SLB'], 'cluster_label_32': ['CCI']}}
+        OTHER_SETTINGS: {rand_seed: *default_seed, num_samples_each_cluster: 1, num_selected_clusters: 10}
         OUTPUT_FILE_NAME_BASIS: "sp500_20112015_pca_cluster_mix"
     SP500_20112015_PCA_CLUSTER_PAIRS_1:
-        FILE_PATH:  "{DIRS.PIPELINE_DATA_DIR}/sp500_20112015-train_train/pearson/corr_data/corr_s1_w50.csv"
+        FILE_PATH: &sp500_20112015_corr_s1_w50_file_path  "{DIRS.PIPELINE_DATA_DIR}/sp500_20112015-train_train/pearson/corr_data/corr_s1_w50.csv"
         ALL_SET: *sp500_20082017_train_set
         TRAIN_PAIRS_SET: ['CMS & EA', 'D & EA', 'EA & ES', 'EA & LNT']
         PCA_SETTINGS: {n_samples: 4950, n_featues: 1209, pca_explanation_variance_thres: 0.01, scaler: 'MinMaxScaler'}
         CLUSTER_SETTINGS: {n_samples: 4950, n_features: 34, n_clusters: 2193, linkage: 'complete', cluster_metric: 'euclidean', max_cluster_dist: 9.90603769136474, selected_cluter_label: 714}
         OUTPUT_FILE_NAME_BASIS: "sp500_20112015_pca_cluster_pairs_1"
     SP500_20112015_PCA_CLUSTER_PAIRS_2:
-        FILE_PATH:  "{DIRS.PIPELINE_DATA_DIR}/sp500_20112015-train_train/pearson/corr_data/corr_s1_w50.csv"
+        FILE_PATH: *sp500_20112015_corr_s1_w50_file_path
         ALL_SET: *sp500_20082017_train_set
         TRAIN_PAIRS_SET: ['AIV & MO', 'EQR & MO', 'EXR & MO', 'MO & UDR']
         PCA_SETTINGS: {n_samples: 4950, n_featues: 1209, pca_explanation_variance_thres: 0.01, scaler: 'MinMaxScaler'}
         CLUSTER_SETTINGS: {n_samples: 4950, n_features: 34, n_clusters: 2193, linkage: 'complete', cluster_metric: 'euclidean', max_cluster_dist: 9.90603769136474, selected_cluter_label: 1746}
         OUTPUT_FILE_NAME_BASIS: "sp500_20112015_pca_cluster_pairs_2"
     SP500_20112015_PCA_CLUSTER_PAIRS_1_PCA_CLUSTER_PAIRS_2:
-        FILE_PATH:  "{DIRS.PIPELINE_DATA_DIR}/sp500_20112015-train_train/pearson/corr_data/corr_s1_w50.csv"
+        FILE_PATH: *sp500_20112015_corr_s1_w50_file_path
         ALL_SET: *sp500_20082017_train_set
         TRAIN_PAIRS_SET: ['AIV & MO', 'CMS & EA', 'D & EA', 'EA & ES', 'EA & LNT', 'EQR & MO', 'EXR & MO', 'MO & UDR']
         TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_PCA_CLUSTER_PAIRS_1", "SP500_20112015_PCA_CLUSTER_PAIRS_2"]
         OUTPUT_FILE_NAME_BASIS: "sp500_20112015_pca_cluster_pairs_1_pca_cluster_pairs_2"
-    
+    SP500_20112015_PCA_CLUSTER_PAIRS_GIVEN_PAIR:
+        FILE_PATH: *sp500_20112015_corr_s1_w50_file_path
+        ALL_SET: *sp500_20082017_train_set
+        TRAIN_PAIRS_SET: ['APD & LMT', 'COF & EMR', 'COF & IT', 'DISH & LMT', 'LMT & MCHP']
+        TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_RAND_1"]
+        PCA_SETTINGS: {n_samples: 4950, n_featues: 1209, pca_explanation_variance_thres: 0.01, scaler: 'MinMaxScaler'}
+        CLUSTER_SETTINGS: {n_samples: 4950, n_features: 34, n_clusters: 2193, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_label: 31}
+        OTHER_SETTINGS: {designated_sample: "DISH & LMT"}
+        OUTPUT_FILE_NAME_BASIS: "sp500_20112015_pca_cluster_pairs_given_pair"
