@@ -18,6 +18,7 @@ import torch
 import yaml
 from torch.nn import GRU, Dropout, Linear, Sequential, Softmax
 from tqdm import tqdm
+
 from utils.log_utils import Log
 
 LOGGER = Log().init_logger(logger_name=__name__)

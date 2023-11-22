@@ -18,7 +18,9 @@ from models.gru_models import (GRUCorrClass, GRUCorrClassCustomFeatures,
                                GRUCorrCoefPred)
 from utils.assorted_utils import load_data_cfg, split_and_norm_data
 from utils.log_utils import Log
-from utils.metrics_utils import CustomIndicesEdgeAccuracy, TolEdgeAccuracyLoss
+from utils.metrics_utils import (CustomIndicesEdgeAccuracy,
+                                 CustomIndicesEdgeAccuracyLoss,
+                                 TolEdgeAccuracyLoss)
 from utils.plot_utils import plot_heatmap
 
 THIS_FILE_DIR = Path(__file__).resolve().parent
@@ -107,6 +109,8 @@ if __name__ == "__main__":
                              help="input the order of input features of gru, the order is from 0 to combination(num_nodes, 2)-1")
     args_parser.add_argument("--tol_edge_acc_loss_atol", type=float, nargs='?', default=None,
                              help="input the absolute tolerance of TolEdgeAccuracyLoss")
+    args_parser.add_argument("--custom_indices_edge_acc_loss_indices", type=int, nargs='*', default=[],
+                             help="input the indices of CustomIndicesEdgeAccuracyLoss")
     args_parser.add_argument("--use_weighted_loss", type=bool, default=False, action=argparse.BooleanOptionalAction,
                              help="input --use_weighted_loss to use CrossEntropyLoss weight")
     args_parser.add_argument("--custom_indices_edge_acc_metric_indices", type=int, nargs='*', default=[],
@@ -130,6 +134,7 @@ if __name__ == "__main__":
     assert ("GRUCORRCLASS" not in ARGS.train_models+ARGS.inference_models) or ARGS.output_type == "class_probability", "output_type must be class_probability when train_models|inferene_models is GRUCORRCLASS"
     assert ("GRUCORRCLASSCUSTOMFEATURES" not in ARGS.train_models+ARGS.inference_models) or ARGS.output_type == "class_probability", "output_type must be class_probability when train_models|inferene_models is GRUCORRCLASSCUSTOMFEATURES"
     assert "class_fc" not in ARGS.drop_pos or ARGS.output_type == "class_probability", "output_type must be class_probability when class_fc in drop_pos"
+    assert ("GRUCORRCLASS" not in ARGS.train_models+ARGS.inference_models) or ARGS.gru_input_feature_idx is None, "gru_input_feature_idx must be None when train_models|inferene_models is GRUCORRCLASS"
     assert ("GRUCORRCLASSCUSTOMFEATURES" not in ARGS.train_models+ARGS.inference_models) or (ARGS.gru_input_feature_idx is not None and len(ARGS.gru_input_feature_idx) >= 1), "gru_input_feature_idx must be input when train_models|inferene_models is GRUCORRCLASSCUSTOMFEATURES and len(gru_input_feature_idx) must be greater equal to 1"
     LOGGER.info(pformat(f"\n{vars(ARGS)}", indent=1, width=100, compact=True))
 
@@ -167,7 +172,7 @@ if __name__ == "__main__":
                                        "val": ceil((val_dataset["model_input"].shape[1]-ARGS.seq_len)/ARGS.batch_size),
                                        "test": ceil((test_dataset["model_input"].shape[1]-ARGS.seq_len)/ARGS.batch_size)},
                        "seq_len": ARGS.seq_len,
-                       "num_pairs": train_dataset["model_input"].shape[0] if ARGS.gru_input_feature_idx is None else len(ARGS.gru_input_feature_idx),
+                       "num_pairs": train_dataset["model_input"].shape[0],
                        "model_input_cus_bins": '_'.join((str(f) for f in ARGS.model_input_cus_bins)).replace('.', '') if ARGS.model_input_cus_bins else None,
                        "learning_rate": ARGS.learning_rate,
                        "weight_decay": ARGS.weight_decay,
@@ -181,15 +186,19 @@ if __name__ == "__main__":
                        "tol_edge_acc_loss_atol": ARGS.tol_edge_acc_loss_atol}
 
     # setting of loss function of model
+    if ARGS.use_weighted_loss:
+        tr_labels, tr_labels_freq_counts = np.unique(train_dataset['target'], return_counts=True)
+        loss_weight = torch.tensor(np.reciprocal(tr_labels_freq_counts/tr_labels_freq_counts.sum()))
     loss_fns_dict = {"fns": [MSELoss()],
                      "fn_args": {"MSELoss()": {}}}
     if ARGS.output_type == "class_probability":
         loss_fns_dict["fns"].clear(); loss_fns_dict["fn_args"].clear()
-        if ARGS.use_weighted_loss:
-            tr_labels, tr_labels_freq_counts = np.unique(train_dataset['target'], return_counts=True)
-            weight = torch.tensor(np.reciprocal(tr_labels_freq_counts/tr_labels_freq_counts.sum()))
-        loss_fns_dict["fns"].append(CrossEntropyLoss(weight if ARGS.use_weighted_loss else None))
-        loss_fns_dict["fn_args"].update({"CrossEntropyLoss()": {}})
+        if ARGS.custom_indices_edge_acc_loss_indices:
+            loss_fns_dict["fns"].append(CustomIndicesEdgeAccuracyLoss(selected_indices=ARGS.custom_indices_edge_acc_loss_indices))
+            loss_fns_dict["fn_args"].update({"CustomIndicesEdgeAccuracyLoss()": {"selected_indices": ARGS.custom_indices_edge_acc_loss_indices}})
+        else:
+            loss_fns_dict["fns"].append(CrossEntropyLoss(loss_weight if ARGS.use_weighted_loss else None))
+            loss_fns_dict["fn_args"].update({"CrossEntropyLoss()": {}})
     elif ARGS.tol_edge_acc_loss_atol is not None:
         loss_fns_dict["fns"].append(TolEdgeAccuracyLoss())
         loss_fns_dict["fn_args"].update({"TolEdgeAccuracyLoss()": {"atol": ARGS.tol_edge_acc_loss_atol}})
@@ -217,7 +226,7 @@ if __name__ == "__main__":
         assert list(filter(lambda x: x in ModelType.__members__.keys(), ARGS.train_models)), f"train_models must be input one of {ModelType.__members__.keys()}"
         for model_type in ModelType:
             is_training, train_count = True, 0
-            while (model_type.name in ARGS.train_models) and (is_training is True) and (train_count < 100):
+            while (model_type.name in ARGS.train_models) and (is_training is True) and (train_count < 10):
                 try:
                     LOGGER.info(f"===== train model:{model_type.name} =====")
                     train_count += 1
