@@ -5,6 +5,7 @@ from math import sqrt
 import numpy as np
 import torch
 import torch_geometric
+from torch.nn import CrossEntropyLoss
 from torch_geometric.utils import unbatch, unbatch_edge_index
 
 from .log_utils import Log
@@ -31,21 +32,19 @@ class TolEdgeAccuracyLoss(torch.nn.Module):
         ###loss = 1 - edge_acc
         ###return loss
 
-class CustomIndicesEdgeAccuracyLoss(torch.nn.Module):
+class CustomIndicesCrossEntropyLoss(torch.nn.Module):
     def __init__(self, num_classes: int, selected_indices: list):
-        super(CustomIndicesEdgeAccuracyLoss, self).__init__()
+        super(CustomIndicesCrossEntropyLoss, self).__init__()
         self.num_classes = num_classes
         self.selected_indices = selected_indices
 
     def forward(self, input: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
-        batch_size, num_classes, graph_size = input.shape
+        batch_size, num_classes, input_feature_size = input.shape
         assert num_classes == self.num_classes, "The number of classes in the input tensor is not equal to the number of classes in the model."
-        assert graph_size > 1, "The graph size must be greater than 1."
+        assert input_feature_size > 1, "The input data feature size must be greater than 1."
         selected_input = input[::, ::, self.selected_indices]
         selected_target = target[::, self.selected_indices]
-        selected_preds = torch.argmax(selected_input, dim=1)
-        edge_acc = (selected_preds == selected_target).to(torch.float64).mean()
-        loss = 1 - edge_acc
+        loss = CrossEntropyLoss()(input=selected_input, target=selected_target)
 
         return loss
 
@@ -57,8 +56,12 @@ class CustomIndicesEdgeAccuracy(torch.nn.Module):
         self.selected_indices = selected_indices
 
     def forward(self, input: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
-        custom_indices_edge_acc_loss_fn = CustomIndicesEdgeAccuracyLoss(num_classes=input.shape[1], selected_indices=self.selected_indices)
-        custom_indices_edge_acc_loss = custom_indices_edge_acc_loss_fn(input, target)
-        edge_acc = 1 - custom_indices_edge_acc_loss
+        batch_size, num_classes, input_feature_size = input.shape
+        assert num_classes == self.num_classes, "The number of classes in the input tensor is not equal to the number of classes in the model."
+        assert input_feature_size > 1, "The input data feature size must be greater than 1."
+        selected_input = input[::, ::, self.selected_indices]
+        selected_target = target[::, self.selected_indices]
+        selected_preds = torch.argmax(selected_input, dim=1)
+        edge_acc = (selected_preds == selected_target).to(torch.float64).mean()
 
         return edge_acc

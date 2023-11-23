@@ -18,8 +18,8 @@ from models.gru_models import (GRUCorrClass, GRUCorrClassCustomFeatures,
                                GRUCorrCoefPred)
 from utils.assorted_utils import load_data_cfg, split_and_norm_data
 from utils.log_utils import Log
-from utils.metrics_utils import (CustomIndicesEdgeAccuracy,
-                                 CustomIndicesEdgeAccuracyLoss,
+from utils.metrics_utils import (CustomIndicesCrossEntropyLoss,
+                                 CustomIndicesEdgeAccuracy,
                                  TolEdgeAccuracyLoss)
 from utils.plot_utils import plot_heatmap
 
@@ -109,11 +109,11 @@ if __name__ == "__main__":
                              help="input the order of input features of gru, the order is from 0 to combination(num_nodes, 2)-1")
     args_parser.add_argument("--tol_edge_acc_loss_atol", type=float, nargs='?', default=None,
                              help="input the absolute tolerance of TolEdgeAccuracyLoss")
-    args_parser.add_argument("--custom_indices_edge_acc_loss_indices", type=int, nargs='*', default=[],
-                             help="input the indices of CustomIndicesEdgeAccuracyLoss")
+    args_parser.add_argument("--custom_indices_loss_indices", type=int, nargs='*', default=[],
+                             help="input the indices of CustomIndicesCrossEntropyLoss")
     args_parser.add_argument("--use_weighted_loss", type=bool, default=False, action=argparse.BooleanOptionalAction,
                              help="input --use_weighted_loss to use CrossEntropyLoss weight")
-    args_parser.add_argument("--custom_indices_edge_acc_metric_indices", type=int, nargs='*', default=[],
+    args_parser.add_argument("--custom_indices_metric_indices", type=int, nargs='*', default=[],
                              help="input the indices of CustomIndicesEdgeAccuracy")
     args_parser.add_argument("--output_type", type=str, nargs='?', default=None,
                              choices=["corr_coef", "class_probability"],
@@ -193,9 +193,10 @@ if __name__ == "__main__":
                      "fn_args": {"MSELoss()": {}}}
     if ARGS.output_type == "class_probability":
         loss_fns_dict["fns"].clear(); loss_fns_dict["fn_args"].clear()
-        if ARGS.custom_indices_edge_acc_loss_indices:
-            loss_fns_dict["fns"].append(CustomIndicesEdgeAccuracyLoss(selected_indices=ARGS.custom_indices_edge_acc_loss_indices))
-            loss_fns_dict["fn_args"].update({"CustomIndicesEdgeAccuracyLoss()": {"selected_indices": ARGS.custom_indices_edge_acc_loss_indices}})
+        if ARGS.custom_indices_loss_indices:
+            num_labels_classes = ARGS.target_mats_path.split("/")[-1].replace("bins_", "").count("_") if ARGS.target_mats_path else None
+            loss_fns_dict["fns"].append(CustomIndicesCrossEntropyLoss(selected_indices=ARGS.custom_indices_loss_indices, num_classes=num_labels_classes))
+            loss_fns_dict["fn_args"].update({"CustomIndicesCrossEntropyLoss()": {}})
         else:
             loss_fns_dict["fns"].append(CrossEntropyLoss(loss_weight if ARGS.use_weighted_loss else None))
             loss_fns_dict["fn_args"].update({"CrossEntropyLoss()": {}})
@@ -205,9 +206,9 @@ if __name__ == "__main__":
     basic_model_cfg["loss_fns"] = loss_fns_dict
 
     # setting of metric function of edge_accuracy of model
-    if ARGS.custom_indices_edge_acc_metric_indices:
+    if ARGS.custom_indices_metric_indices:
         num_labels_classes = ARGS.target_mats_path.split("/")[-1].replace("bins_", "").count("_") if ARGS.target_mats_path else None
-        basic_model_cfg["edge_acc_metric_fn"] = CustomIndicesEdgeAccuracy(selected_indices=ARGS.custom_indices_edge_acc_metric_indices, num_classes=num_labels_classes)
+        basic_model_cfg["metric_fn"] = CustomIndicesEdgeAccuracy(selected_indices=ARGS.custom_indices_metric_indices, num_classes=num_labels_classes)
 
     # show info
     LOGGER.info(f"===== file_name basis:{output_file_name} =====")
@@ -276,9 +277,9 @@ if __name__ == "__main__":
         assert preds.shape == y_labels.shape, f"preds.shape:{preds.shape} != y_labels.shape:{y_labels.shape}"
         loss = loss.item() if isinstance(loss, torch.Tensor) else loss
         edge_acc = edge_acc.item() if isinstance(edge_acc, torch.Tensor) else edge_acc
-        if ARGS.custom_indices_edge_acc_metric_indices:
-            preds = preds[:, ARGS.custom_indices_edge_acc_metric_indices].cpu().numpy()
-            y_labels = y_labels[:, ARGS.custom_indices_edge_acc_metric_indices].cpu().numpy()
+        if ARGS.custom_indices_metric_indices:
+            preds = preds[:, ARGS.custom_indices_metric_indices].cpu().numpy()
+            y_labels = y_labels[:, ARGS.custom_indices_metric_indices].cpu().numpy()
         else:
             preds, y_labels = preds.cpu().numpy(), y_labels.cpu().numpy()
         if ARGS.output_type == "class_probability":
@@ -290,6 +291,6 @@ if __name__ == "__main__":
             conf_mat_save_fig_dir.mkdir(parents=True, exist_ok=True)
             plot_heatmap(preds, y_labels, num_classes=num_labels_classes, pic_title=ARGS.inference_data_split, can_show_conf_mat=True, save_fig_path=conf_mat_save_fig_path)
         LOGGER.info(f"loss_fns:{loss_fns_dict['fns']}")
-        LOGGER.info(f"metric_fn:{basic_model_cfg['edge_acc_metric_fn'] if 'edge_acc_metric_fn' in basic_model_cfg.keys() else None}")
+        LOGGER.info(f"metric_fn:{basic_model_cfg['metric_fn'] if 'metric_fn' in basic_model_cfg.keys() else None}")
         LOGGER.info(f"Special args of loss_fns: {[(loss_fn, loss_args) for loss_fn, loss_args in loss_fns_dict['fn_args'].items() for arg in loss_args if arg not in ['input', 'target']]}")
         LOGGER.info(f"loss:{loss}, edge_acc:{edge_acc}")

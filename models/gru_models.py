@@ -145,6 +145,7 @@ class GRUCorrClass(torch.nn.Module):
         """
         Calculate loss function
         """
+
         has_calc_edge_acc = False
         batch_loss = torch.zeros(1)
         batch_loss_each_loss_fn = {}
@@ -157,16 +158,15 @@ class GRUCorrClass(torch.nn.Module):
             batch_loss_each_loss_fn[fn_name] = loss
             if has_calc_edge_acc:
                 continue
-            if self.model_cfg.get("edge_acc_metric_fn"):
-                edge_acc = self.model_cfg.get("edge_acc_metric_fn")(loss_fn_input, loss_fn_target)
-            elif "EdgeAcc" in fn_name:
-                edge_acc = 1-loss
+            if self.model_cfg.get("metric_fn"):
+                edge_acc = self.model_cfg.get("metric_fn")(loss_fn_input, loss_fn_target)
             elif edge_acc_metric_input is not None and edge_acc_metric_target is not None:
                 edge_acc = (edge_acc_metric_input == edge_acc_metric_target).to(torch.float).mean()
             else:
                 edge_acc = torch.zeros(1)
             has_calc_edge_acc = True
             batch_edge_acc = edge_acc
+
         return batch_loss, batch_edge_acc, batch_loss_each_loss_fn
 
     def update_weights(self, batch_loss: torch.Tensor):
