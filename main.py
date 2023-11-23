@@ -13,15 +13,15 @@ import numpy as np
 import pandas as pd
 import torch
 from torch.nn import CrossEntropyLoss, MSELoss
-
-from models.gru_models import (GRUCorrClass, GRUCorrClassCustomFeatures,
-                               GRUCorrCoefPred)
 from utils.assorted_utils import load_data_cfg, split_and_norm_data
 from utils.log_utils import Log
 from utils.metrics_utils import (CustomIndicesCrossEntropyLoss,
                                  CustomIndicesEdgeAccuracy,
                                  TolEdgeAccuracyLoss)
 from utils.plot_utils import plot_heatmap
+
+from models.gru_models import (GRUCorrClass, GRUCorrClassCustomFeatures,
+                               GRUCorrCoefPred)
 
 THIS_FILE_DIR = Path(__file__).resolve().parent
 DATA_CFG = load_data_cfg()
@@ -197,6 +197,7 @@ if __name__ == "__main__":
             num_labels_classes = ARGS.target_mats_path.split("/")[-1].replace("bins_", "").count("_") if ARGS.target_mats_path else None
             loss_fns_dict["fns"].append(CustomIndicesCrossEntropyLoss(selected_indices=ARGS.custom_indices_loss_indices, num_classes=num_labels_classes))
             loss_fns_dict["fn_args"].update({"CustomIndicesCrossEntropyLoss()": {}})
+            basic_model_cfg["custom_indices_loss_indices"] = ARGS.custom_indices_loss_indices
         else:
             loss_fns_dict["fns"].append(CrossEntropyLoss(loss_weight if ARGS.use_weighted_loss else None))
             loss_fns_dict["fn_args"].update({"CrossEntropyLoss()": {}})
@@ -209,6 +210,7 @@ if __name__ == "__main__":
     if ARGS.custom_indices_metric_indices:
         num_labels_classes = ARGS.target_mats_path.split("/")[-1].replace("bins_", "").count("_") if ARGS.target_mats_path else None
         basic_model_cfg["metric_fn"] = CustomIndicesEdgeAccuracy(selected_indices=ARGS.custom_indices_metric_indices, num_classes=num_labels_classes)
+        basic_model_cfg["custom_indices_metric_indices"] = ARGS.custom_indices_metric_indices
 
     # show info
     LOGGER.info(f"===== file_name basis:{output_file_name} =====")

@@ -18,7 +18,6 @@ import torch
 import yaml
 from torch.nn import GRU, Dropout, Linear, Sequential, Softmax
 from tqdm import tqdm
-
 from utils.log_utils import Log
 
 LOGGER = Log().init_logger(logger_name=__name__)
@@ -103,6 +102,12 @@ class GRUCorrClass(torch.nn.Module):
                                 "output_type": self.model_cfg['output_type'],
                                 "model_input_cus_bins": self.model_cfg['model_input_cus_bins'],
                                 "target_data_bins": self.model_cfg['target_data_bins']}
+        if self.model_cfg.get("custom_indices_loss_indices"):
+            self.best_model_info["custom_indices_loss_indices"] = self.model_cfg.get("custom_indices_loss_indices")
+        if self.model_cfg.get("metric_fn"):
+            self.best_model_info["metric_fn"] = str(self.model_cfg.get("metric_fn"))
+        if self.model_cfg.get("custom_indices_metric_indices"):
+            self.best_model_info["custom_indices_metric_indices"] = self.model_cfg.get("custom_indices_metric_indices")
         if hasattr(self, 'scheduler'):
             if hasattr(self.scheduler, '_milestones'):
                 self.best_model_info["opt_scheduler"] = {"gamma": self.scheduler._schedulers[1].gamma, "milestoines": self.scheduler._milestones+list(self.scheduler._schedulers[1].milestones)}
@@ -145,7 +150,6 @@ class GRUCorrClass(torch.nn.Module):
         """
         Calculate loss function
         """
-
         has_calc_edge_acc = False
         batch_loss = torch.zeros(1)
         batch_loss_each_loss_fn = {}
