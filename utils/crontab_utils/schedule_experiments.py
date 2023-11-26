@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from itertools import chain, product, repeat
 from pprint import pprint
 
-data_implement_list = ["--data_implement SP500_20112015_PCA_CLUSTER_MIX_GIVEN_ITEMS"]  # "--data_implement LINEAR_REG_ONE_CLUSTER_DIM_30_BKPS_0_NOISE_STD_30"
+data_implement_list = ["--data_implement SP500_20112015_PCA_CLUSTER_MIX_GIVEN_ITEMS_2"]  # "--data_implement LINEAR_REG_ONE_CLUSTER_DIM_30_BKPS_0_NOISE_STD_30"
 batch_size_list = [""]
 tr_epochs_list = [""]  # ["", "--tr_epochs 200"]
 train_models_list = ["--train_models GRUCORRCLASS"]  # ["", "--train_models GRUCORRCLASS", "--train_models GRUCORRCLASS --train_models GRUCORRCLASSCUSTOMFEATURES --train_models GRUCORRCOEFPRED"]
@@ -22,8 +22,8 @@ gru_h_list = [""]  # ["--gru_h 40", "--gru_h 80", "--gru_h 100", "--gru_h 320", 
 gru_input_feature_idx_list = [""]  # ["--input_idx 0", "--input_idx 1", "--input_idx 2", "--input_idx 0 --input_idx 1 --input_idx 2 --input_idx 3"]
 use_weighted_loss_list = ["", "--use_weighted_loss true"]  # ["", "--use_weighted_loss true"]
 tol_edge_acc_loss_atol_list = [""]  # ["", "--tol_edge_acc_loss_atol 0.05", "--tol_edge_acc_loss_atol 0.1", "--tol_edge_acc_loss_atol 0.33"]
-custom_indices_loss_idx_list = [""]  # ["", "--custom_indices_loss_idx 0 --custom_indices_loss_idx 1 --custom_indices_loss_idx 2"]
-custom_indices_metric_idx_list = [""]  # ["", "--custom_indices_metric_idx 0 --custom_indices_metric_idx 1 --custom_indices_metric_idx 2"]
+custom_indices_loss_idx_list = ["", "--custom_indices_loss_idx 12"]  # ["", "--custom_indices_loss_idx 0 --custom_indices_loss_idx 1 --custom_indices_loss_idx 2"]
+custom_indices_metric_idx_list = ["", "--custom_indices_metric_idx 12"]  # ["", "--custom_indices_metric_idx 0 --custom_indices_metric_idx 1 --custom_indices_metric_idx 2"]
 output_type_list = ["--output_type class_probability"]  # ["--output_type discretize", "--output_type class_probability"]
 
 args_values = list(product(data_implement_list, batch_size_list, tr_epochs_list, train_models_list, corr_type_list, seq_len_list, model_input_cus_bins_list,
@@ -40,20 +40,21 @@ for args_value in args_values:
     args_list.append(args_dict)
 
 args_list = list(filter(lambda x: not ((not x["drop_pos"] and x["drop_p"]) or (x["drop_pos"] and not x["drop_p"])), args_list))  # Eliminate cases where either one of {drop_p, drop_pos} is null.
+args_list = list(filter(lambda x: not (bool(x["custom_indices_loss_idx"]) ^ bool(x["custom_indices_metric_idx"])), args_list))  # Eliminate cases where either one of {custom_indices_loss_idx, custom_indices_metric_idx} is null.
 
 if set(map(lambda x: x['gru_l'], args_list)) != {""}:
     gru_l_values_set = set(map(lambda x: x['gru_l'], args_list))
     gru_l_values_set.discard("")
     gru_l_pop_value = gru_l_values_set.pop()
     num_models = sum(1 for x in args_list if x['gru_l'] == gru_l_pop_value)
-    model_timedelta_list = [timedelta(hours=1, minutes=20), timedelta(hours=1, minutes=20), timedelta(hours=1, minutes=25)]  # The order of elements of model_timedelta_list should comply with the order of elements of args_list
+    model_timedelta_list = [timedelta(hours=1, minutes=0), timedelta(hours=3, minutes=0)]  # The order of elements of model_timedelta_list should comply with the order of elements of args_list
 else:
     num_models = len(args_list)
     model_timedelta_list = [timedelta(hours=0, minutes=45)]
 
 model_timedelta_list = list(chain.from_iterable(repeat(x, num_models) for x in model_timedelta_list))
-model_timedelta_list = [0] + model_timedelta_list
-model_timedelta_list.pop()
+model_timedelta_list = [model_timedelta_list[-1]] + model_timedelta_list  # Use the last element of model_timedelta_list to fill the first element of model_timedelta_list for repeating the whole experiments.
+model_timedelta_list.pop()  # Remove the last element of model_timedelta_list for matching the length of model_timedelta_list with the length of args_list
 assert len(args_list) == len(model_timedelta_list), f"The order of elements of model_timedelta_list〔length: {len(model_timedelta_list)}〕 should comply with the order of args_list: 〔length: {len(args_list)}〕.\nps. model_timedelta_list is based on num_modelsm num_models: {num_models}"
 print(f"# len of experiments: {len(args_list)}")
 
@@ -70,6 +71,8 @@ if __name__ == "__main__":
                              help="Input the gpu id")
     args_parser.add_argument("--log_suffix", type=str, nargs='?', default="",
                              help="Input the suffix of log file")
+    args_parser.add_argument("--repeat", type=int, nargs='?', default=1,
+                             help="Input the number of repeating experiments")
     ARGS = args_parser.parse_args()
     pprint(f"\n{vars(ARGS)}", indent=1, width=40, compact=True)
     operating_time_status = "postpone" if ARGS.operating_time.split(" ")[0] == "+" else "advance"
@@ -79,7 +82,9 @@ if __name__ == "__main__":
         experiments_start_t = datetime.now()+timedelta(hours=operating_hours, minutes=operating_minutes)
     elif operating_time_status == "advance":
         experiments_start_t = datetime.now()-timedelta(hours=operating_hours, minutes=operating_minutes)
-    for i, (prev_model_time_len, model_args) in enumerate(zip(model_timedelta_list, args_list)):
+
+    model_t_and_args = chain.from_iterable(repeat(list(zip(model_timedelta_list, args_list)), ARGS.repeat))
+    for i, (prev_model_time_len, model_args) in enumerate(model_t_and_args):
         # print({"operate time length of previous model": prev_model_time_len, "model argumets": model_args})
         model_start_t = experiments_start_t if i == 0 else model_start_t + prev_model_time_len
         home_directory = os.path.expanduser("~")

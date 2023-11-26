@@ -117,6 +117,7 @@ def gen_pca_cluster_filtered_samples_each_cluster(pca_input_data: pd.DataFrame, 
     """
     _, _, _, filtered_1_clusters_info_df, _, each_sample_cluster_labels = pca_cluster(pca_input_data=pca_input_data, pca_kwargs=pca_kwargs, cluster_kwargs=cluster_kwargs)
     filtered_cluster_labels = filtered_1_clusters_info_df.loc[::, 'cluster_label'].tolist()
+    assert len(filtered_cluster_labels) >= num_selected_clusters, f"len(filtered_cluster_labels): {len(filtered_cluster_labels)} should >= num_selected_clusters: {num_selected_clusters}"
     selected_cluter_labels = gen_random_items(all_items=filtered_cluster_labels, ret_items_len=num_selected_clusters, verbose=0)
     ret_samples_each_cluster = {}
     pca_input_data_samples = pca_input_data.index

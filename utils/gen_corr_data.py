@@ -63,7 +63,6 @@ def set_corr_data(data_implement, data_cfg: dict, data_gen_cfg: dict, corr_data_
 
 
 def set_certain_pairs_corr_data(data_implement, data_cfg: dict, data_gen_cfg: dict, corr_data_dir: Path, save_corr_data: bool = False):
-
     # data loading & implement setting
     ori_corr_df = pd.read_csv(data_cfg["DATASETS"][data_implement]['FILE_PATH'], index_col=['item_pair']).sort_index(axis=1).sort_index(axis=0)
     pairs_implement = data_cfg["DATASETS"][data_implement]['TRAIN_PAIRS_SET']

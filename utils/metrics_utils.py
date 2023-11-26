@@ -33,10 +33,12 @@ class TolEdgeAccuracyLoss(torch.nn.Module):
         ###return loss
 
 class CustomIndicesCrossEntropyLoss(torch.nn.Module):
-    def __init__(self, num_classes: int, selected_indices: list):
+    def __init__(self, num_classes: int, selected_indices: list, weight: torch.Tensor):
         super(CustomIndicesCrossEntropyLoss, self).__init__()
         self.num_classes = num_classes
         self.selected_indices = selected_indices
+        self.weight = weight
+
 
     def forward(self, input: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
         batch_size, num_classes, input_feature_size = input.shape
@@ -44,7 +46,7 @@ class CustomIndicesCrossEntropyLoss(torch.nn.Module):
         assert input_feature_size > 1, "The input data feature size must be greater than 1."
         selected_input = input[::, ::, self.selected_indices]
         selected_target = target[::, self.selected_indices]
-        loss = CrossEntropyLoss()(input=selected_input, target=selected_target)
+        loss = CrossEntropyLoss(weight=self.weight)(input=selected_input, target=selected_target)
 
         return loss
 
