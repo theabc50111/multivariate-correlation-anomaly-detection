@@ -81,6 +81,8 @@ if __name__ == "__main__":
                              help="input the number of stride length of correlation computing")
     args_parser.add_argument("--corr_window", type=int, nargs='?', default=50,
                              help="input the number of window length of correlation computing")
+    args_parser.add_argument("--model_input_items", type=bool, default=False, action=argparse.BooleanOptionalAction,
+                             help="input --model_input_items to use items as model input, if not input, use corr_pair as model input")
     args_parser.add_argument("--model_input_cus_bins", type=float, nargs='*', default=None,
                              help="input the custom discrete boundaries(bins) of model input data")
     args_parser.add_argument("--target_mats_path", type=str, nargs='?', default=None,
@@ -154,6 +156,7 @@ if __name__ == "__main__":
     torch.set_default_dtype(torch.float64)
     torch.autograd.set_detect_anomaly(True)  # for debug grad
 
+    # setting of data
     s_l, w_l = ARGS.corr_stride, ARGS.corr_window
     if ARGS.model_input_cus_bins:
         corr_data_mode_dir = f"custom_discretize_corr_data/bins_{'_'.join((str(f) for f in ARGS.model_input_cus_bins)).replace('.', '')}"
@@ -161,11 +164,16 @@ if __name__ == "__main__":
         corr_data_mode_dir = "corr_data"
     corr_df_dir = Path(DATA_CFG["DIRS"]["PIPELINE_DATA_DIR"])/f"{output_file_name}/{ARGS.corr_type}/{corr_data_mode_dir}"
     target_df_dir = Path(DATA_CFG["DIRS"]["PIPELINE_DATA_DIR"])/f"{output_file_name}/{ARGS.target_mats_path}"
-
-    # model configuration
     corr_df = pd.read_csv(corr_df_dir/f"corr_s{s_l}_w{w_l}.csv", index_col=["item_pair"])
     target_df = pd.read_csv(target_df_dir/f"corr_s{s_l}_w{w_l}.csv", index_col=["item_pair"]) if ARGS.target_mats_path else None
+    if ARGS.model_input_items:
+        # model_input_df = items_df
+        pass
+    else:
+        model_input_df = corr_df
     train_dataset, val_dataset, test_dataset = split_and_norm_data(model_input_df=corr_df, target_df=target_df, batch_size=ARGS.batch_size)
+
+    # model configuration
     basic_model_cfg = {"tr_epochs": ARGS.tr_epochs,
                        "batch_size": ARGS.batch_size,
                        "num_batches": {"train": ceil((train_dataset["model_input"].shape[1]-ARGS.seq_len)/ARGS.batch_size),

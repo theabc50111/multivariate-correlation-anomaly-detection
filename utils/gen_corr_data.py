@@ -88,8 +88,6 @@ def set_certain_pairs_corr_data(data_implement, data_cfg: dict, data_gen_cfg: di
     return corr_dataset
 
 
-
-
 def gen_custom_discretize_corr(src_dir: Path, data_gen_cfg: dict, bins: list, save_dir: Path = None):
     """
     Create discretize correlation matrix by given conditions, the discretize boundary is customized.
