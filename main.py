@@ -14,6 +14,7 @@ import pandas as pd
 import torch
 from torch.nn import CrossEntropyLoss, MSELoss
 
+from models.cnn_gru_models import CNNOneDimGRUCorrClass
 from models.gru_models import (GRUCorrClass, GRUCorrClassCustomFeatures,
                                GRUCorrCoefPred)
 from utils.assorted_utils import load_data_cfg, split_and_norm_data
@@ -34,6 +35,7 @@ class ModelType(Enum):
     GRUCORRCOEFPRED = auto()
     GRUCORRCLASS = auto()
     GRUCORRCLASSCUSTOMFEATURES = auto()
+    CNNONEDIMGRUCORRCLASS = auto()
 
     def set_model(self, basic_model_cfg, args):
         gru_corr_coef_cfg = basic_model_cfg.copy()
@@ -43,9 +45,12 @@ class ModelType(Enum):
         gru_corr_class_custom_feature_cfg = gru_corr_class_cfg.copy()
         gru_corr_class_custom_feature_cfg["gru_in_dim"] = len(args.gru_input_feature_idx) if args.gru_input_feature_idx else 1
         gru_corr_class_custom_feature_cfg["input_feature_idx"] = args.gru_input_feature_idx
+        cnn_one_dim_gru_corr_class_cfg = gru_corr_class_cfg.copy()
+        cnn_one_dim_gru_corr_class_cfg["cnn_in_channels"] = basic_model_cfg["num_pairs"]
         model_dict = {"GRUCORRCOEFPRED": GRUCorrCoefPred(gru_corr_coef_cfg),
                       "GRUCORRCLASS": GRUCorrClass(gru_corr_class_cfg),
-                      "GRUCORRCLASSCUSTOMFEATURES": GRUCorrClassCustomFeatures(gru_corr_class_custom_feature_cfg)}
+                      "GRUCORRCLASSCUSTOMFEATURES": GRUCorrClassCustomFeatures(gru_corr_class_custom_feature_cfg),
+                      "CNNONEDIMGRUCORRCLASS": CNNOneDimGRUCorrClass(cnn_one_dim_gru_corr_class_cfg)}
         model = model_dict[self.name]
         assert ModelType.__members__.keys() == model_dict.keys(), f"ModelType members and model_dict must be the same keys, ModelType.__members__.keys(): {ModelType.__members__.keys()}, model_dict.keys(): {model_dict.keys()}"
 
@@ -54,7 +59,8 @@ class ModelType(Enum):
     def set_save_model_dir(self, save_model_base_dir, output_file_name, corr_type, s_l, w_l):
         save_model_dir_base_dict = {"GRUCORRCOEFPRED": "gru_corr_coef_pred",
                                     "GRUCORRCLASS": "gru_corr_class",
-                                    "GRUCORRCLASSCUSTOMFEATURES": "gru_corr_class_custom_features"}
+                                    "GRUCORRCLASSCUSTOMFEATURES": "gru_corr_class_custom_features",
+                                    "CNNONEDIMGRUCORRCLASS": "cnn_one_dim_gru_corr_class"}
         assert ModelType.__members__.keys() == save_model_dir_base_dict.keys(), f"ModelType members and save_model_dir_base_dict must be the same keys, ModelType.__members__.keys(): {ModelType.__members__.keys()}, save_model_dir_base_dict.keys(): {save_model_dir_base_dict.keys()}"
         model_dir = save_model_base_dir/f'models/save_models/{save_model_dir_base_dict[self.name]}/{output_file_name}/{corr_type}/corr_s{s_l}_w{w_l}'
         model_log_dir = save_model_base_dir/f'models/save_models/{save_model_dir_base_dict[self.name]}/{output_file_name}/{corr_type}/corr_s{s_l}_w{w_l}/train_logs/'
@@ -90,8 +96,8 @@ if __name__ == "__main__":
     args_parser.add_argument("--cuda_device", type=int, nargs='?', default=0,
                              help="input the number of cuda device")
     args_parser.add_argument("--train_models", type=str, nargs='+', default=[],
-                             choices=["GRUCORRCOEFPRED", "GRUCORRCLASS", "GRUCORRCLASSCUSTOMFEATURES"],
-                             help="input to decide which models to train, the choices are [GRUCORRCOEFPRED, GRUCORRCLASS, GRUCORRCLASSCUSTOMFEATURES]")
+                             choices=["GRUCORRCOEFPRED", "GRUCORRCLASS", "GRUCORRCLASSCUSTOMFEATURES", "CNNONEDIMGRUCORRCLASS"],
+                             help="input to decide which models to train, the choices are [GRUCORRCOEFPRED, GRUCORRCLASS, GRUCORRCLASSCUSTOMFEATURES, CNNONEDIMGRUCORRCLASS]]")
     args_parser.add_argument("--learning_rate", type=float, nargs='?', default=0.001,
                              help="input the learning rate of training")
     args_parser.add_argument("--weight_decay", type=float, nargs='?', default=0,
@@ -123,8 +129,8 @@ if __name__ == "__main__":
     args_parser.add_argument("--save_model", type=bool, default=False, action=argparse.BooleanOptionalAction,  # setting of output files
                              help="input --save_model to save model weight and model info")
     args_parser.add_argument("--inference_models", type=str, nargs='+', default=[],
-                             choices=["GRUCORRCOEFPRED", "GRUCORRCLASS", "GRUCORRCLASSCUSTOMFEATURES"],
-                             help="input to decide which models to inference, the choices are [GRUCORRCOEFPRED, GRUCORRCLASS, GRUCORRCLASSCUSTOMFEATURES]")
+                             choices=["GRUCORRCOEFPRED", "GRUCORRCLASS", "GRUCORRCLASSCUSTOMFEATURES, CNNONEDIMGRUCORRCLASS"],
+                             help="input to decide which models to inference, the choices are [GRUCORRCOEFPRED, GRUCORRCLASS, GRUCORRCLASSCUSTOMFEATURES, CNNONEDIMGRUCORRCLASS]")
     args_parser.add_argument("--inference_model_paths", type=str, nargs='+', default=[],
                              help="input the path of inference model weight")
     args_parser.add_argument("--inference_data_split", type=str, nargs='?', default="val",

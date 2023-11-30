@@ -3,7 +3,6 @@
 import copy
 import functools
 import json
-import logging
 import re
 from collections import OrderedDict
 from datetime import datetime
@@ -12,16 +11,15 @@ from pathlib import Path
 from pprint import pformat
 from typing import overload
 
-import dynamic_yaml
 import numpy as np
 import torch
-import yaml
 from torch.nn import GRU, Dropout, Linear, Sequential, Softmax
 from tqdm import tqdm
 
 from utils.log_utils import Log
 
 LOGGER = Log().init_logger(logger_name=__name__)
+
 
 class GRUCorrClass(torch.nn.Module):
     """
@@ -40,9 +38,9 @@ class GRUCorrClass(torch.nn.Module):
         self.init_epoch_metrics(loss_fns=self.model_cfg["loss_fns"])
         # set model components
         self.fc_dec_out_dim = self.model_cfg["gru_in_dim"]
+        self.class_fc_out_dim = self.model_cfg["gru_in_dim"]
         self.gru = GRU(input_size=self.model_cfg['gru_in_dim'], hidden_size=self.model_cfg['gru_h'], num_layers=self.model_cfg['gru_l'], dropout=self.model_cfg["drop_p"] if "gru" in self.model_cfg["drop_pos"] else 0, batch_first=True)
         self.fc_decoder = Sequential(Linear(self.model_cfg['gru_h'], self.fc_dec_out_dim), Dropout(self.model_cfg["drop_p"] if "fc_decoder" in self.model_cfg["drop_pos"] else 0))
-        self.class_fc_out_dim = self.model_cfg["gru_in_dim"]
         for class_i in range(self.num_labels_classes):
             setattr(self, f"class_fc{class_i}", Sequential(Linear(self.fc_dec_out_dim, self.class_fc_out_dim), Dropout(self.model_cfg["drop_p"] if "class_fc" in self.model_cfg["drop_pos"] else 0)))
         self.softmax = Softmax(dim=0)
@@ -62,6 +60,7 @@ class GRUCorrClass(torch.nn.Module):
                 logits = class_fc_output if class_i == 0 else torch.cat([logits, class_fc_output], dim=0)
             pred_probs = self.softmax(logits)
             batch_pred_probs[data_batch_idx] = pred_probs
+        assert torch.isclose(batch_pred_probs.sum(dim=1), torch.ones(batch_size, self.class_fc_out_dim)).all(), f"batch_pred_probs.sum(dim=1) must be close to 1, but batch_pred_probs.sum(dim=1)={batch_pred_probs.sum(dim=1)}"
 
         return batch_pred_probs
 
@@ -99,7 +98,7 @@ class GRUCorrClass(torch.nn.Module):
                                 "tol_edge_acc_loss_atol": self.model_cfg['tol_edge_acc_loss_atol'],
                                 "drop_pos": self.model_cfg["drop_pos"],
                                 "drop_p": self.model_cfg["drop_p"],
-                                "max_val_edge_acc": 0,
+                                "max_val_edge_acc": float("-inf"),
                                 "output_type": self.model_cfg['output_type'],
                                 "model_input_cus_bins": self.model_cfg['model_input_cus_bins'],
                                 "target_data_bins": self.model_cfg['target_data_bins']}
@@ -573,3 +572,5 @@ class GRUCorrCoefPred(GRUCorrClass):
                 test_y_labels = batch_y_labels if batch_idx == 0 else torch.cat((test_y_labels, batch_y_labels), dim=0)
 
         return test_loss, test_edge_acc, test_preds, test_y_labels
+
+
