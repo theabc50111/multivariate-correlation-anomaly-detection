@@ -38,6 +38,12 @@ DATASETS:
         TRAIN_SET: ['ADBE', 'AFL', 'DISH', 'FFIV', 'LMT', 'MDLZ', 'MRK', 'MSFT', 'PNC', 'PPL']
         OTHER_SETTINGS: {rand_seed: *default_seed, num_items: 10}
         OUTPUT_FILE_NAME_BASIS: "sp500_20112015_rand_1"
+    SP500_20112015_RAND_2:
+        FILE_PATH: *sp500_20112015_file_path
+        ALL_SET: *sp500_20082017_train_set
+        TRAIN_SET: ['ADBE', 'AIV', 'ALB', 'ATVI', 'CMG', 'COF', 'CRM', 'DISH', 'ES', 'EXR', 'FFIV', 'FL', 'HBI', 'IFF', 'INCY', 'IPGP', 'LEN', 'LMT', 'MA', 'MAC', 'MCHP', 'MDLZ', 'MSCI', 'OKE', 'PPL', 'PVH', 'RRC', 'UDR', 'VZ', 'ZBH']
+        OTHER_SETTINGS: {rand_seed: *default_seed, num_items: 30}
+        OUTPUT_FILE_NAME_BASIS: "sp500_20112015_rand_2"
     SP500_20112015_CORR_MEAN_POSITIVE_KEEP:
         FILE_PATH: *sp500_20112015_file_path
         ALL_SET: []
