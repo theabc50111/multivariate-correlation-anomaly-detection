@@ -40,8 +40,12 @@ class CNNOneDimGRUCorrClass(GRUCorrClass):
         conv_input = x.permute(0, 2, 1)  # (batch_size, num_pairs, seq_len)
         conv_output = self.conv1(conv_input)  # (batch_size, num_out_channels, seq_len)
         split_conv_output = torch.split(conv_output, 1, dim=1)  # (batch_size, 1, seq_len)*conv1.out_channels
-        for channel_i, conv_output_each_channel in enumerate(split_conv_output):
-            gru_input = conv_output_each_channel.permute(0, 2, 1)
+        split_x = torch.split(x, 1, dim=2)  # (batch_size, 1, seq_len)*num_pairs
+        assert len(split_conv_output) == len(split_x) == self.conv1.out_channels, f"len(split_conv_output): {len(split_conv_output)}, len(split_x): {len(split_x)}, self.conv1.out_channels: {self.conv1.out_channels} and they should be equal"
+        for channel_i, (conv_output_each_channel, x_each_pair) in enumerate(zip(split_conv_output, split_x)):
+            trans_conv_output_each_channel = conv_output_each_channel.permute(0, 2, 1)
+            assert trans_conv_output_each_channel.shape == x_each_pair.shape, f"trans_conv_output_each_channel.shape: {trans_conv_output_each_channel.shape}, x_each_pair.shape: {x_each_pair.shape} and they should be equal"
+            gru_input = trans_conv_output_each_channel+x_each_pair  # (batch_size, seq_len, gru_in_dim)
             gru_output, _ = getattr(self, f"channel{channel_i}_gru")(gru_input)  # (batch_size, seq_len, gru_h)
             fc_dec_output = getattr(self, f"channel{channel_i}_fc_decoder")(gru_output[:, -1, :]).unsqueeze(1)  # (batch_size, 1, fc_dec_out_dim), gru_output[-1] => only take last time-step
             for class_i in range(self.num_labels_classes):

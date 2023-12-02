@@ -153,3 +153,17 @@ DATASETS:
         CLUSTER_SETTINGS: {n_samples: 100, n_features: 1, n_clusters: 19, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_labels: [1, 9], selected_cluter_sample: {'cluster_label_1': ['ADBE', 'CRM', 'DISH', 'EMR', 'LRCX', 'TAP', 'TSCO', 'VTR'], 'cluster_label_9': ['AMZN', 'AOS', 'ATVI', 'CNP', 'CSCO', 'GLW', 'KR', 'MAS', 'MCHP']}}
         OTHER_SETTINGS: {rand_seed: *default_seed, designated_samples: ['ADBE', 'MCHP']}
         OUTPUT_FILE_NAME_BASIS: "sp500_20112015_pca_cluster_mix_given_items_2"
+    SYNTHETIC_COLL2_POW1_WAVY:
+        FILE_PATH: "{DIRS.DATASET_DIR}/is_pre_data/synthetic/dim10/collections_2/power_collection/basis_pw_rand_wavy/power_1_0/bkps0-noise_scale5.csv"
+        ALL_SET: []
+        TRAIN_SET: ['cluster_0_var_0', 'cluster_0_var_1', 'cluster_0_var_2', 'cluster_0_var_3', 'cluster_0_var_4', 'cluster_1_var_0', 'cluster_1_var_1', 'cluster_1_var_2', 'cluster_1_var_3', 'cluster_1_var_4']
+        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["power_collection"], basis_timeseries: "pw_rand_wavy"}
+        OTHER_SETTINS: {power: 1.0, bkps: 0, noise_scale:5}
+        OUTPUT_FILE_NAME_BASIS: "synthetic_coll2_pow1_wavy"
+    SYNTHETIC_COLL2_POW1_WAVY_2:
+        FILE_PATH: "{DIRS.DATASET_DIR}/is_pre_data/synthetic/dim10/collections_2/power_collection/basis_pw_rand_wavy/power_1_0/bkps0-noise_scale50.csv"
+        ALL_SET: []
+        TRAIN_SET: ['cluster_0_var_0', 'cluster_0_var_1', 'cluster_0_var_2', 'cluster_0_var_3', 'cluster_0_var_4', 'cluster_1_var_0', 'cluster_1_var_1', 'cluster_1_var_2', 'cluster_1_var_3', 'cluster_1_var_4']
+        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["power_collection"], basis_timeseries: "pw_rand_wavy"}
+        OTHER_SETTINS: {power: 1.0, bkps: 0, noise_scale:50}
+        OUTPUT_FILE_NAME_BASIS: "synthetic_coll2_pow1_wavy_2"
