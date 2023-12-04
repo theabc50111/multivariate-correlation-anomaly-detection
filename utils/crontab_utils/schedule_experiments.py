@@ -7,12 +7,12 @@ from pprint import pprint
 data_implement_list = ["--data_implement SP500_20112015_PCA_CLUSTER_PAIRS_GIVEN_PAIR"]  # "--data_implement LINEAR_REG_ONE_CLUSTER_DIM_30_BKPS_0_NOISE_STD_30"
 batch_size_list = [""]
 tr_epochs_list = [""]  # ["", "--tr_epochs 200"]
-train_models_list = ["--train_models CNNONEDIMGRUCORRCLASS"]  # ["", "--train_models GRUCORRCLASS", "--train_models GRUCORRCLASS --train_models GRUCORRCLASSCUSTOMFEATURES --train_models GRUCORRCOEFPRED"]
+train_models_list = ["--train_models CNNONEDIMGRURESMAPCORRCLASS"]  # ["", "--train_models GRUCORRCLASS", "--train_models GRUCORRCLASS --train_models GRUCORRCLASSCUSTOMFEATURES --train_models GRUCORRCOEFPRED"]
 corr_type_list = ["--corr_type pearson"]  # ["--corr_type pearson", "--corr_type cross_corr"]
 seq_len_list = ["--seq_len 30"]  # ["--seq_len 5", "--seq_len 10"]
 model_input_cus_bins_list = [""]  # ["", "--model_input_cus_bins -1 --model_input_cus_bins 0 --model_input_cus_bins 1", "--model_input_cus_bins -1 --model_input_cus_bins -0.3 --model_input_cus_bins 0.3 --model_input_cus_bins 1", "--model_input_cus_bins -1 --model_input_cus_bins -0.5 --model_input_cus_bins 0 --model_input_cus_bins 0.5 --model_input_cus_bins 1"]
 target_mats_path_list = ["--target_mats_path pearson/custom_discretize_corr_data/bins_-10_-03_03_10"]  # ["", "--target_mats_path pearson/custom_discretize_corr_data/bins_-10_-025_025_10", "--target_mats_path pearson/quan_discretize_corr_data/bin3"]
-learning_rate_list = [""]  # ["", "--learning_rate 0.0001", "--learning_rate 0.0005"]
+learning_rate_list = ["--learning_rate 0.0001"]  # ["", "--learning_rate 0.0001", "--learning_rate 0.0005"]
 weight_decay_list = [""]  # ["--weight_decay 0.0001", "--weight_decay 0.0005", "--weight_decay 0.001", "--weight_decay 0.005", "--weight_decay 0.01", "--weight_decay 0.05", "--weight_decay 0.1"]
 use_optim_scheduler_list = [""]  # ["", "--use_optim_scheduler true"]
 drop_pos_list = [""]  # ["", "--drop_pos gru", "--drop_pos decoder --drop_pos gru", "--drop_pos gru --drop_pos decoder"]
@@ -22,8 +22,8 @@ gru_h_list = [""]  # ["--gru_h 40", "--gru_h 80", "--gru_h 100", "--gru_h 320", 
 gru_input_feature_idx_list = [""]  # ["--input_idx 0", "--input_idx 1", "--input_idx 2", "--input_idx 0 --input_idx 1 --input_idx 2 --input_idx 3"]
 use_weighted_loss_list = [""]  # ["", "--use_weighted_loss true"]
 tol_edge_acc_loss_atol_list = [""]  # ["", "--tol_edge_acc_loss_atol 0.05", "--tol_edge_acc_loss_atol 0.1", "--tol_edge_acc_loss_atol 0.33"]
-custom_indices_loss_idx_list = ["--custom_indices_loss_idx 1", "--custom_indices_loss_idx 2", "--custom_indices_loss_idx 3", "--custom_indices_loss_idx 4", "--custom_indices_loss_idx 5"]  # ["", "--custom_indices_loss_idx 0", "--custom_indices_loss_idx 0 --custom_indices_loss_idx 1 --custom_indices_loss_idx 2"]
-custom_indices_metric_idx_list = [" --custom_indices_metric_idx 1", "--custom_indices_metric_idx 2", "--custom_indices_metric_idx 3", "--custom_indices_metric_idx 4", "--custom_indices_metic_idx 5"]  # ["", "--custom_indices_metric_idx 0", "--custom_indices_metric_idx 0 --custom_indices_metric_idx 1 --custom_indices_metric_idx 2"]
+custom_indices_loss_idx_list = [""]  # ["", "--custom_indices_loss_idx 0", "--custom_indices_loss_idx 0 --custom_indices_loss_idx 1 --custom_indices_loss_idx 2"]
+custom_indices_metric_idx_list = [""]  # ["", "--custom_indices_metric_idx 0", "--custom_indices_metric_idx 0 --custom_indices_metric_idx 1 --custom_indices_metric_idx 2"]
 output_type_list = ["--output_type class_probability"]  # ["--output_type discretize", "--output_type class_probability"]
 
 args_values = list(product(data_implement_list, batch_size_list, tr_epochs_list, train_models_list, corr_type_list, seq_len_list, model_input_cus_bins_list,
@@ -41,7 +41,8 @@ for args_value in args_values:
 
 args_list = list(filter(lambda x: not ((not x["drop_pos"] and x["drop_p"]) or (x["drop_pos"] and not x["drop_p"])), args_list))  # Eliminate cases where either one of {drop_p, drop_pos} is null.
 args_list = list(filter(lambda x: not (bool(x["custom_indices_loss_idx"]) ^ bool(x["custom_indices_metric_idx"])), args_list))  # Eliminate cases where either one of {custom_indices_loss_idx, custom_indices_metric_idx} is null.
-args_list = list(filter(lambda x: x["custom_indices_loss_idx"].split(" ")[1] == x["custom_indices_metric_idx"].split(" ")[1], args_list))  # Eliminate cases where the idx of {custom_indices_loss_idx, custom_indices_metric_idx} is different.
+if list(filter(lambda x: (x["custom_indices_loss_idx"] and x["custom_indices_metric_idx"]), args_list)):
+    args_list = list(filter(lambda x: x["custom_indices_loss_idx"].split(" ")[1] == x["custom_indices_metric_idx"].split(" ")[1], args_list))  # Eliminate cases where the idx of {custom_indices_loss_idx, custom_indices_metric_idx} is different.
 
 if set(map(lambda x: x['gru_l'], args_list)) != {""}:
     gru_l_values_set = set(map(lambda x: x['gru_l'], args_list))
@@ -51,7 +52,7 @@ if set(map(lambda x: x['gru_l'], args_list)) != {""}:
     model_timedelta_list = [timedelta(hours=1, minutes=0), timedelta(hours=3, minutes=0)]  # The order of elements of model_timedelta_list should comply with the order of elements of args_list
 else:
     num_models = len(args_list)
-    model_timedelta_list = [timedelta(hours=0, minutes=15)]
+    model_timedelta_list = [timedelta(hours=0, minutes=20)]
 
 model_timedelta_list = list(chain.from_iterable(repeat(x, num_models) for x in model_timedelta_list))
 model_timedelta_list = [model_timedelta_list[-1]] + model_timedelta_list  # Use the last element of model_timedelta_list to fill the first element of model_timedelta_list for repeating the whole experiments.

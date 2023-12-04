@@ -163,9 +163,9 @@ def exec_post_processing(signal: np.array, noise_scale: float):
     return signal, df
 
 
-def gen_power_collection_data(args, collection_idx_seed):
+def gen_power_collection_data(args: argparse.Namespace, collection_idx_seed: int):
     """
-    Generate cluster data whose instances are power ($$X_n = m_n*X_{leader}+b_n$$)(non-linear) correlation to leader_signal
+    Generate collection data whose instances are power ($$X_n = m_n*X_{leader}+b_n$$)(non-linear) correlation to leader_signal
     Specifing `args.n_bkps` to decide the number of change-point of leader_signal.
     """
     dim, noise_scale, n_bkps = args.dim, args.noise_scale, args.n_bkps
@@ -179,8 +179,66 @@ def gen_power_collection_data(args, collection_idx_seed):
         else:
             sub_signal += (reg_coef*(leader_signal**power)+reg_bias).reshape(-1, 1)  # create sub_variable that has linear correlation to power_2 of leader_signal
     signal, df = exec_post_processing(signal=no_noise_signal, noise_scale=noise_scale)
-    LOGGER.info(f"Generated power_{power} cluster data with seed: {collection_idx_seed}, shape: {df.shape}, basis_type: {basis_type}, {n_bkps} change points.")
-    DF_LOGGER.info(f"Power {power} cluster data[:5, :5]:")
+    LOGGER.info(f"Generated power_{power}_one_collection data with seed: {collection_idx_seed}, shape: {df.shape}, basis_type: {basis_type}, {n_bkps} change points.")
+    DF_LOGGER.info(f"Power {power} collection data[:5, :5]:")
+    DF_LOGGER.info(df.iloc[:5, :5])
+
+    return signal, bkps, df
+
+
+def gen_t_shift_collection_data(args: argparse.Namespace, collection_idx_seed: int):
+    """
+    Generate  collection data whose instances has time shift  to leader_signal.
+    Specifing `args.n_bkps` to decide the number of change-point of  leader_signal.
+    """
+    dim, noise_scale, n_bkps, lag_period = args.dim, args.noise_scale, args.n_bkps, args.lag_period
+    ori_time_len = args.time_len
+    signal_start_idx_list = list(range(0, (dim*lag_period)-1, lag_period))
+    assert dim == len(signal_start_idx_list), f"dim: {dim}, len(signal_start_idx_list): {len(signal_start_idx_list)} them should be equal."
+    leader_signal_len = ori_time_len+(lag_period*dim)
+    args.time_len = leader_signal_len
+    leader_signal, bkps = gen_leader_signal(args, basis_sig_seed=collection_idx_seed)
+    no_noise_signal = np.zeros((ori_time_len, dim))
+    for i, (sub_signal, signal_start_idx) in enumerate(zip(np.split(no_noise_signal, dim, axis=1), signal_start_idx_list)):
+        sub_signal += leader_signal[signal_start_idx:signal_start_idx+ori_time_len].reshape(-1, 1)
+        assert sub_signal.shape[0] == ori_time_len, f"sub_signal.shape[0]: {sub_signal.shape[0]}, ori_time_len: {ori_time_len}, them should be equal."
+    if args.time_len != ori_time_len:
+        args.time_len = ori_time_len
+    signal, df = exec_post_processing(signal=no_noise_signal, noise_scale=noise_scale)
+    LOGGER.info(f"Generated t_shift_one_collection data with shape {df.shape} and basis_type {args.basis_type} and {n_bkps} change points.")
+    DF_LOGGER.info("Time shift cluster data[:5, :5]:")
+    DF_LOGGER.info(df.iloc[:5, :5])
+
+    return signal, bkps, df
+
+
+
+def gen_power_and_t_shift_collection_data(args: argparse.Namespace, collection_idx_seed: int):
+    """
+    Generate  collection data whose instances has time shift  to leader_signal.
+    Specifing `args.n_bkps` to decide the number of change-point of  leader_signal.
+    """
+    dim, noise_scale, n_bkps, lag_period, basis_type, power = args.dim, args.noise_scale, args.n_bkps, args.lag_period, args.basis_type, args.power
+    rng = np.random.default_rng(seed=collection_idx_seed)
+    ori_time_len = args.time_len
+    signal_start_idx_list = list(range(0, (dim*lag_period)-1, lag_period))
+    assert dim == len(signal_start_idx_list), f"dim: {dim}, len(signal_start_idx_list): {len(signal_start_idx_list)} them should be equal."
+    leader_signal_len = ori_time_len+(lag_period*dim)
+    args.time_len = leader_signal_len
+    leader_signal, bkps = gen_leader_signal(args, basis_sig_seed=collection_idx_seed)
+    no_noise_signal = np.zeros((ori_time_len, dim))
+    assert len(np.split(no_noise_signal, dim, axis=1)) == rng.uniform(low=-10, high=10, size=(dim, 2)).shape[0] == len(signal_start_idx_list), f"len(np.split(no_noise_signal, dim, axis=1)): {len(np.split(no_noise_signal, dim, axis=1))}, rng.uniform(low=-10, high=10, size=(dim, 2)).shape[0]: {rng.uniform(low=-10, high=10, size=(dim, 2)).shape[0]}, len(signal_start_idx_list): {len(signal_start_idx_list)}, them should be equal."
+    for i, (sub_signal, (reg_coef, reg_bias), signal_start_idx) in enumerate(zip(np.split(no_noise_signal, dim, axis=1), rng.uniform(low=-10, high=10, size=(dim, 2)), signal_start_idx_list)):
+        if i == 0:
+            sub_signal += leader_signal[signal_start_idx:signal_start_idx+ori_time_len].reshape(-1, 1)
+        else:
+            sub_signal += (reg_coef*(leader_signal**power)+reg_bias)[signal_start_idx:signal_start_idx+ori_time_len].reshape(-1, 1)  # create sub_variable that has linear correlation to power_2 of leader_signal
+        assert sub_signal.shape[0] == ori_time_len, f"sub_signal.shape[0]: {sub_signal.shape[0]}, ori_time_len: {ori_time_len}, them should be equal."
+    if args.time_len != ori_time_len:
+        args.time_len = ori_time_len
+    signal, df = exec_post_processing(signal=no_noise_signal, noise_scale=noise_scale)
+    LOGGER.info(f"Generated t_shift_one_collection data with shape {df.shape} and basis_type {basis_type} and {n_bkps} change points.")
+    DF_LOGGER.info("Time shift cluster data[:5, :5]:")
     DF_LOGGER.info(df.iloc[:5, :5])
 
     return signal, bkps, df
@@ -189,23 +247,23 @@ def gen_power_collection_data(args, collection_idx_seed):
 def gen_multi_collections_data(args, gen_data_func):
     """
     Generate multiple cluseter data.
-    Construct the clusters by data that produce by `gen_data_func`.
+    Construct the collections by data that produce by `gen_data_func`.
     """
     gen_data_func_name = gen_data_func.__name__
     n, dim = args.time_len, args.dim  # time_length(number of samples), number of variables(dimension)
     n_bkps, sigma = args.n_bkps, args.noise_scale  # number of change points, noise standart deviation
-    n_collections = args.n_collections  # number of clusters
+    n_collections = args.n_collections  # number of collections
     signal = np.zeros((n, n_collections*dim))
     for sub, collection_idx in zip(np.split(signal, n_collections, axis=1), range(n_collections)):
-        cluster_signal, _, _ = gen_data_func(args, collection_idx_seed=collection_idx)
-        sub += cluster_signal
+        collection_signal, _, _ = gen_data_func(args, collection_idx_seed=collection_idx)
+        sub += collection_signal
     dates = pd.to_datetime(range(n), unit='D', origin=pd.Timestamp('now'))  # create a DatetimeIndex with interval of one day
-    var_names = [f'cluster_{collection_idx}_var_{i}' for collection_idx in range(n_collections) for i in range(dim)]
+    var_names = [f'collection_{collection_idx}_var_{i}' for collection_idx in range(n_collections) for i in range(dim)]
     df = pd.DataFrame(signal, index=dates, columns=var_names)
     df.index.name = "Date"
     df_save_file_name = f'bkps{n_bkps}-noise_scale{sigma}.csv'
-    LOGGER.info(f"Generated clusters_{n_collections} piecewise {gen_data_func_name} data with shape {df.shape} and {n_bkps} change points.")
-    DF_LOGGER.info(f"clusters_{n_collections} piecewise {gen_data_func_name} data[:5, :5]:")
+    LOGGER.info(f"Generated collections_{n_collections} piecewise {gen_data_func_name} data with shape {df.shape} and {n_bkps} change points.")
+    DF_LOGGER.info(f"collections_{n_collections} piecewise {gen_data_func_name} data[:5, :5]:")
     DF_LOGGER.info(df.iloc[:5, :5])
 
     return df, df_save_file_name
@@ -218,22 +276,22 @@ def set_save_dir(args):
     if args.n_collections:
         base_save_dir = CURRENT_DIR/f'../dataset/is_pre_data/synthetic/dim{args.n_collections*args.dim}/collections_{args.n_collections}/{args.data_type[0]}/basis_{args.basis_type}'
     elif args.specific_ts_path:
-        base_save_dir = CURRENT_DIR/f'../dataset/is_pre_data/synthetic/dim{args.dim}/basis_specific_ts/{Path(args.specific_ts_path).stem}'
+        base_save_dir = CURRENT_DIR/f'../dataset/is_pre_data/synthetic/dim{args.dim}/{args.data_type[0]}/basis_specific/{Path(args.specific_ts_path).stem}'
     else:
         base_save_dir = CURRENT_DIR/f'../dataset/is_pre_data/synthetic/dim{args.dim}/{args.data_type[0]}'
-    if args.power:
-        save_dir = base_save_dir/f'power_{args.power}'.replace('.', '_')
-    else:
-        save_dir = base_save_dir
-    save_dir.mkdir(parents=True, exist_ok=True)
+    other_args = {"power": args.power, "lag": args.lag_period}
+    for arg_name, arg_value in other_args.items():
+        if arg_value:
+            base_save_dir = base_save_dir/f'{arg_name}_{arg_value}'.replace('.', '_')
+    base_save_dir.mkdir(parents=True, exist_ok=True)
 
-    return save_dir
+    return base_save_dir
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Generate raw data.')
     parser.add_argument('--data_type', type=str, default=['multi_collections'], nargs='+',
-                        choices=['power_collection', 'multi_collections'],
+                        choices=['power_collection', 't_shift_collection', 'power_and_t_shift_collection', 'multi_collections'],
                         help='Type of data to generate. (default: pw_constant)')
     parser.add_argument('--time_len', type=int, default=1258, help='Input time length. (default: 1258)')
     parser.add_argument('--dim', type=int, default=5, help='Input dimension(number of variable). (default: 5)')
@@ -243,7 +301,8 @@ if __name__ == "__main__":
     parser.add_argument('--basis_type', type=str, default='pw_rand_wavy', nargs='?',
                         choices=['nike_ts', 'pw_rand_wavy', 'specific_ts'],
                         help='Type of basis_signal to generate. (default: nike_ts)')
-    parser.add_argument('--power', type=float, default=None, help='Input power of gen_power_collection_data().')
+    parser.add_argument('--power', type=float, default=None, help='Input power for generate power based collection data.')
+    parser.add_argument('--lag_period', type=int, default=None, help='Input lag_period for lag based collection data.')
     parser.add_argument('--specific_ts_path', type=str, default=None,
                         help='Input path of specific_ts. (default: None)')
     parser.add_argument('--specific_ts_var', type=str, default=None,
@@ -251,16 +310,18 @@ if __name__ == "__main__":
     parser.add_argument("--save_data", type=bool, default=False, action=argparse.BooleanOptionalAction,
                         help="input --save_data to save raw data")
     ARGS = parser.parse_args()
-    assert bool("power_collection" in ARGS.data_type) == bool(ARGS.power), "`power` should be set when `data_type` contains 'power_collection' and vice versa"
-    assert bool("multi_collections" in ARGS.data_type) == bool(ARGS.n_collections >= 2), "`n_collections` should be set when `data_type` is 'multi_collections' and vice versa"
-    assert bool("multi_collections" in ARGS.data_type) == bool(len(ARGS.data_type) == 2), "`data_type` should contain another generate data setting when 'multi_collections' is set"
+    assert "power_collection" not in ARGS.data_type or bool(ARGS.power), f"`power` should be set when `data_type` contains 'power_collection' and ARGS.data_type: {ARGS.data_type}, ARGS.power: {ARGS.power}"
+    assert "t_shift_collection" not in ARGS.data_type or bool(ARGS.lag_period), f"`lag_period` should be set when `data_type` contains 't_shift_collection' and ARGS.data_type: {ARGS.data_type}, ARGS.lag_period: {ARGS.lag_period}"
+    assert "power_and_t_shift_collection" not in ARGS.data_type or (bool(ARGS.power) and bool(ARGS.lag_period)), f"`power` and `lag_period` should be set when `data_type` contains 'power_and_t_shift_collection' and ARGS.data_type: {ARGS.data_type}, ARGS.power: {ARGS.power}, ARGS.lag_period: {ARGS.lag_period}"
+    assert ("multi_collections" in ARGS.data_type) == (ARGS.n_collections >= 2), "`n_collections` should be set when `data_type` is 'multi_collections' and vice versa"
+    assert ("multi_collections" in ARGS.data_type) == (len(ARGS.data_type) == 2), "`data_type` should contain another generate data setting when 'multi_collections' is set"
     assert bool("specific_ts" in ARGS.basis_type) == bool(ARGS.specific_ts_path), "`specific_ts_path` should be set when `basis_type` is 'specific_ts'"
     assert bool("specific_ts" in ARGS.basis_type) == bool(ARGS.specific_ts_var), "`specific_ts_var` should be set when `basis_type` is 'specific_ts'"
 
     if 'multi_collections' in ARGS.data_type:
         ARGS.data_type.remove('multi_collections')
-        func = locals()[f'gen_{ARGS.data_type[0]}_data']
-        save_df, df_save_file_name = gen_multi_collections_data(args=ARGS, gen_data_func=gen_power_collection_data)
+        gen_data_func = locals()[f'gen_{ARGS.data_type[0]}_data']
+        save_df, df_save_file_name = gen_multi_collections_data(args=ARGS, gen_data_func=gen_data_func)
     if ARGS.save_data:
         save_dir = set_save_dir(args=ARGS)
         save_path = save_dir/f'{df_save_file_name}'
