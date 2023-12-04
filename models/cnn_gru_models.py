@@ -16,15 +16,14 @@ class CNNOneDimGRUCorrClass(GRUCorrClass):
         # set model config
         self.model_cfg = model_cfg
         del self.model_cfg["gru_in_dim"]
-        # set model components
         self.gru_in_dim = 1
         self.fc_dec_out_dim = self.gru_in_dim
         self.class_fc_out_dim = self.gru_in_dim
+        # set model components
         del_attr_names = ["gru", "fc_decoder"] + [f"class_fc{class_i}" for class_i in range(self.num_labels_classes)]
         for attr_name in dir(self):
             if attr_name in del_attr_names:
                 delattr(self, attr_name)
-
         self.conv1 = Conv1d(in_channels=self.model_cfg["cnn_in_channels"], out_channels=self.model_cfg["cnn_in_channels"], kernel_size=1)
         for channel_i in range(self.conv1.out_channels):
             setattr(self, f"channel{channel_i}_gru", GRU(input_size=self.gru_in_dim, hidden_size=self.model_cfg["gru_h"], num_layers=self.model_cfg["gru_l"], dropout=self.model_cfg["drop_p"] if "gru" in self.model_cfg["drop_pos"] else 0, batch_first=True))

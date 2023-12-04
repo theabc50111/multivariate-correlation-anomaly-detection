@@ -212,7 +212,6 @@ def gen_t_shift_collection_data(args: argparse.Namespace, collection_idx_seed: i
     return signal, bkps, df
 
 
-
 def gen_power_and_t_shift_collection_data(args: argparse.Namespace, collection_idx_seed: int):
     """
     Generate  collection data whose instances has time shift  to leader_signal.

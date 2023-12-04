@@ -15,7 +15,6 @@ import numpy as np
 import torch
 from torch.nn import GRU, Dropout, Linear, Sequential, Softmax
 from tqdm import tqdm
-
 from utils.log_utils import Log
 
 LOGGER = Log().init_logger(logger_name=__name__)
@@ -49,17 +48,18 @@ class GRUCorrClass(torch.nn.Module):
 
     def forward(self, x, *unused_args, **unused_kwargs):
         batch_size = x.shape[0]
-        batch_pred_probs = torch.empty(batch_size, self.num_labels_classes, self.class_fc_out_dim)
-        gru_output, _ = self.gru(x)
+        batch_pred_probs = torch.empty(batch_size, self.num_labels_classes, self.class_fc_out_dim).fill_(np.nan)  # (batch_size, num_labels_classes, class_fc_out_dim)
+        gru_output, _ = self.gru(x)  # (batch_size, seq_len, gru_h)
         for data_batch_idx in range(x.shape[0]):
-            fc_dec_output = self.fc_decoder(gru_output[data_batch_idx, -1, :])  # gru_output[-1] => only take last time-step↵
-            flatten_fc_dec_output = fc_dec_output.reshape(1, -1)
+            fc_dec_output = self.fc_decoder(gru_output[data_batch_idx, -1, :])  # (fc_dec_out_dim,), gru_output[-1] => only take last time-step↵
+            flatten_fc_dec_output = fc_dec_output.reshape(1, -1)  # (1, fc_dec_out_dim)
             for class_i in range(self.num_labels_classes):
                 class_fc = getattr(self, f"class_fc{class_i}")
-                class_fc_output = class_fc(flatten_fc_dec_output)
-                logits = class_fc_output if class_i == 0 else torch.cat([logits, class_fc_output], dim=0)
-            pred_probs = self.softmax(logits)
-            batch_pred_probs[data_batch_idx] = pred_probs
+                class_fc_output = class_fc(flatten_fc_dec_output)  # (1, class_fc_out_dim)
+                logits = class_fc_output if class_i == 0 else torch.cat([logits, class_fc_output], dim=0)  # In the end of loop, logits.shape: (num_labels_classes, class_fc_out_dim)
+            pred_probs = self.softmax(logits)  # (num_labels_classes, class_fc_out_dim)
+            batch_pred_probs[data_batch_idx] = pred_probs  # In the end of loop, batch_pred_probs.shape: (batch_size, num_labels_classes, class_fc_out_dim)
+        assert not torch.isnan(batch_pred_probs).any(), f"batch_pred_probs contains NaN, batch_pred_probs: {batch_pred_probs}"
         assert torch.isclose(batch_pred_probs.sum(dim=1), torch.ones(batch_size, self.class_fc_out_dim)).all(), f"batch_pred_probs.sum(dim=1) must be close to 1, but batch_pred_probs.sum(dim=1)={batch_pred_probs.sum(dim=1)}"
 
         return batch_pred_probs
@@ -439,6 +439,101 @@ class GRUCorrClassCustomFeatures(GRUCorrClass):
             assert not torch.isnan(batch_x).any() or not torch.isnan(batch_y).any(), "batch_x or batch_y contains nan"
 
             yield batch_x, batch_y
+
+
+class GRUCorrClassOneFeature(GRUCorrClass):
+    """
+    GRU model with one input feature for predicting correlation class
+    """
+    def __init__(self, model_cfg: dict, **unused_kwargs):
+        super(GRUCorrClassOneFeature, self).__init__(model_cfg, **unused_kwargs)
+        # set model config
+        self.model_cfg = model_cfg
+        del self.model_cfg["gru_in_dim"]
+        self.num_gru = self.model_cfg["num_gru"]
+        self.gru_in_dim = 1
+        self.fc_dec_out_dim = self.gru_in_dim
+        self.class_fc_out_dim = self.gru_in_dim
+        # set model components
+        del_attr_names = ["gru", "fc_decoder"] + [f"class_fc{class_i}" for class_i in range(self.num_labels_classes)]
+        for attr_name in dir(self):
+            if attr_name in del_attr_names:
+                delattr(self, attr_name)
+        for gru_i in range(self.num_gru):
+            setattr(self, f"gru{gru_i}", GRU(input_size=self.gru_in_dim, hidden_size=self.model_cfg["gru_h"], num_layers=self.model_cfg["gru_l"], dropout=self.model_cfg["drop_p"] if "gru" in self.model_cfg["drop_pos"] else 0, batch_first=True))
+            setattr(self, f"gru{gru_i}_fc_decoder", Sequential(Linear(self.model_cfg["gru_h"], self.fc_dec_out_dim), Dropout(self.model_cfg["drop_p"] if "fc_decoder" in self.model_cfg["drop_pos"] else 0)))
+            for class_i in range(self.num_labels_classes):
+                setattr(self, f"gru{gru_i}_class_fc{class_i}", Sequential(Linear(self.fc_dec_out_dim, self.class_fc_out_dim), Dropout(self.model_cfg["drop_p"] if "class_fc" in self.model_cfg["drop_pos"] else 0)))
+        if type(self) == GRUCorrClassOneFeature:
+            self.init_optimizer()
+
+
+    def forward(self, x, *unused_args, **unused_kwargs):
+        batch_size = x.shape[0]
+        split_x = torch.split(x, 1, dim=2)  # (batch_size, 1, seq_len)*num_pairs
+        assert len(split_x) == self.num_gru, f"len(split_x): {len(split_x)}, but it should be {self.num_gru}"
+        gru_batch_pred_probs = torch.empty(batch_size, self.num_labels_classes, self.num_gru, self.class_fc_out_dim).fill_(np.nan)
+        for gru_i, x_each_pair in enumerate(split_x):
+            gru_input = x_each_pair  # (batch_size, seq_len, 1), gru_in_dim == 1
+            gru_output, _ = getattr(self, f"gru{gru_i}")(gru_input)  # (batch_size, seq_len, gru_h)
+            for data_batch_idx in range(x.shape[0]):
+                fc_dec_output = getattr(self, f"gru{gru_i}_fc_decoder")(gru_output[data_batch_idx, -1, :])  # (fc_dec_out_dim,), gru_output[-1] => only take last time-step
+                flatten_fc_dec_output = fc_dec_output.reshape(1, -1)  # (1, fc_dec_out_dim)
+                for class_i in range(self.num_labels_classes):
+                    class_fc_output = getattr(self, f"gru{gru_i}_class_fc{class_i}")(flatten_fc_dec_output)  # (1, class_fc_out_dim)
+                    class_logits = class_fc_output if class_i == 0 else torch.cat([class_logits, class_fc_output], dim=0)  # In the end of loop, logits.shape: (num_labels_classes, class_fc_out_dim)
+                pred_probs = self.softmax(class_logits)  # (num_labels_classes, class_fc_out_dim), in this case, class_fc_out_dim == 1, because gru_in_dim == 1
+                gru_batch_pred_probs[data_batch_idx, ::, gru_i, ::] = pred_probs
+        batch_pred_probs = gru_batch_pred_probs.squeeze(3)  # (batch_size, num_labels_classes, num_gru*class_fc_out_dim) => (batch_size, num_labels_classes, num_gru), because class_fc_out_dim == 1
+        assert not torch.isnan(gru_batch_pred_probs).any(), "gru_batch_pred_probs contains nan"
+        assert gru_batch_pred_probs.shape[3] == 1, f"gru_batch_pred_probs.shape[3] is class_fc_out_dim, so it should be 1, but gru_batch_pred_probs.shape[3]={gru_batch_pred_probs.shape[3]}"
+        assert batch_pred_probs.shape == (batch_size, self.num_labels_classes, self.num_gru), f"batch_pred_probs.shape: {batch_pred_probs.shape}, but it should be (batch_size, self.num_labels_classes, self.num_gru)"
+        assert torch.isclose(batch_pred_probs.sum(dim=1), torch.ones(batch_size, self.class_fc_out_dim)).all(), f"batch_pred_probs.sum(dim=1) must be close to 1, but batch_pred_probs.sum(dim=1)={batch_pred_probs.sum(dim=1)}"
+
+        return batch_pred_probs
+    #### this forward() is based on reference to CNNOneDimGRUResMapCorrClass.forward()
+    ###def forward(self, x, *unused_args, **unused_kwargs):
+    ###    batch_size = x.shape[0]
+    ###    split_x = torch.split(x, 1, dim=2)  # (batch_size, 1, seq_len)*num_pairs
+    ###    assert len(split_x) == self.model_cfg["num_gru"], f"len(split_x): {len(split_x)}, but it should be {self.model_cfg['num_gru']}"
+    ###    for gru_i, x_each_pair in enumerate(split_x):
+    ###        gru_input = x_each_pair  # (batch_size, seq_len, gru_in_dim)
+    ###        gru_output, _ = getattr(self, f"gru{gru_i}_gru")(gru_input)  # (batch_size, seq_len, gru_h)
+    ###        fc_dec_output = getattr(self, f"gru{gru_i}_fc_decoder")(gru_output[:, -1, :]).unsqueeze(1)  # (batch_size, 1, fc_dec_out_dim), gru_output[-1] => only take last time-step
+    ###        for class_i in range(self.num_labels_classes):
+    ###            class_fc_output = getattr(self, f"gru{gru_i}_class_fc{class_i}")(fc_dec_output)  # (batch_size, 1, class_fc_out_dim)
+    ###            class_logits = class_fc_output if class_i == 0 else torch.cat((class_logits, class_fc_output), dim=1)  # (batch_size, num_labels_classes, class_fc_out_dim)
+    ###        logits = class_logits if gru_i == 0 else torch.cat((logits, class_logits), dim=2)  # (batch_size, num_labels_classes, num_out_channels*class_fc_out_dim)
+    ###    batch_pred_probs = self.softmax(logits)
+    ###    assert batch_pred_probs.shape == (batch_size, self.num_labels_classes, self.conv1.out_channels*self.class_fc_out_dim), f"batch_pred_probs.shape: {batch_pred_probs.shape}, but it should be (batch_size, self.num_labels_classes, self.conv1.out_channels*class_fc_out_dim)"
+    ###    assert torch.isclose(batch_pred_probs.sum(dim=1), torch.ones(batch_size, self.conv1.out_channels*self.class_fc_out_dim)).all(), f"batch_pred_probs.sum(dim=1): {batch_pred_probs.sum(dim=1)}, but it should all be 1"
+
+    ###    return batch_pred_probs
+
+    def record_epoch_metrics_each_batch(self, batch_loss: torch.Tensor, batch_loss_each_loss_fn, batch_edge_acc: torch.Tensor, num_batches: int, rec_stage: str):
+        """
+        Record metrics at each batch and update to `epoch_metrics`.
+        """
+        assert rec_stage in ["train", "val", "test"], "rec_stage must be 'train' or 'val' or 'test'"
+        epoch_metrics = self.epoch_metrics
+        if rec_stage == "train":
+            epoch_metrics["tr_edge_acc"] += batch_edge_acc/num_batches
+            epoch_metrics["tr_loss"] += batch_loss/num_batches
+            for attr in dir(self):
+                if re.match(r"gru\d+", attr) and isinstance(getattr(self, attr), GRU):
+                    epoch_metrics["gru_gradient"] += sum(p.grad.abs().sum() for p in getattr(self, attr).parameters() if p.grad is not None)/num_batches
+                elif re.match(r"gru\d+_fc_decoder", attr) and isinstance(getattr(self, attr), Sequential):
+                    epoch_metrics["fc_dec_gradient"] += sum(p.grad.abs().sum() for p in getattr(self, attr).parameters() if p.grad is not None)/num_batches
+                elif re.match(r"gru\d+_class_fc\d+", attr) and isinstance(getattr(self, attr), Sequential):
+                    epoch_metrics["class_fc_gradient"] += sum(p.grad.abs().sum() for p in getattr(self, attr).parameters() if p.grad is not None)/num_batches
+
+        elif rec_stage == "val":
+            epoch_metrics['val_edge_acc'] += batch_edge_acc/num_batches
+            epoch_metrics['val_loss'] += batch_loss/num_batches
+        elif rec_stage == "test":
+            pass
+        for fn_name, loss in batch_loss_each_loss_fn.items():
+            epoch_metrics[(rec_stage+"_"+fn_name)] += loss/num_batches
 
 
 class GRUCorrCoefPred(GRUCorrClass):

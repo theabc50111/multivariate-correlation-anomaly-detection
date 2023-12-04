@@ -23,7 +23,7 @@ from utils.plot_utils import plot_heatmap
 from models.cnn_gru_models import (CNNOneDimGRUCorrClass,
                                    CNNOneDimGRUResMapCorrClass)
 from models.gru_models import (GRUCorrClass, GRUCorrClassCustomFeatures,
-                               GRUCorrCoefPred)
+                               GRUCorrClassOneFeature, GRUCorrCoefPred)
 
 THIS_FILE_DIR = Path(__file__).resolve().parent
 DATA_CFG = load_data_cfg()
@@ -36,6 +36,7 @@ class ModelType(Enum):
     GRUCORRCOEFPRED = auto()
     GRUCORRCLASS = auto()
     GRUCORRCLASSCUSTOMFEATURES = auto()
+    GRUCORRCLASSONEFEATURE = auto()
     CNNONEDIMGRUCORRCLASS = auto()
     CNNONEDIMGRURESMAPCORRCLASS = auto()
 
@@ -47,12 +48,15 @@ class ModelType(Enum):
         gru_corr_class_custom_feature_cfg = gru_corr_class_cfg.copy()
         gru_corr_class_custom_feature_cfg["gru_in_dim"] = len(args.gru_input_feature_idx) if args.gru_input_feature_idx else 1
         gru_corr_class_custom_feature_cfg["input_feature_idx"] = args.gru_input_feature_idx
+        gru_corr_class_one_feature_cfg = gru_corr_class_cfg.copy()
+        gru_corr_class_one_feature_cfg["num_gru"] = basic_model_cfg["num_pairs"]
         cnn_one_dim_gru_corr_class_cfg = gru_corr_class_cfg.copy()
         cnn_one_dim_gru_corr_class_cfg["cnn_in_channels"] = basic_model_cfg["num_pairs"]
         cnn_one_dim_gru_res_map_corr_class_cfg = cnn_one_dim_gru_corr_class_cfg.copy()
         model_dict = {"GRUCORRCOEFPRED": GRUCorrCoefPred(gru_corr_coef_cfg),
                       "GRUCORRCLASS": GRUCorrClass(gru_corr_class_cfg),
                       "GRUCORRCLASSCUSTOMFEATURES": GRUCorrClassCustomFeatures(gru_corr_class_custom_feature_cfg),
+                      "GRUCORRCLASSONEFEATURE": GRUCorrClassOneFeature(gru_corr_class_one_feature_cfg),
                       "CNNONEDIMGRUCORRCLASS": CNNOneDimGRUCorrClass(cnn_one_dim_gru_corr_class_cfg),
                       "CNNONEDIMGRURESMAPCORRCLASS": CNNOneDimGRUResMapCorrClass(cnn_one_dim_gru_res_map_corr_class_cfg)}
         model = model_dict[self.name]
@@ -64,6 +68,7 @@ class ModelType(Enum):
         save_model_dir_base_dict = {"GRUCORRCOEFPRED": "gru_corr_coef_pred",
                                     "GRUCORRCLASS": "gru_corr_class",
                                     "GRUCORRCLASSCUSTOMFEATURES": "gru_corr_class_custom_features",
+                                    "GRUCORRCLASSONEFEATURE": "gru_corr_class_one_features",
                                     "CNNONEDIMGRUCORRCLASS": "cnn_one_dim_gru_corr_class",
                                     "CNNONEDIMGRURESMAPCORRCLASS": "cnn_one_dim_gru_res_map_corr_class"}
         assert ModelType.__members__.keys() == save_model_dir_base_dict.keys(), f"ModelType members and save_model_dir_base_dict must be the same keys, ModelType.__members__.keys(): {ModelType.__members__.keys()}, save_model_dir_base_dict.keys(): {save_model_dir_base_dict.keys()}"
@@ -101,8 +106,8 @@ if __name__ == "__main__":
     args_parser.add_argument("--cuda_device", type=int, nargs='?', default=0,
                              help="input the number of cuda device")
     args_parser.add_argument("--train_models", type=str, nargs='+', default=[],
-                             choices=["GRUCORRCOEFPRED", "GRUCORRCLASS", "GRUCORRCLASSCUSTOMFEATURES", "CNNONEDIMGRUCORRCLASS", "CNNONEDIMGRURESMAPCORRCLASS"],
-                             help="input to decide which models to train, the choices are [GRUCORRCOEFPRED, GRUCORRCLASS, GRUCORRCLASSCUSTOMFEATURES, CNNONEDIMGRUCORRCLASS, CNNONEDIMGRURESMAPCORRCLASS]")
+                             choices=["GRUCORRCOEFPRED", "GRUCORRCLASS", "GRUCORRCLASSCUSTOMFEATURES", "GRUCORRCLASSONEFEATURE", "CNNONEDIMGRUCORRCLASS", "CNNONEDIMGRURESMAPCORRCLASS"],
+                             help="input to decide which models to train, the choices are [GRUCORRCOEFPRED, GRUCORRCLASS, GRUCORRCLASSCUSTOMFEATURES, GRUCORRCLASSONEFEATURE, CNNONEDIMGRUCORRCLASS, CNNONEDIMGRURESMAPCORRCLASS]")
     args_parser.add_argument("--learning_rate", type=float, nargs='?', default=0.001,
                              help="input the learning rate of training")
     args_parser.add_argument("--weight_decay", type=float, nargs='?', default=0,
@@ -134,8 +139,8 @@ if __name__ == "__main__":
     args_parser.add_argument("--save_model", type=bool, default=False, action=argparse.BooleanOptionalAction,  # setting of output files
                              help="input --save_model to save model weight and model info")
     args_parser.add_argument("--inference_models", type=str, nargs='+', default=[],
-                             choices=["GRUCORRCOEFPRED", "GRUCORRCLASS", "GRUCORRCLASSCUSTOMFEATURES", "CNNONEDIMGRUCORRCLASS", "CNNONEDIMGRURESMAPCORRCLASS"],
-                             help="input to decide which models to inference, the choices are [GRUCORRCOEFPRED, GRUCORRCLASS, GRUCORRCLASSCUSTOMFEATURES, CNNONEDIMGRUCORRCLASS, CNNONEDIMGRURESMAPCORRCLASS]")
+                             choices=["GRUCORRCOEFPRED", "GRUCORRCLASS", "GRUCORRCLASSCUSTOMFEATURES", "GRUCORRCLASSONEFEATURE", "CNNONEDIMGRUCORRCLASS", "CNNONEDIMGRURESMAPCORRCLASS"],
+                             help="input to decide which models to inference, the choices are [GRUCORRCOEFPRED, GRUCORRCLASS, GRUCORRCLASSCUSTOMFEATURES, GRUCORRCLASSONEFEATURE, CNNONEDIMGRUCORRCLASS, CNNONEDIMGRURESMAPCORRCLASS]")
     args_parser.add_argument("--inference_model_paths", type=str, nargs='+', default=[],
                              help="input the path of inference model weight")
     args_parser.add_argument("--inference_data_split", type=str, nargs='?', default="val",
@@ -144,8 +149,7 @@ if __name__ == "__main__":
     assert bool(ARGS.train_models) != bool(ARGS.inference_models), "train_models and inference_models must be input one of them"
     assert bool(ARGS.drop_pos) == bool(ARGS.drop_p), "drop_pos and drop_p must be both input or not input"
     assert ("GRUCORRCOEFPRED" not in ARGS.train_models+ARGS.inference_models) or (ARGS.output_type == "corr_coef"), "output_type must be corr_coef when train_models|inferene_models is GRUCORRCOEFPRED"
-    assert ("GRUCORRCLASS" not in ARGS.train_models+ARGS.inference_models) or ARGS.output_type == "class_probability", "output_type must be class_probability when train_models|inferene_models is GRUCORRCLASS"
-    assert ("GRUCORRCLASSCUSTOMFEATURES" not in ARGS.train_models+ARGS.inference_models) or ARGS.output_type == "class_probability", "output_type must be class_probability when train_models|inferene_models is GRUCORRCLASSCUSTOMFEATURES"
+    assert bool(set(ARGS.train_models+ARGS.inference_models) - {"GRUCORRCLASS", "GRUCORRCLASSCUSTOMFEATURES", "GRUCORRCLASSONEFEATURE", "CNNONEDIMGRUCORRCLASS", "CNNONEDIMGRURESMAPCORRCLASS"}) or (ARGS.output_type == "class_probability"), "output_type must be class_probability when train_models|inferene_models is not GRUCORRCLASSCUSTOMFEATURES or GRUCORRCLASSONEFEATURE"
     assert "class_fc" not in ARGS.drop_pos or ARGS.output_type == "class_probability", "output_type must be class_probability when class_fc in drop_pos"
     assert ("GRUCORRCLASS" not in ARGS.train_models+ARGS.inference_models) or ARGS.gru_input_feature_idx is None, "gru_input_feature_idx must be None when train_models|inferene_models is GRUCORRCLASS"
     assert ("GRUCORRCLASSCUSTOMFEATURES" not in ARGS.train_models+ARGS.inference_models) or (ARGS.gru_input_feature_idx is not None and len(ARGS.gru_input_feature_idx) >= 1), "gru_input_feature_idx must be input when train_models|inferene_models is GRUCORRCLASSCUSTOMFEATURES and len(gru_input_feature_idx) must be greater equal to 1"
