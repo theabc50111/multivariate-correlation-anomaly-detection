@@ -2,9 +2,7 @@
 
 
 # Define the list of items
-
-
-dataset_list=("--data_implement SYNTHETIC_COLL2_POW1_LAG7_WAVY" "--data_implement SYNTHETIC_COLL2_POW1_LAG7_WAVY_2")
+dataset_list=("--data_implement SYNTHETIC_COLL2_LAG59_WAVY" "--data_implement SYNTHETIC_COLL2_LAG59_WAVY_2" "--data_implement SYNTHETIC_COLL2_LAG19_WAVY" "--data_implement SYNTHETIC_COLL2_LAG19_WAVY_2" "--data_implement SYNTHETIC_COLL2_POW1_LAG59_WAVY" "--data_implement SYNTHETIC_COLL2_POW1_LAG59_WAVY_2" "--data_implement SYNTHETIC_COLL2_POW1_LAG19_WAVY" "--data_implement SYNTHETIC_COLL2_POW1_LAG19_WAVY_2")
 train_items_setting_list=("--train_items_setting train_train")  # ("--train_items_setting train_train" "--train_items_setting train_all")
 corr_type_list=("--corr_type pearson")  # ("--corr_type pearson" "--corr_type cross_corr")
 corr_win_list=("--corr_window 50")  # ("--corr_window 10" "--corr_window 30" "--corr_window 50")

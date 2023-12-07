@@ -71,7 +71,7 @@ def nike_ts(n_samples: int = 200, seed: int = None, start_date: str = "2010/1/1"
     holiday_factor = HolidayFactor(
         holiday_factor=1.5,
         special_holiday_factors={
-            "Christmas Day": 3.
+            "Christmas Day": 1.5
         },
         country_list=[country.replace(" ", "_")]
     )
@@ -297,7 +297,7 @@ if __name__ == "__main__":
     parser.add_argument('--noise_scale', type=int, default=5, help='Input noise scale in the form of percentage integer. (default: 5))')
     parser.add_argument('--n_bkps', type=int, default=0, help='Input number of change points. (default: 0)')
     parser.add_argument('--n_collections', type=int, default=0, help='Input number of collections. (default: 0)')
-    parser.add_argument('--basis_type', type=str, default='pw_rand_wavy', nargs='?',
+    parser.add_argument('--basis_type', type=str, default='nike_ts', nargs='?',
                         choices=['nike_ts', 'pw_rand_wavy', 'specific_ts'],
                         help='Type of basis_signal to generate. (default: nike_ts)')
     parser.add_argument('--power', type=float, default=None, help='Input power for generate power based collection data.')

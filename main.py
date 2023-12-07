@@ -12,18 +12,18 @@ from pprint import pformat
 import numpy as np
 import pandas as pd
 import torch
+from models.cnn_gru_models import (CNNOneDimGRUCorrClass,
+                                   CNNOneDimGRUResMapCorrClass)
+from models.gru_models import (GRUCorrClass, GRUCorrClassCustomFeatures,
+                               GRUCorrClassOneFeature, GRUCorrCoefPred)
 from torch.nn import CrossEntropyLoss, MSELoss
+
 from utils.assorted_utils import load_data_cfg, split_and_norm_data
 from utils.log_utils import Log
 from utils.metrics_utils import (CustomIndicesCrossEntropyLoss,
                                  CustomIndicesEdgeAccuracy,
                                  TolEdgeAccuracyLoss)
 from utils.plot_utils import plot_heatmap
-
-from models.cnn_gru_models import (CNNOneDimGRUCorrClass,
-                                   CNNOneDimGRUResMapCorrClass)
-from models.gru_models import (GRUCorrClass, GRUCorrClassCustomFeatures,
-                               GRUCorrClassOneFeature, GRUCorrCoefPred)
 
 THIS_FILE_DIR = Path(__file__).resolve().parent
 DATA_CFG = load_data_cfg()

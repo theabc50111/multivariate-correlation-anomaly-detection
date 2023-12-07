@@ -263,3 +263,39 @@ def plot_cluster_info(data: np.ndarray, each_sample_cluster_labels: np.ndarray, 
         plot_table(ax=ax, df=display_df)
     plt.show()
     plt.close()
+
+
+def plot_tr_val_labels_pie(tr_labels: np.ndarray, val_labels: np.ndarray, tr_labels_freq_counts: np.ndarray, val_labels_freq_counts: np.ndarray, axes: mpl.axes._axes.Axes = None):
+    """Plot the pie chart of the train and validation labels"""
+    colors_labels_map = {"-1.0": "lime", "0.0": "darkorange", "1.0": "dodgerblue"}
+    if axes is None:
+        fig, axes = plt.subplots(1, 2, figsize=(16, 9))
+        axes[0].pie(tr_labels_freq_counts, labels=tr_labels, autopct='%1.1f%%', textprops={'fontsize': 24}, colors=[colors_labels_map[str(label)] for label in tr_labels])
+        axes[0].set_title("Train", fontsize=32)
+        axes[1].pie(val_labels_freq_counts, labels=val_labels, autopct='%1.1f%%', textprops={'fontsize': 24}, colors=[colors_labels_map[str(label)] for label in val_labels])
+        axes[1].set_title("Validation", fontsize=32)
+        plt.show()
+        plt.close()
+    else:
+        axes[0, 0].pie(tr_labels_freq_counts, labels=tr_labels, autopct='%1.1f%%', textprops={'fontsize': 24}, colors=[colors_labels_map[str(label)] for label in tr_labels])
+        axes[0, 0].set_title("Train", fontsize=32)
+        axes[0, 1].pie(val_labels_freq_counts, labels=val_labels, autopct='%1.1f%%', textprops={'fontsize': 24}, colors=[colors_labels_map[str(label)] for label in val_labels])
+        axes[0, 1].set_title("Validation", fontsize=32)
+
+
+def plot_corr_distribution(corr_df: pd.DataFrame, axes: mpl.axes._axes.Axes = None):
+    """Plot the correlation distribution"""
+    all_item_pair_corrs = np.hstack(corr_df.values)
+    if axes is None:
+        fig, axes = plt.subplots(1, 2, figsize=(16, 9))
+        axes[0].hist(all_item_pair_corrs, bins=20)
+        axes[0].xaxis.set_tick_params(labelsize=18)
+        axes[1].boxplot(all_item_pair_corrs)
+        axes[1].yaxis.set_tick_params(labelsize=18)
+        plt.show()
+        plt.close()
+    else:
+        axes[1, 0].hist(all_item_pair_corrs, bins=20)
+        axes[1, 0].xaxis.set_tick_params(labelsize=18)
+        axes[1, 1].boxplot(all_item_pair_corrs)
+        axes[1, 1].yaxis.set_tick_params(labelsize=18)

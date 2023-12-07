@@ -102,8 +102,17 @@ def gen_custom_discretize_corr(src_dir: Path, data_gen_cfg: dict, bins: list, sa
     discretize_idxs[discretize_idxs == 0] = 1
     discretize_idxs[discretize_idxs > num_bins] = num_bins
     discretize_data = discretize_idxs.astype(np.float32)
-    discretize_values = np.linspace(-1, num_bins-2, num_bins)
-    for discretize_tag, discretize_value in zip(np.unique(discretize_data), discretize_values):
+    all_discretize_values = np.linspace(-1, num_bins-2, num_bins)
+    if np.unique(discretize_data).shape[0] != num_bins:
+        selected_discretize_values = []
+        for i in range(1, num_bins+1):
+            if i in np.unique(discretize_data):
+                selected_discretize_values.append(all_discretize_values[i-1])
+        selected_discretize_values = np.array(selected_discretize_values)
+    else:
+        selected_discretize_values = all_discretize_values
+    assert selected_discretize_values.shape[0] == np.unique(discretize_data).shape[0], f"selected_discretize_values.shape[0]:{selected_discretize_values.shape[0]} != np.unique(discretize_data).shape[0]:{np.unique(discretize_data).shape[0]}"
+    for discretize_tag, discretize_value in zip(np.unique(discretize_data), selected_discretize_values):
         discretize_data[discretize_data == discretize_tag] = discretize_value
     discretize_corr_dataset = pd.DataFrame(discretize_data, index=corr_data.index, columns=corr_data.columns)
 
