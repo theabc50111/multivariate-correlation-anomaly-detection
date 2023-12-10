@@ -51,7 +51,6 @@ class GRUCorrClass(torch.nn.Module):
         batch_size = x.shape[0]
         batch_pred_probs = torch.empty(batch_size, self.num_labels_classes, self.class_fc_out_dim).fill_(np.nan)  # (batch_size, num_labels_classes, class_fc_out_dim)
         gru_output, _ = self.gru(x)  # (batch_size, seq_len, gru_h)
-        fc_dec_output = self.fc_decoder(gru_output[:, -1, :])  # (batch_size, fc_dec_out_dim), gru_output[-1] => only take last time-step↵
         fc_dec_output = self.fc_decoder(gru_output[:, -1, :]).unsqueeze(1)  # (batch_size, 1, fc_dec_out_dim), gru_output[-1] => only take last time-step
         for class_i in range(self.num_labels_classes):
             class_fc_output = getattr(self, f"class_fc{class_i}")(fc_dec_output)  # (batch_size, 1, class_fc_out_dim)
