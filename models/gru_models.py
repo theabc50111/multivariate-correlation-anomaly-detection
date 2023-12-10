@@ -468,48 +468,24 @@ class GRUCorrClassOneFeature(GRUCorrClass):
         if type(self) == GRUCorrClassOneFeature:
             self.init_optimizer()
 
-
+    # this forward() is based on reference to CNNOneDimGRUResMapCorrClass.forward()
     def forward(self, x, *unused_args, **unused_kwargs):
         batch_size = x.shape[0]
         split_x = torch.split(x, 1, dim=2)  # (batch_size, 1, seq_len)*num_pairs
-        assert len(split_x) == self.num_gru, f"len(split_x): {len(split_x)}, but it should be {self.num_gru}"
-        gru_batch_pred_probs = torch.empty(batch_size, self.num_labels_classes, self.num_gru, self.class_fc_out_dim).fill_(np.nan)
+        assert len(split_x) == self.model_cfg["num_gru"], f"len(split_x): {len(split_x)}, but it should be {self.model_cfg['num_gru']}"
         for gru_i, x_each_pair in enumerate(split_x):
-            gru_input = x_each_pair  # (batch_size, seq_len, 1), gru_in_dim == 1
+            gru_input = x_each_pair  # (batch_size, seq_len, gru_in_dim)
             gru_output, _ = getattr(self, f"gru{gru_i}")(gru_input)  # (batch_size, seq_len, gru_h)
-            for data_batch_idx in range(x.shape[0]):
-                fc_dec_output = getattr(self, f"gru{gru_i}_fc_decoder")(gru_output[data_batch_idx, -1, :])  # (fc_dec_out_dim,), gru_output[-1] => only take last time-step
-                flatten_fc_dec_output = fc_dec_output.reshape(1, -1)  # (1, fc_dec_out_dim)
-                for class_i in range(self.num_labels_classes):
-                    class_fc_output = getattr(self, f"gru{gru_i}_class_fc{class_i}")(flatten_fc_dec_output)  # (1, class_fc_out_dim)
-                    class_logits = class_fc_output if class_i == 0 else torch.cat([class_logits, class_fc_output], dim=0)  # In the end of loop, logits.shape: (num_labels_classes, class_fc_out_dim)
-                pred_probs = self.softmax(class_logits)  # (num_labels_classes, class_fc_out_dim), in this case, class_fc_out_dim == 1, because gru_in_dim == 1
-                gru_batch_pred_probs[data_batch_idx, ::, gru_i, ::] = pred_probs
-        batch_pred_probs = gru_batch_pred_probs.squeeze(3)  # (batch_size, num_labels_classes, num_gru*class_fc_out_dim) => (batch_size, num_labels_classes, num_gru), because class_fc_out_dim == 1
-        assert not torch.isnan(gru_batch_pred_probs).any(), "gru_batch_pred_probs contains nan"
-        assert gru_batch_pred_probs.shape[3] == 1, f"gru_batch_pred_probs.shape[3] is class_fc_out_dim, so it should be 1, but gru_batch_pred_probs.shape[3]={gru_batch_pred_probs.shape[3]}"
-        assert batch_pred_probs.shape == (batch_size, self.num_labels_classes, self.num_gru), f"batch_pred_probs.shape: {batch_pred_probs.shape}, but it should be (batch_size, self.num_labels_classes, self.num_gru)"
-        assert torch.isclose(batch_pred_probs.sum(dim=1), torch.ones(batch_size, self.class_fc_out_dim)).all(), f"batch_pred_probs.sum(dim=1) must be close to 1, but batch_pred_probs.sum(dim=1)={batch_pred_probs.sum(dim=1)}"
+            fc_dec_output = getattr(self, f"gru{gru_i}_fc_decoder")(gru_output[:, -1, :]).unsqueeze(1)  # (batch_size, 1, fc_dec_out_dim), gru_output[-1] => only take last time-step
+            for class_i in range(self.num_labels_classes):
+                class_fc_output = getattr(self, f"gru{gru_i}_class_fc{class_i}")(fc_dec_output)  # (batch_size, 1, class_fc_out_dim)
+                class_logits = class_fc_output if class_i == 0 else torch.cat((class_logits, class_fc_output), dim=1)  # (batch_size, num_labels_classes, class_fc_out_dim)
+            logits = class_logits if gru_i == 0 else torch.cat((logits, class_logits), dim=2)  # (batch_size, num_labels_classes, num_out_channels*class_fc_out_dim)
+        batch_pred_probs = self.softmax(logits)
+        assert batch_pred_probs.shape == (batch_size, self.num_labels_classes, self.num_gru*self.class_fc_out_dim), f"batch_pred_probs.shape: {batch_pred_probs.shape}, but it should be (batch_size, self.num_labels_classes, self.num_gur*class_fc_out_dim)"
+        assert torch.isclose(batch_pred_probs.sum(dim=1), torch.ones(batch_size, self.num_gru*self.class_fc_out_dim)).all(), f"batch_pred_probs.sum(dim=1): {batch_pred_probs.sum(dim=1)}, but it should all be 1"
 
         return batch_pred_probs
-    #### this forward() is based on reference to CNNOneDimGRUResMapCorrClass.forward()
-    ###def forward(self, x, *unused_args, **unused_kwargs):
-    ###    batch_size = x.shape[0]
-    ###    split_x = torch.split(x, 1, dim=2)  # (batch_size, 1, seq_len)*num_pairs
-    ###    assert len(split_x) == self.model_cfg["num_gru"], f"len(split_x): {len(split_x)}, but it should be {self.model_cfg['num_gru']}"
-    ###    for gru_i, x_each_pair in enumerate(split_x):
-    ###        gru_input = x_each_pair  # (batch_size, seq_len, gru_in_dim)
-    ###        gru_output, _ = getattr(self, f"gru{gru_i}")(gru_input)  # (batch_size, seq_len, gru_h)
-    ###        fc_dec_output = getattr(self, f"gru{gru_i}_fc_decoder")(gru_output[:, -1, :]).unsqueeze(1)  # (batch_size, 1, fc_dec_out_dim), gru_output[-1] => only take last time-step
-    ###        for class_i in range(self.num_labels_classes):
-    ###            class_fc_output = getattr(self, f"gru{gru_i}_class_fc{class_i}")(fc_dec_output)  # (batch_size, 1, class_fc_out_dim)
-    ###            class_logits = class_fc_output if class_i == 0 else torch.cat((class_logits, class_fc_output), dim=1)  # (batch_size, num_labels_classes, class_fc_out_dim)
-    ###        logits = class_logits if gru_i == 0 else torch.cat((logits, class_logits), dim=2)  # (batch_size, num_labels_classes, num_out_channels*class_fc_out_dim)
-    ###    batch_pred_probs = self.softmax(logits)
-    ###    assert batch_pred_probs.shape == (batch_size, self.num_labels_classes, self.num_gru*self.class_fc_out_dim), f"batch_pred_probs.shape: {batch_pred_probs.shape}, but it should be (batch_size, self.num_labels_classes, self.num_gur*class_fc_out_dim)"
-    ###    assert torch.isclose(batch_pred_probs.sum(dim=1), torch.ones(batch_size, self.num_gru*self.class_fc_out_dim)).all(), f"batch_pred_probs.sum(dim=1): {batch_pred_probs.sum(dim=1)}, but it should all be 1"
-
-    ###    return batch_pred_probs
 
     def record_epoch_metrics_each_batch(self, batch_loss: torch.Tensor, batch_loss_each_loss_fn, batch_edge_acc: torch.Tensor, num_batches: int, rec_stage: str):
         """
