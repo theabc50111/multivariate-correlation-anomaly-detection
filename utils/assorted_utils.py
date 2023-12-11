@@ -170,8 +170,8 @@ def load_multiple_data(data_implement: str, retrieve_items_setting: str, corr_ty
       The dataset dataframe, correlation dataframe, target dataframe, and correlation series property dataframe.
     """
     data_cfg = load_data_cfg()
-    all_set = data_cfg["DATASETS"][data_implement]['ALL_SET']  # all items
-    train_set = data_cfg["DATASETS"][data_implement]['TRAIN_SET']
+    all_set = data_cfg["DATASETS"][data_implement].get('ALL_SET', [])  # all items
+    train_set = data_cfg["DATASETS"][data_implement].get('TRAIN_SET', [])
     items_implement = train_set if retrieve_items_setting == "-train_train" else all_set
     output_file_name = data_cfg["DATASETS"][data_implement]['OUTPUT_FILE_NAME_BASIS'] + retrieve_items_setting
     _, corr_dir, target_dir, corr_property_dir, _, _ = load_dirs(data_implement=data_implement,
@@ -183,8 +183,11 @@ def load_multiple_data(data_implement: str, retrieve_items_setting: str, corr_ty
     target_df_path = target_dir/f"corr_s{s_l}_w{w_l}.csv"
     corr_property_df_path = corr_property_dir/"corr_series_property.csv"
     dataset_df = pd.read_csv(data_cfg["DATASETS"][data_implement]['FILE_PATH'])
-    dataset_df = dataset_df.set_index('Date')
-    dataset_df = dataset_df.loc[::, items_implement]
+    if len(items_implement):
+        dataset_df = dataset_df.set_index('Date')
+        dataset_df = dataset_df.loc[::, items_implement]
+    else:
+        dataset_df = pd.DataFrame()
     corr_df = pd.read_csv(corr_df_path, index_col=["item_pair"])
     target_df = pd.read_csv(target_df_path, index_col=["item_pair"])
     corr_property_df = calc_corr_ser_property(corr_dataset=corr_df, corr_property_df_path=corr_property_df_path)
