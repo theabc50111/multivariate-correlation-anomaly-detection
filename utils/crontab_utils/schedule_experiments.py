@@ -6,13 +6,14 @@ from pprint import pprint
 
 data_implement_list = ["--data_implement SP500_20112015_RAND_1"]  # ["", "--data_implement LINEAR_REG_ONE_CLUSTER_DIM_30_BKPS_0_NOISE_STD_30"]
 batch_size_list = [""]
+n_folds_list = [""]  # ["", "--n_folds 2", "--n_folds 3"]
 tr_epochs_list = [""]  # ["", "--tr_epochs 200"]
-train_models_list = ["--train_models CNNONEDIMGRUCORRCLASS", "--train_models CNNONEDIMGRURESMAPCORRCLASS"]  # ["", "--train_models GRUCORRCLASS", "--train_models GRUCORRCLASS --train_models GRUCORRCLASSCUSTOMFEATURES --train_models GRUCORRCOEFPRED"]
+train_models_list = ["--train_models CNNONEDIMGRURESMAPCORRCLASS"]  # ["", "--train_models GRUCORRCLASS", "--train_models GRUCORRCLASS --train_models GRUCORRCLASSCUSTOMFEATURES --train_models GRUCORRCOEFPRED"]
 corr_type_list = ["--corr_type pearson"]  # ["--corr_type pearson", "--corr_type cross_corr"]
 seq_len_list = ["--seq_len 30"]  # ["--seq_len 5", "--seq_len 10"]
 model_input_cus_bins_list = [""]  # ["", "--model_input_cus_bins -1 --model_input_cus_bins 0 --model_input_cus_bins 1", "--model_input_cus_bins -1 --model_input_cus_bins -0.3 --model_input_cus_bins 0.3 --model_input_cus_bins 1", "--model_input_cus_bins -1 --model_input_cus_bins -0.5 --model_input_cus_bins 0 --model_input_cus_bins 0.5 --model_input_cus_bins 1"]
 target_mats_path_list = ["--target_mats_path pearson/custom_discretize_corr_data/bins_-10_-03_03_10"]  # ["", "--target_mats_path pearson/custom_discretize_corr_data/bins_-10_-025_025_10", "--target_mats_path pearson/quan_discretize_corr_data/bin3"]
-learning_rate_list = [""]  # ["", "--learning_rate 0.0001", "--learning_rate 0.0005"]
+learning_rate_list = ["--learning_rate 0.0005", "--learning_rate 0.0001"]  # ["", "--learning_rate 0.0001", "--learning_rate 0.0005"]
 weight_decay_list = [""]  # ["--weight_decay 0.0001", "--weight_decay 0.0005", "--weight_decay 0.001", "--weight_decay 0.005", "--weight_decay 0.01", "--weight_decay 0.05", "--weight_decay 0.1"]
 use_optim_scheduler_list = [""]  # ["", "--use_optim_scheduler true"]
 drop_pos_list = [""]  # ["", "--drop_pos gru", "--drop_pos decoder --drop_pos gru", "--drop_pos gru --drop_pos decoder"]
@@ -20,18 +21,18 @@ drop_p_list = [""]  # ["--drop_p 0.33", "--drop_p 0.5", "--drop_p 0.66"]
 gru_l_list = [""]  # ["--gru_l 1", "--gru_l 2", "--gru_l 3", "--gru_l 4", "--gru_l 5"]
 gru_h_list = [""]  # ["--gru_h 40", "--gru_h 80", "--gru_h 100", "--gru_h 320", "--gru_h 640"]
 gru_input_feature_idx_list = [""]  # ["--input_idx 0", "--input_idx 1", "--input_idx 2", "--input_idx 0 --input_idx 1 --input_idx 2 --input_idx 3"]
-use_weighted_loss_list = ["", "--use_weighted_loss true"]  # ["", "--use_weighted_loss true"]
+use_weighted_loss_list = [""]  # ["", "--use_weighted_loss true"]
 tol_edge_acc_loss_atol_list = [""]  # ["", "--tol_edge_acc_loss_atol 0.05", "--tol_edge_acc_loss_atol 0.1", "--tol_edge_acc_loss_atol 0.33"]
 custom_indices_loss_idx_list = [""]  # ["", "--custom_indices_loss_idx 0", "--custom_indices_loss_idx 0 --custom_indices_loss_idx 1 --custom_indices_loss_idx 2"]
 custom_indices_metric_idx_list = [""]  # ["", "--custom_indices_metric_idx 0", "--custom_indices_metric_idx 0 --custom_indices_metric_idx 1 --custom_indices_metric_idx 2"]
 output_type_list = ["--output_type class_probability"]  # ["--output_type discretize", "--output_type class_probability"]
 
-args_values = list(product(data_implement_list, batch_size_list, tr_epochs_list, train_models_list, corr_type_list, seq_len_list, model_input_cus_bins_list,
+args_values = list(product(data_implement_list, batch_size_list, n_folds_list, tr_epochs_list, train_models_list, corr_type_list, seq_len_list, model_input_cus_bins_list,
                            target_mats_path_list, learning_rate_list, weight_decay_list, use_optim_scheduler_list,
                            drop_pos_list, drop_p_list, gru_l_list, gru_h_list,
                            gru_input_feature_idx_list, use_weighted_loss_list, tol_edge_acc_loss_atol_list, custom_indices_loss_idx_list, custom_indices_metric_idx_list,
                            output_type_list))
-args_keys = ["data_implement", "batch_size", "tr_epochs", "train_models", "corr_type", "seq_len", "model_input_cus_bins", "target_mats_path",
+args_keys = ["data_implement", "batch_size", "n_folds", "tr_epochs", "train_models", "corr_type", "seq_len", "model_input_cus_bins", "target_mats_path",
              "learning_rate", "weight_decay", "use_optim_scheduler", "drop_pos", "drop_p", "gru_l", "gru_h", "gru_input_feature_idx", "use_weighted_loss",
              "tol_edge_acc_loss_atol", "custom_indices_loss_idx", "custom_indices_metric_idx", "output_type"]
 args_list = []

@@ -6,6 +6,7 @@ import dynamic_yaml
 import numpy as np
 import pandas as pd
 import yaml
+from sklearn.model_selection import KFold
 
 from .etl_utils import calc_corr_ser_property
 from .log_utils import Log
@@ -13,14 +14,16 @@ from .log_utils import Log
 LOGGER = Log().init_logger(logger_name=__name__)
 DF_LOGGER = Log().init_logger(logger_name="df_logger")
 
-def split_and_norm_data(model_input_df: pd.DataFrame, batch_size: int, target_df: pd.DataFrame = None):
+def split_data_with_varied_ratio(model_input_df: pd.DataFrame, batch_size: int, target_df: pd.DataFrame = None):
     """
-    split dataset to train, validation, test
-    normalize these dataset
+    Split dataset to train, validation, test.
+    The split validation plus test ratio is between 0.1 and 0.3.
+    The validation and test set has to be larger than batch_size.
     """
     num_pairs, all_timesteps = model_input_df.shape
     # Split to training, validation, and test sets
     model_input_mat = model_input_df.values
+
     for val_test_pct in np.linspace(0.1, 0.3, 21):
         if int(all_timesteps*val_test_pct) > 2*batch_size:
             train_pct = 1 - val_test_pct
@@ -44,6 +47,57 @@ def split_and_norm_data(model_input_df: pd.DataFrame, batch_size: int, target_df
     LOGGER.info("="*80)
 
     return train_dataset, val_dataset, test_dataset
+
+def split_data_with_kfold(model_input_df: pd.DataFrame, target_df: pd.DataFrame = None, n_folds: int = 5):
+    num_pairs, all_timesteps = model_input_df.shape
+    # Split to training, validation, and test sets
+    model_input_mat = model_input_df.values
+    kfold_model_input = model_input_mat[::, :int(all_timesteps*(n_folds/(n_folds+1)))]
+    test_model_input = model_input_mat[::, int(all_timesteps*(n_folds/(n_folds+1))):]
+    kfold_model_input_t_idxs = np.arange(kfold_model_input.shape[1])
+    kf = KFold(n_splits=n_folds, shuffle=False)
+    ret_split_data = {}
+    for fold_i, (tr_t_idxs, val_t_idxs) in enumerate(kf.split(kfold_model_input_t_idxs)):
+        LOGGER.info(f"In fold_{fold_i}: tr_t_idxs range: {tr_t_idxs[0]}~{tr_t_idxs[-1]}, val_t_idxs range: {val_t_idxs[0]}~{val_t_idxs[-1]}")
+        train_dataset = {"model_input": kfold_model_input[::, tr_t_idxs]}
+        val_dataset = {"model_input": kfold_model_input[::, val_t_idxs]}
+        test_dataset = {"model_input": test_model_input}
+        if target_df is not None:
+            assert model_input_df.shape == target_df.shape, "Check the whether the shape of model_input_df and target_df are the same."
+            target_mat = target_df.values
+            kfold_target = target_mat[::, :int(all_timesteps*(n_folds/(n_folds+1)))]
+            test_target = target_mat[::, int(all_timesteps*(n_folds/(n_folds+1))):]
+            train_dataset["target"] = kfold_target[::, tr_t_idxs]
+            val_dataset["target"] = kfold_target[::, val_t_idxs]
+            test_dataset["target"] = test_target
+        else:
+            train_dataset["target"] = train_dataset["model_input"]
+            val_dataset["target"] = val_dataset["model_input"]
+            test_dataset["target"] = test_dataset["model_input"]
+        accumulated_timesteps = 0
+        for data_split, dataset in {"tr": train_dataset, "val": val_dataset, "test": test_dataset}.items():
+            assert dataset["model_input"].shape == dataset["target"].shape, f"Check the whether the shape of {data_split}_dataset['model_input'] and {data_split}_dataset['target'] are the same."
+            accumulated_timesteps += dataset["model_input"].shape[1]
+        assert accumulated_timesteps == all_timesteps, "Check the whether the accumulated_timesteps == all_timesteps"
+        ret_split_data[f"fold_{fold_i}"] = [train_dataset, val_dataset, test_dataset]
+    LOGGER.info(f"split ratio: train:{(n_folds-1)/(n_folds+1)}, val:{1/(n_folds+1)}, test {1/(n_folds+1)}")
+    LOGGER.info(f"For fold_0:\n  train_dataset[model_input].shape: {ret_split_data['fold_0'][0]['model_input'].shape}, train_dataset[target].shape: {ret_split_data['fold_0'][0]['target'].shape}\n  val_dataset[model_input].shape: {ret_split_data['fold_0'][1]['model_input'].shape}, val_dataset[target].shape: {ret_split_data['fold_0'][1]['target'].shape}\n  test_dataset[model_input].shape: {ret_split_data['fold_0'][2]['model_input'].shape}, test_dataset[target].shape: {ret_split_data['fold_0'][2]['target'].shape}")
+    LOGGER.info("="*80)
+
+    return ret_split_data
+
+
+def split_data(model_input_df: pd.DataFrame, target_df: pd.DataFrame = None, batch_size: int = None, n_folds: int = None):
+    """
+    Split dataset to train, validation, test.
+    """
+    if batch_size is not None and n_folds is None:
+        train_dataset, val_dataset, test_dataset = split_data_with_varied_ratio(model_input_df=model_input_df, batch_size=batch_size, target_df=target_df)
+        return {"fold_0": [train_dataset, val_dataset, test_dataset]}
+    elif batch_size is None and n_folds is not None:
+        return split_data_with_kfold(model_input_df=model_input_df, target_df=target_df, n_folds=n_folds)
+    else:
+        LOGGER.error("batch_size and n_folds are mutually exclusive")
 
 
 def find_abs_max_cross_corr(x):

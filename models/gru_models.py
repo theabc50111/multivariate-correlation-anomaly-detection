@@ -15,6 +15,7 @@ import numpy as np
 import torch
 from torch.nn import GRU, Dropout, Linear, Sequential, Softmax
 from tqdm import tqdm
+
 from utils.log_utils import Log
 
 LOGGER = Log().init_logger(logger_name=__name__)
@@ -83,6 +84,7 @@ class GRUCorrClass(torch.nn.Module):
                                 "seq_len": self.model_cfg['seq_len'],
                                 "epochs": epochs,
                                 "batch_size": self.model_cfg['batch_size'],
+                                "fold_idx": self.model_cfg['fold_idx'],
                                 "tr_batches_per_epoch": self.num_tr_batches,
                                 "val_batches_per_epoch": self.num_val_batches,
                                 "opt_lr": self.model_cfg['learning_rate'],
