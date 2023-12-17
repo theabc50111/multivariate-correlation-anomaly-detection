@@ -13,12 +13,12 @@ from pprint import pformat
 import numpy as np
 import pandas as pd
 import torch
+from torch.nn import CrossEntropyLoss, MSELoss
+
 from models.cnn_gru_models import (CNNOneDimGRUCorrClass,
                                    CNNOneDimGRUResMapCorrClass)
 from models.gru_models import (GRUCorrClass, GRUCorrClassCustomFeatures,
                                GRUCorrClassOneFeature, GRUCorrCoefPred)
-from torch.nn import CrossEntropyLoss, MSELoss
-
 from utils.assorted_utils import load_data_cfg, split_data
 from utils.log_utils import Log
 from utils.metrics_utils import (CustomIndicesCrossEntropyLoss,
@@ -189,7 +189,7 @@ if __name__ == "__main__":
         pass
     else:
         model_input_df = corr_df
-    folds_settings = f"{ARGS.n_folds}_folds_{time.strftime('%Y%m%d%H%M%S', time.localtime())}"
+    folds_settings = f"{ARGS.n_folds}_folds_{time.strftime('%Y%m%d%H%M%S', time.localtime())}" if ARGS.n_folds is not None else "no_fold"
     split_data_setting = {"batch_size": ARGS.batch_size if ARGS.n_folds is None else None,
                           "n_folds": None if ARGS.n_folds is None else ARGS.n_folds}
     for fold_idx, (train_dataset, val_dataset, test_dataset) in split_data(model_input_df=model_input_df, target_df=target_df, **split_data_setting).items():
