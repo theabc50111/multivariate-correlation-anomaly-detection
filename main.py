@@ -193,6 +193,7 @@ if __name__ == "__main__":
     split_data_setting = {"batch_size": ARGS.batch_size if ARGS.n_folds is None else None,
                           "n_folds": None if ARGS.n_folds is None else ARGS.n_folds}
     for fold_idx, (train_dataset, val_dataset, test_dataset) in split_data(model_input_df=model_input_df, target_df=target_df, **split_data_setting).items():
+        fold_idx = fold_idx if ARGS.n_folds is not None else "no_fold"
         LOGGER.info(f"===== For fold_idx:{fold_idx} =====")
         # model configuration
         basic_model_cfg = {"tr_epochs": ARGS.tr_epochs,
