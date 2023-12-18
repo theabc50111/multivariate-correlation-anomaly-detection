@@ -299,8 +299,8 @@ if __name__ == "__main__":
             if len(ARGS.inference_models) == 1:
                 model_type = ModelType[ARGS.inference_models[0]]
                 model = model_type.set_model(basic_model_cfg, ARGS)
-                model_dir, _ = model_type.set_save_model_dir(THIS_FILE_DIR, output_file_name, ARGS.corr_type, s_l, w_l)
-                model_param_path = model_dir.parents[2].joinpath(ARGS.inference_model_paths[0])
+                model_dir, _ = model_type.set_save_model_dir(THIS_FILE_DIR, output_file_name, ARGS.corr_type, s_l, w_l, folds_settings)
+                model_param_path = model_dir.parents[3].joinpath(ARGS.inference_model_paths[0])
                 assert model_param_path.exists(), f"{model_param_path} not exists"
                 model.load_state_dict(torch.load(model_param_path, map_location=device))
                 model.eval()

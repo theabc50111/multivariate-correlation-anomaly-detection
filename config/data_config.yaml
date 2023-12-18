@@ -131,7 +131,7 @@ DATASETS:
         GIVEN_PAIRS_IDX: [0]
         PCA_SETTINGS: {n_samples: 4950, n_featues: 1209, pca_explanation_variance_thres: 0.01, scaler: 'MinMaxScaler'}
         CLUSTER_SETTINGS: {n_samples: 4950, n_features: 34, n_clusters: 2193, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_label: 959}
-        OTHER_SETTINGS: {designated_sample: "ADBE & MCHP", designated_sample_idx: 158}
+        OTHER_SETTINGS: {designated_sample: "ADBE & ZBH", designated_sample_idx: 158}
         OUTPUT_FILE_NAME_BASIS: "sp500_20112015_pca_cluster_pairs_given_pair_2"
     SP500_20112015_PCA_CLUSTER_MIX_GIVEN_ITEMS:
         FILE_PATH: *sp500_20112015_file_path
