@@ -1,3 +1,4 @@
+import json
 import logging
 from itertools import combinations
 from pathlib import Path
@@ -171,18 +172,6 @@ def convert_str_bins_list(str_bins: str) -> list:
     return bins_list
 
 
-def load_data_cfg():
-    """
-    Load data config file.
-    """
-    this_file_dir = Path(__file__).parent
-    data_config_path = this_file_dir/"../config/data_config.yaml"
-    with open(data_config_path) as f:
-        data = dynamic_yaml.load(f)
-        data_cfg = yaml.full_load(dynamic_yaml.dump(data))
-    return data_cfg
-
-
 def get_certain_level_dict_items(nested_dict: dict, lvl: int):
     """
     Get the items of certain level of nested dict
@@ -208,6 +197,34 @@ def get_certain_level_dict_values_given_key(nested_dict: dict, lvl: int, key: st
             LOGGER.error(f"item[1] is not list, item[0]: {item[0]}, key: {key}, item[1]: {item[1]}")
 
     return ret_values
+
+
+def update_and_insert_json(file_location: Path, data: dict, display_diff: bool = False):
+    """
+    Update and insert json file.
+    """
+    with open(file_location, 'r+') as json_file:
+        json_from_file = json.load(json_file)
+        for key in data:
+            ori_value = json_from_file.get(key)
+            json_from_file[key] = data[key]  # make modifications here
+            if display_diff and ori_value != json_from_file.get(key):
+                LOGGER.info(f"ori_json:({key}: {ori_value})")
+                LOGGER.info(f"revise_json:({key}: {json_from_file.get(key)})")
+        json_file.seek(0)  # rewind to top of the file
+        json.dump(json_from_file, json_file)
+
+
+def load_data_cfg():
+    """
+    Load data config file.
+    """
+    this_file_dir = Path(__file__).parent
+    data_config_path = this_file_dir/"../config/data_config.yaml"
+    with open(data_config_path) as f:
+        data = dynamic_yaml.load(f)
+        data_cfg = yaml.full_load(dynamic_yaml.dump(data))
+    return data_cfg
 
 
 def load_multiple_data(data_implement: str, retrieve_items_setting: str, corr_type: str, target_df_bins: str, w_l: int, s_l: int, corr_ser_clac_method: str) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
