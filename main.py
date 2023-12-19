@@ -83,6 +83,16 @@ class ModelType(Enum):
         return model_dir, model_log_dir
 
 
+def rename_and_move_log_file(args: argparse.Namespace, model_log_dir: Path, folds_settings: str):
+    if args.train_model is not None and args.save_model:
+        if args.n_folds is None and globals().get("saved_model_name_prefix"):
+            ori_log_file_path = THIS_FILE_DIR/"models/model_train_info.log"
+            new_log_file_path = model_log_dir/f"{saved_model_name_prefix}.log"
+        elif args.n_folds is not None:
+            ori_log_file_path = THIS_FILE_DIR/"models/model_train_info.log"
+            new_log_file_path = model_log_dir/f"{folds_settings}.log"
+        os.replace(ori_log_file_path, new_log_file_path)
+
 if __name__ == "__main__":
     args_parser = argparse.ArgumentParser()
     args_parser.add_argument("--data_implement", type=str, nargs='?', default="PW_CONST_DIM_70_BKPS_0_NOISE_STD_10",
@@ -328,13 +338,4 @@ if __name__ == "__main__":
             LOGGER.info(f"metric_fn:{basic_model_cfg['metric_fn'] if 'metric_fn' in basic_model_cfg.keys() else None}")
             LOGGER.info(f"Special args of loss_fns: {[(loss_fn, loss_args) for loss_fn, loss_args in loss_fns_dict['fn_args'].items() for arg in loss_args if arg not in ['input', 'target']]}")
             LOGGER.info(f"loss:{loss}, edge_acc:{edge_acc}")
-    if ARGS.train_model is not None and ARGS.save_model:
-        if ARGS.n_folds is None and globals().get("saved_model_name_prefix"):
-            ori_log_file_path = THIS_FILE_DIR/"models/model_train_info.log"
-            new_log_file_path = model_log_dir/f"{saved_model_name_prefix}.log"
-            os.replace(ori_log_file_path, new_log_file_path)
-        elif ARGS.n_folds is not None:
-            ori_log_file_path = THIS_FILE_DIR/"models/model_train_info.log"
-            new_log_file_path = model_log_dir/f"{folds_settings}.log"
-            os.replace(ori_log_file_path, new_log_file_path)
-
+    rename_and_move_log_file(ARGS, model_log_dir, folds_settings)
