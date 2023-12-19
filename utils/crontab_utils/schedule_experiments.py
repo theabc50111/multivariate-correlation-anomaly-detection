@@ -8,7 +8,7 @@ data_implement_list = ["--data_implement SP500_20112015_RAND_1"]  # ["", "--data
 batch_size_list = [""]
 n_folds_list = ["--n_folds 5"]  # ["", "--n_folds 2", "--n_folds 3"]
 tr_epochs_list = [""]  # ["", "--tr_epochs 200"]
-train_models_list = ["--train_models CNNONEDIMGRURESMAPCORRCLASS"]  # ["", "--train_models GRUCORRCLASS", "--train_models GRUCORRCLASS --train_models GRUCORRCLASSCUSTOMFEATURES --train_models GRUCORRCOEFPRED"]
+train_model_list = ["--train_model CNNONEDIMGRURESMAPCORRCLASS"]  # ["", "--train_model GRUCORRCLASS"]
 corr_type_list = ["--corr_type pearson"]  # ["--corr_type pearson", "--corr_type cross_corr"]
 seq_len_list = ["--seq_len 30"]  # ["--seq_len 5", "--seq_len 10"]
 model_input_cus_bins_list = [""]  # ["", "--model_input_cus_bins -1 --model_input_cus_bins 0 --model_input_cus_bins 1", "--model_input_cus_bins -1 --model_input_cus_bins -0.3 --model_input_cus_bins 0.3 --model_input_cus_bins 1", "--model_input_cus_bins -1 --model_input_cus_bins -0.5 --model_input_cus_bins 0 --model_input_cus_bins 0.5 --model_input_cus_bins 1"]
@@ -27,12 +27,12 @@ custom_indices_loss_idx_list = [""]  # ["", "--custom_indices_loss_idx 0", "--cu
 custom_indices_metric_idx_list = [""]  # ["", "--custom_indices_metric_idx 0", "--custom_indices_metric_idx 0 --custom_indices_metric_idx 1 --custom_indices_metric_idx 2"]
 output_type_list = ["--output_type class_probability"]  # ["--output_type discretize", "--output_type class_probability"]
 
-args_values = list(product(data_implement_list, batch_size_list, n_folds_list, tr_epochs_list, train_models_list, corr_type_list, seq_len_list, model_input_cus_bins_list,
+args_values = list(product(data_implement_list, batch_size_list, n_folds_list, tr_epochs_list, train_model_list, corr_type_list, seq_len_list, model_input_cus_bins_list,
                            target_mats_path_list, learning_rate_list, weight_decay_list, use_optim_scheduler_list,
                            drop_pos_list, drop_p_list, gru_l_list, gru_h_list,
                            gru_input_feature_idx_list, use_weighted_loss_list, tol_edge_acc_loss_atol_list, custom_indices_loss_idx_list, custom_indices_metric_idx_list,
                            output_type_list))
-args_keys = ["data_implement", "batch_size", "n_folds", "tr_epochs", "train_models", "corr_type", "seq_len", "model_input_cus_bins", "target_mats_path",
+args_keys = ["data_implement", "batch_size", "n_folds", "tr_epochs", "train_model", "corr_type", "seq_len", "model_input_cus_bins", "target_mats_path",
              "learning_rate", "weight_decay", "use_optim_scheduler", "drop_pos", "drop_p", "gru_l", "gru_h", "gru_input_feature_idx", "use_weighted_loss",
              "tol_edge_acc_loss_atol", "custom_indices_loss_idx", "custom_indices_metric_idx", "output_type"]
 args_list = []
