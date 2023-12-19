@@ -181,7 +181,7 @@ def get_certain_level_dict_items(nested_dict: dict, lvl: int):
     elif all(isinstance(sub_dict, dict) for sub_dict in nested_dict.values()):
         return [item for sub_dict in nested_dict.values() for item in get_certain_level_dict_items(nested_dict=sub_dict, lvl=lvl-1)]
     else:
-        LOGGER.error("input_dict is not nested_dict")
+        LOGGER.error(f"The shallowest layer of input_dict lower than input level:{lvl}")
 
 
 def get_certain_level_dict_values_given_key(nested_dict: dict, lvl: int, key: str):

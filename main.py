@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 # coding: utf-8
 import argparse
+import os
 import sys
-import time
 import traceback
 import warnings
+from collections import deque
+from datetime import datetime
 from enum import Enum, auto
 from math import ceil
 from pathlib import Path
@@ -26,11 +28,11 @@ from utils.metrics_utils import (CustomIndicesCrossEntropyLoss,
                                  TolEdgeAccuracyLoss)
 from utils.plot_utils import plot_heatmap
 
+warnings.simplefilter("ignore")
+SCRIPT_START_TIME = datetime.strftime(datetime.now(), "%Y%m%d%H%M%S")
 THIS_FILE_DIR = Path(__file__).resolve().parent
 DATA_CFG = load_data_cfg()
-
-LOGGER = Log().init_logger(logger_name=__name__)
-warnings.simplefilter("ignore")
+LOGGER = Log().init_logger(logger_name=__name__, update_config=[(deque(["root", "handlers"]), ["console", "info_file_handler"])])
 
 
 class ModelType(Enum):
@@ -108,7 +110,7 @@ if __name__ == "__main__":
                              help="input the relative path of target matrices, the base directory of path is DATA_CFG[DIR][PIPELINE_DATA_DIR])/DATA_CFG[DATASETS][data_implement][OUTPUT_FILE_NAME_BASIS] + train_items_setting")
     args_parser.add_argument("--cuda_device", type=int, nargs='?', default=0,
                              help="input the number of cuda device")
-    args_parser.add_argument("--train_models", type=str, nargs='+', default=[],
+    args_parser.add_argument("--train_model", type=str, nargs='?', default=None,
                              choices=["GRUCORRCOEFPRED", "GRUCORRCLASS", "GRUCORRCLASSCUSTOMFEATURES", "GRUCORRCLASSONEFEATURE", "CNNONEDIMGRUCORRCLASS", "CNNONEDIMGRURESMAPCORRCLASS"],
                              help="input to decide which models to train, the choices are [GRUCORRCOEFPRED, GRUCORRCLASS, GRUCORRCLASSCUSTOMFEATURES, GRUCORRCLASSONEFEATURE, CNNONEDIMGRUCORRCLASS, CNNONEDIMGRURESMAPCORRCLASS]")
     args_parser.add_argument("--learning_rate", type=float, nargs='?', default=0.001,
@@ -149,13 +151,13 @@ if __name__ == "__main__":
     args_parser.add_argument("--inference_data_split", type=str, nargs='?', default="val",
                              help="input the data split of inference data, the choices are [train, val, test]")
     ARGS = args_parser.parse_args()
-    assert bool(ARGS.train_models) != bool(ARGS.inference_models), "train_models and inference_models must be input one of them"
+    assert bool(ARGS.train_model) != bool(ARGS.inference_models), "train_model and inference_models must be input one of them"
     assert bool(ARGS.drop_pos) == bool(ARGS.drop_p), "drop_pos and drop_p must be both input or not input"
-    assert ("GRUCORRCOEFPRED" not in ARGS.train_models+ARGS.inference_models) or (ARGS.output_type == "corr_coef"), "output_type must be corr_coef when train_models|inferene_models is GRUCORRCOEFPRED"
-    assert bool(set(ARGS.train_models+ARGS.inference_models) - {"GRUCORRCLASS", "GRUCORRCLASSCUSTOMFEATURES", "GRUCORRCLASSONEFEATURE", "CNNONEDIMGRUCORRCLASS", "CNNONEDIMGRURESMAPCORRCLASS"}) or (ARGS.output_type == "class_probability"), "output_type must be class_probability when train_models|inferene_models is not GRUCORRCLASSCUSTOMFEATURES or GRUCORRCLASSONEFEATURE"
+    assert ("GRUCORRCOEFPRED" not in [ARGS.train_model]+ARGS.inference_models) or (ARGS.output_type == "corr_coef"), "output_type must be corr_coef when train_model|inferene_models is GRUCORRCOEFPRED"
+    assert bool(set([ARGS.train_model]+ARGS.inference_models) - {"GRUCORRCLASS", "GRUCORRCLASSCUSTOMFEATURES", "GRUCORRCLASSONEFEATURE", "CNNONEDIMGRUCORRCLASS", "CNNONEDIMGRURESMAPCORRCLASS"}) or (ARGS.output_type == "class_probability"), "output_type must be class_probability when train_model|inferene_models is not GRUCORRCLASSCUSTOMFEATURES or GRUCORRCLASSONEFEATURE"
     assert "class_fc" not in ARGS.drop_pos or ARGS.output_type == "class_probability", "output_type must be class_probability when class_fc in drop_pos"
-    assert ("GRUCORRCLASS" not in ARGS.train_models+ARGS.inference_models) or ARGS.gru_input_feature_idx is None, "gru_input_feature_idx must be None when train_models|inferene_models is GRUCORRCLASS"
-    assert ("GRUCORRCLASSCUSTOMFEATURES" not in ARGS.train_models+ARGS.inference_models) or (ARGS.gru_input_feature_idx is not None and len(ARGS.gru_input_feature_idx) >= 1), "gru_input_feature_idx must be input when train_models|inferene_models is GRUCORRCLASSCUSTOMFEATURES and len(gru_input_feature_idx) must be greater equal to 1"
+    assert ("GRUCORRCLASS" not in [ARGS.train_model]+ARGS.inference_models) or ARGS.gru_input_feature_idx is None, "gru_input_feature_idx must be None when train_model|inferene_models is GRUCORRCLASS"
+    assert ("GRUCORRCLASSCUSTOMFEATURES" not in [ARGS.train_model]+ARGS.inference_models) or (ARGS.gru_input_feature_idx is not None and len(ARGS.gru_input_feature_idx) >= 1), "gru_input_feature_idx must be input when train_model|inferene_models is GRUCORRCLASSCUSTOMFEATURES and len(gru_input_feature_idx) must be greater equal to 1"
     LOGGER.info(pformat(f"\n{vars(ARGS)}", indent=1, width=100, compact=True))
 
     # Data implement & output setting & testset setting
@@ -189,7 +191,7 @@ if __name__ == "__main__":
         pass
     else:
         model_input_df = corr_df
-    folds_settings = f"{ARGS.n_folds}_folds_{time.strftime('%Y%m%d%H%M%S', time.localtime())}" if ARGS.n_folds is not None else "no_fold"
+    folds_settings = f"{ARGS.n_folds}_folds_{SCRIPT_START_TIME}" if ARGS.n_folds is not None else "no_fold"
     split_data_setting = {"batch_size": ARGS.batch_size if ARGS.n_folds is None else None,
                           "n_folds": None if ARGS.n_folds is None else ARGS.n_folds}
     for fold_idx, (train_dataset, val_dataset, test_dataset) in split_data(model_input_df=model_input_df, target_df=target_df, **split_data_setting).items():
@@ -256,11 +258,11 @@ if __name__ == "__main__":
         LOGGER.info(f'Test set       = {test_dataset["model_input"].shape[1]} timesteps')
         LOGGER.info("="*80)
 
-        if len(ARGS.train_models) > 0:
-            assert list(filter(lambda x: x in ModelType.__members__.keys(), ARGS.train_models)), f"train_models must be input one of {ModelType.__members__.keys()}"
+        if ARGS.train_model is not None:
+            assert ARGS.train_model in ModelType.__members__.keys(), f"train_model must be input one of {ModelType.__members__.keys()}"
             for model_type in ModelType:
                 is_training, train_count = True, 0
-                while (model_type.name in ARGS.train_models) and (is_training is True) and (train_count < 10):
+                while (model_type.name in ARGS.train_model) and (is_training is True) and (train_count < 10):
                     try:
                         LOGGER.info(f"===== train model:{model_type.name} =====")
                         train_count += 1
@@ -283,7 +285,7 @@ if __name__ == "__main__":
                         is_training = False
                         if save_model_info:
                             model_dir, model_log_dir = model_type.set_save_model_dir(THIS_FILE_DIR, output_file_name, ARGS.corr_type, s_l, w_l, folds_settings)
-                            model.save_model(best_model, best_model_info, model_dir=model_dir, model_log_dir=model_log_dir)
+                            saved_model_name_prefix = model.save_model(best_model, best_model_info, model_dir=model_dir, model_log_dir=model_log_dir)
         elif len(ARGS.inference_models) > 0:
             LOGGER.info(f"===== inference model:[{ARGS.inference_models}] on {ARGS.inference_data_split} data =====")
             LOGGER.info("===== if inference_models is more than one, the inference result is ensemble result =====")
@@ -326,3 +328,13 @@ if __name__ == "__main__":
             LOGGER.info(f"metric_fn:{basic_model_cfg['metric_fn'] if 'metric_fn' in basic_model_cfg.keys() else None}")
             LOGGER.info(f"Special args of loss_fns: {[(loss_fn, loss_args) for loss_fn, loss_args in loss_fns_dict['fn_args'].items() for arg in loss_args if arg not in ['input', 'target']]}")
             LOGGER.info(f"loss:{loss}, edge_acc:{edge_acc}")
+    if ARGS.train_model is not None and ARGS.save_model:
+        if ARGS.n_folds is None and globals().get("saved_model_name_prefix"):
+            ori_log_file_path = THIS_FILE_DIR/"models/model_train_info.log"
+            new_log_file_path = model_log_dir/f"{saved_model_name_prefix}.log"
+            os.replace(ori_log_file_path, new_log_file_path)
+        elif ARGS.n_folds is not None:
+            ori_log_file_path = THIS_FILE_DIR/"models/model_train_info.log"
+            new_log_file_path = model_log_dir/f"{folds_settings}.log"
+            os.replace(ori_log_file_path, new_log_file_path)
+

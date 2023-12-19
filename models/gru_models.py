@@ -367,11 +367,15 @@ class GRUCorrClass(torch.nn.Module):
     def save_model(unsaved_model: OrderedDict, model_info: dict, model_dir: Path, model_log_dir: Path):
         e_i = model_info.get("best_val_epoch")
         t_stamp = datetime.strftime(datetime.now(), "%Y%m%d%H%M%S")
-        torch.save(unsaved_model, model_dir/f"epoch_{e_i}-{t_stamp}.pt")
-        with open(model_log_dir/f"epoch_{e_i}-{t_stamp}.json", "w") as f:
+        saved_model_name_prefix = f"epoch_{e_i}-{t_stamp}"
+        torch.save(unsaved_model, model_dir/f"{saved_model_name_prefix}.pt")
+        with open(model_log_dir/f"{saved_model_name_prefix}.json", "w") as f:
             json_str = json.dumps(model_info)
             f.write(json_str)
         LOGGER.info(f"model has been saved in:{model_dir}")
+
+        return saved_model_name_prefix
+
 
     @staticmethod
     def yield_batch_data(model_input_data: np.ndarray, target_data: np.ndarray, seq_len: int = 10, batch_size: int = 5):
