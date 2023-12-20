@@ -1,6 +1,6 @@
+import io
 import logging
 import logging.config
-import sys
 from collections import deque
 from pathlib import Path
 from typing import Any, List, Tuple
@@ -55,3 +55,22 @@ class Log:
         pd.set_option('display.max_rows', self.max_rows)
         pd.set_option('display.max_columns', self.max_columns)
         pd.set_option('display.expand_frame_repr', self.expand_frame_repr)
+
+
+class TqdmToLogger(io.StringIO):
+    """
+        Output stream for TQDM which will output to logger module instead of
+        the StdOut.
+    """
+    buf = ''
+
+    def __init__(self, logger, log_level: int = logging.INFO):
+        super().__init__()
+        self.logger = logger
+        self.level = logging.INFO
+
+    def write(self, buf):
+        self.buf = buf.strip('\r\n\t ')
+
+    def flush(self):
+        self.logger.log(self.level, self.buf)

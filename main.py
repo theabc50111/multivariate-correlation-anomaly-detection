@@ -32,7 +32,10 @@ warnings.simplefilter("ignore")
 SCRIPT_START_TIME = datetime.strftime(datetime.now(), "%Y%m%d%H%M%S")
 THIS_FILE_DIR = Path(__file__).resolve().parent
 DATA_CFG = load_data_cfg()
-LOGGER = Log().init_logger(logger_name=__name__, update_config=[(deque(["root", "handlers"]), ["console", "info_file_handler"])])
+
+ORI_LOG_FILE_PATH = THIS_FILE_DIR/f"models/model_train_info_{SCRIPT_START_TIME}.log"
+LOGGER = Log().init_logger(logger_name=__name__, update_config=[(deque(["root", "handlers"]), ["console", "info_file_handler"]),
+                                                                (deque(["handlers", "info_file_handler", "filename"]), ORI_LOG_FILE_PATH)])
 
 
 class ModelType(Enum):
@@ -86,12 +89,12 @@ class ModelType(Enum):
 def rename_and_move_log_file(args: argparse.Namespace, model_log_dir: Path, folds_settings: str):
     if args.train_model is not None and args.save_model:
         if args.n_folds is None and globals().get("saved_model_name_prefix"):
-            ori_log_file_path = THIS_FILE_DIR/"models/model_train_info.log"
+            ###ori_log_file_path = THIS_FILE_DIR/"models/model_train_info.log"
             new_log_file_path = model_log_dir/f"{saved_model_name_prefix}.log"
         elif args.n_folds is not None:
-            ori_log_file_path = THIS_FILE_DIR/"models/model_train_info.log"
+            ###ori_log_file_path = THIS_FILE_DIR/"models/model_train_info.log"
             new_log_file_path = model_log_dir/f"{folds_settings}.log"
-        os.replace(ori_log_file_path, new_log_file_path)
+        os.replace(ORI_LOG_FILE_PATH, new_log_file_path)
 
 if __name__ == "__main__":
     args_parser = argparse.ArgumentParser()

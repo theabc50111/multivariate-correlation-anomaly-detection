@@ -16,7 +16,7 @@ import torch
 from torch.nn import GRU, Dropout, Linear, Sequential, Softmax
 from tqdm import tqdm
 
-from utils.log_utils import Log
+from utils.log_utils import Log, TqdmToLogger
 
 LOGGER = Log().init_logger(logger_name=__name__)
 
@@ -306,7 +306,8 @@ class GRUCorrClass(torch.nn.Module):
         self.init_best_model_info(train_data, val_data, loss_fns, epochs)
         self.show_model_config()
         best_model = []
-        for epoch_i in tqdm(range(epochs)):
+        tqdm_out = TqdmToLogger(LOGGER)
+        for epoch_i in tqdm(range(epochs), file=tqdm_out, miniters=10, desc="Training progress"):
             self.train()
             self.init_epoch_metrics(loss_fns)
             # Train on batches
