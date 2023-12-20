@@ -38,7 +38,11 @@ def gen_random_items(all_items: list, ret_items_len: int = 100, verbose: int = 0
 
 def gen_corr_prop_filtered_items(item_pairs_ser: pd.Series, corr_prop_cond: str, item_names: tuple, fill_diag_val: int, ret_items_len: int, cliques_dir: Path, can_check_filtering_proc: bool):
     corr_prop_proximity_df = convert_pairs_data_to_proximity_mat(item_pairs_ser=item_pairs_ser, item_names=item_names, fill_diag_val=fill_diag_val)
-    corr_prop_mask_settings = {"positive_corr_prop": (corr_prop_proximity_df > 0),
+    corr_prop_mask_settings = {"strong_positive_corr_prop": (corr_prop_proximity_df > 0.7),
+                               "moderate_positive_corr_prop": (corr_prop_proximity_df < 0.7) & (corr_prop_proximity_df > 0.3),
+                               "above_moderate_positive_corr_prop": (corr_prop_proximity_df > 0.3),
+                               "below_moderate_positive_corr_prop": (corr_prop_proximity_df < 0.3),
+                               "positive_corr_prop": (corr_prop_proximity_df > 0),
                                "negative_corr_prop": (corr_prop_proximity_df < 0)}
     corr_prop_mask = corr_prop_mask_settings[corr_prop_cond]
     corr_prop_filtered_proximity_df, _ = filter_proximity_mat(proximity_mat=corr_prop_proximity_df.copy(), filter_mask=corr_prop_mask, tmp_clique_dir=cliques_dir)

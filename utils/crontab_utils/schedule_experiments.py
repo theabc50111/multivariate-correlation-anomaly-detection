@@ -4,9 +4,9 @@ from datetime import datetime, timedelta
 from itertools import chain, product, repeat
 from pprint import pprint
 
-data_implement_list = ["--data_implement SP500_20112015_RAND_1"]  # ["", "--data_implement LINEAR_REG_ONE_CLUSTER_DIM_30_BKPS_0_NOISE_STD_30"]
+data_implement_list = ["--data_implement SP500_20112015_CORR_MEAN_ABOVE_MODERATE_POSITIVE_KEEP", "--data_implement SP500_20112015_CORR_MEAN_BELOW_MODERATE_POSITIVE_KEEP"]  # ["", "--data_implement LINEAR_REG_ONE_CLUSTER_DIM_30_BKPS_0_NOISE_STD_30"]
 batch_size_list = [""]
-n_folds_list = ["--n_folds 5"]  # ["", "--n_folds 2", "--n_folds 3"]
+n_folds_list = [""]  # ["", "--n_folds 2", "--n_folds 3"]
 tr_epochs_list = [""]  # ["", "--tr_epochs 200"]
 train_model_list = ["--train_model CNNONEDIMGRURESMAPCORRCLASS"]  # ["", "--train_model GRUCORRCLASS"]
 corr_type_list = ["--corr_type pearson"]  # ["--corr_type pearson", "--corr_type cross_corr"]
@@ -21,7 +21,7 @@ drop_p_list = [""]  # ["--drop_p 0.33", "--drop_p 0.5", "--drop_p 0.66"]
 gru_l_list = [""]  # ["--gru_l 1", "--gru_l 2", "--gru_l 3", "--gru_l 4", "--gru_l 5"]
 gru_h_list = [""]  # ["--gru_h 40", "--gru_h 80", "--gru_h 100", "--gru_h 320", "--gru_h 640"]
 gru_input_feature_idx_list = [""]  # ["--input_idx 0", "--input_idx 1", "--input_idx 2", "--input_idx 0 --input_idx 1 --input_idx 2 --input_idx 3"]
-use_weighted_loss_list = [""]  # ["", "--use_weighted_loss true"]
+use_weighted_loss_list = ["", "--use_weighted_loss true"]  # ["", "--use_weighted_loss true"]
 tol_edge_acc_loss_atol_list = [""]  # ["", "--tol_edge_acc_loss_atol 0.05", "--tol_edge_acc_loss_atol 0.1", "--tol_edge_acc_loss_atol 0.33"]
 custom_indices_loss_idx_list = [""]  # ["", "--custom_indices_loss_idx 0", "--custom_indices_loss_idx 0 --custom_indices_loss_idx 1 --custom_indices_loss_idx 2"]
 custom_indices_metric_idx_list = [""]  # ["", "--custom_indices_metric_idx 0", "--custom_indices_metric_idx 0 --custom_indices_metric_idx 1 --custom_indices_metric_idx 2"]
@@ -53,7 +53,7 @@ if set(map(lambda x: x['gru_l'], args_list)) != {""}:
     model_timedelta_list = [timedelta(hours=1, minutes=0), timedelta(hours=3, minutes=0)]  # The order of elements of model_timedelta_list should comply with the order of elements of args_list
 else:
     num_models = len(args_list)
-    model_timedelta_list = [timedelta(hours=1, minutes=0)]
+    model_timedelta_list = [timedelta(hours=1, minutes=55)]
 
 model_timedelta_list = list(chain.from_iterable(repeat(x, num_models) for x in model_timedelta_list))
 model_timedelta_list = [model_timedelta_list[-1]] + model_timedelta_list  # Use the last element of model_timedelta_list to fill the first element of model_timedelta_list for repeating the whole experiments.
