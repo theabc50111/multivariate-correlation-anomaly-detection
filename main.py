@@ -275,7 +275,7 @@ if __name__ == "__main__":
             assert ARGS.train_model in ModelType.__members__.keys(), f"train_model must be input one of {ModelType.__members__.keys()}"
             for model_type in ModelType:
                 is_training, train_count = True, 0
-                while (model_type.name in ARGS.train_model) and (is_training is True) and (train_count < 10):
+                while (model_type.name == ARGS.train_model) and (is_training is True) and (train_count < 10):
                     try:
                         LOGGER.info(f"===== train model:{model_type.name} =====")
                         train_count += 1
