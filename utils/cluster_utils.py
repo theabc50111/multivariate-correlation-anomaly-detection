@@ -12,7 +12,8 @@ import pandas as pd
 from scipy.linalg import issymmetric
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.decomposition import PCA
-from sklearn.metrics import (pairwise_distances, silhouette_samples,
+from sklearn.metrics import (calinski_harabasz_score, davies_bouldin_score,
+                             pairwise_distances, silhouette_samples,
                              silhouette_score)
 from sklearn.neighbors import NearestCentroid
 from sklearn.preprocessing import MinMaxScaler
@@ -159,6 +160,9 @@ def calc_hrchy_cluster_given_n_clusters(n_clusters: int, data: pd.DataFrame, clu
     assert cluster_centers.shape[0] == n_clusters and cluster_centers.shape[1] == cluster_conds["n_features"], "cluster_centers.shape is not equal to (n_clusters, n_features)"
 
     silhouette_avg = silhouette_score(data, each_sample_cluster_labels)  # The silhouette_score gives the average value for all the samples. This gives a perspective into the density and separation of the formed clusters
+    db_score = davies_bouldin_score(data, each_sample_cluster_labels)
+    ch_score = calinski_harabasz_score(data, each_sample_cluster_labels)
+
     sample_silhouette_values = silhouette_samples(data, each_sample_cluster_labels)  # Compute the silhouette scores for each sample
     pair_cluster_center_dist = pairwise_distances(cluster_centers)  # Compute the diatance between center of clusters
     dist_dict = {f"dist_to_cluster_{i}": pair_cluster_center_dist[::, i] for i in range(n_clusters)}
@@ -169,7 +173,7 @@ def calc_hrchy_cluster_given_n_clusters(n_clusters: int, data: pd.DataFrame, clu
     cluster_data_dict.update(dist_dict)
     clusters_info_df = pd.DataFrame(cluster_data_dict)
 
-    return each_sample_cluster_labels, cluster_centers, silhouette_avg, sample_silhouette_values, clusters_info_df
+    return each_sample_cluster_labels, cluster_centers, silhouette_avg, sample_silhouette_values, db_score, ch_score, clusters_info_df
 
 
 def obs_various_n_clusters_hrchy_cluster(data: pd.DataFrame, cluster_conds: dict, save_fig_path: Path = None, can_plot_each_cluster_info: bool = False):
@@ -183,20 +187,31 @@ def obs_various_n_clusters_hrchy_cluster(data: pd.DataFrame, cluster_conds: dict
     various_n_clusters_model_info_df = pd.DataFrame()
     for n_clusters in n_clusters_list:
         hrchy_ret = calc_hrchy_cluster_given_n_clusters(n_clusters=n_clusters, data=data, cluster_conds=cluster_conds)
-        each_sample_cluster_labels, cluster_centers, silhouette_avg, sample_silhouette_values, clusters_info_df = hrchy_ret
-        various_n_clusters_model_info_df = pd.concat([various_n_clusters_model_info_df, pd.DataFrame({"n_clusters": n_clusters, "cluster_linkage": linkage, "cluster_metric": cluster_metric, "silhouette_avg": silhouette_avg}, index=[0])], axis=0)
+        each_sample_cluster_labels, cluster_centers, silhouette_avg, sample_silhouette_values, db_score, ch_score, clusters_info_df = hrchy_ret
+        various_n_clusters_model_info_df = pd.concat([various_n_clusters_model_info_df, pd.DataFrame({"n_clusters": n_clusters, "cluster_linkage": linkage, "cluster_metric": cluster_metric, "silhouette_avg": silhouette_avg, "db_score": db_score, "ch_score": ch_score}, index=[0])], axis=0)
         if can_plot_each_cluster_info:
             LOGGER.info(f"Plotting Hierarchical Clustering with n_clusters={n_clusters} linkage={linkage} cluster_metric={cluster_metric}")
             plot_cluster_info(data=data.values, each_sample_cluster_labels=each_sample_cluster_labels, cluster_centers=cluster_centers,
                               n_clusters=n_clusters, linkage=linkage, cluster_metric=cluster_metric,
-                              sample_silhouette_values=sample_silhouette_values, silhouette_avg=silhouette_avg, clusters_info_df=clusters_info_df)
-
-    ax = various_n_clusters_model_info_df.loc[::, ["n_clusters", "silhouette_avg"]].plot(title="silhouette_avg vs n_clusters", x="n_clusters", y="silhouette_avg", kind="line", grid=True, figsize=(10, 6))
+                              sample_silhouette_values=sample_silhouette_values, silhouette_avg=silhouette_avg, db_score=db_score, ch_score=ch_score,
+                              clusters_info_df=clusters_info_df)
+    scaler = MinMaxScaler()
+    cluster_score_df = various_n_clusters_model_info_df.loc[::, ["n_clusters", "silhouette_avg", "db_score", "ch_score"]]
+    cluster_score_df.loc[::, ["silhouette_avg", "db_score", "ch_score"]] = scaler.fit_transform(cluster_score_df.loc[::, ["silhouette_avg", "db_score", "ch_score"]])
+    cluster_score_df.loc[::, "reverse_db_score"] = 1 - cluster_score_df.loc[::, "db_score"]
+    cluster_score_df.loc[::, "synthetic_score"] = cluster_score_df.loc[::, ["silhouette_avg", "reverse_db_score", "ch_score"]].sum(axis=1)
     if save_fig_path is not None:
+        ax = cluster_score_df.loc[::, ["n_clusters", "silhouette_avg", "reverse_db_score", "ch_score", "synthetic_score"]].plot(title="cluster_score vs n_clusters",
+                                                                                                                                x="n_clusters",
+                                                                                                                                y=["silhouette_avg", "reverse_db_score", "ch_score", "synthetic_score"],
+                                                                                                                                kind="line", grid=True, figsize=(10, 6))
+        ax.set_xticks(n_clusters_list)
         fig = ax.get_figure()
         fig.savefig(save_fig_path)
         plt.show()
         plt.close()
+    if various_n_clusters_model_info_df.shape[0] > 2:
+        various_n_clusters_model_info_df.loc[::, "synthetic_score"] = cluster_score_df.loc[::, ["synthetic_score"]]
     various_n_clusters_model_info_df = various_n_clusters_model_info_df.set_index("n_clusters")
     DF_LOGGER.info("==================== various_n_clusters_model_info_df ====================")
     DF_LOGGER.info(various_n_clusters_model_info_df)
@@ -243,7 +258,7 @@ def pca_cluster(pca_input_data: pd.DataFrame, pca_kwargs: dict, cluster_kwargs: 
     cluster_conditions = {"n_samples": pca_kwargs["n_samples"], "n_features": len(pri_components),
                           "linkage": cluster_kwargs["linkage"], "cluster_metric": cluster_kwargs["cluster_metric"]}
     hrchy_ret = calc_hrchy_cluster_given_n_clusters(n_clusters=cluster_kwargs["n_clusters"], data=reducted_data_df, cluster_conds=cluster_conditions)
-    each_sample_cluster_labels, cluster_centers, silhouette_avg, sample_silhouette_values, clusters_info_df = hrchy_ret
+    each_sample_cluster_labels, cluster_centers, silhouette_avg, sample_silhouette_values, db_score, ch_score, clusters_info_df = hrchy_ret
     filtered_1_clusters_info_df = filtered_small_n_samples_and_silhouette_min_cluster(clusters_info_df=clusters_info_df, min_cluster_n_samples=3, min_cluster_silhouette=0)
     selected_cluter_labels, max_cluster_dist, filtered_2_clusters_info_df = select_cluster_labels_with_max_dist(filtered_1_clusters_info_df)
 

@@ -233,6 +233,16 @@ def plot_cluster_scatters(ax: mpl.axes._axes.Axes, n_clusters: int, data: np.nda
     ax.set_ylabel("Feature space for the 2nd feature")
 
 
+def plot_cluster_scores(ax: mpl.axes._axes.Axes, silhouette_avg: float, db_score: float, ch_score: float):
+    """Plot the cluster scores"""
+    scores_dict = {"silhouette_avg": silhouette_avg, "db_score": db_score, "ch_score": ch_score}
+    cmp = mpl.colormaps['rainbow']
+    color_each_score_type = cmp(len(scores_dict.keys()))
+    ax.set_title(f"The silhouette_avg is: {silhouette_avg}\nThe davies_bouldin_score is: {db_score}\nThe calinski_harabasz_score is: {ch_score}", fontsize=14)
+    bars = ax.bar(scores_dict.keys(), scores_dict.values(), color=color_each_score_type)
+    ax.bar_label(bars, fmt='%.8f', label_type='center', fontsize=14)
+
+
 def plot_table(ax: mpl.axes._axes.Axes, df: pd.DataFrame):
     """Plot the table"""
     n_rows, n_cols = df.shape
@@ -244,21 +254,24 @@ def plot_table(ax: mpl.axes._axes.Axes, df: pd.DataFrame):
 
 def plot_cluster_info(data: np.ndarray, each_sample_cluster_labels: np.ndarray, cluster_centers: np.ndarray,
                       n_clusters: int, linkage: str, cluster_metric: str,
-                      sample_silhouette_values: np.ndarray, silhouette_avg: float, clusters_info_df: pd.DataFrame):
+                      sample_silhouette_values: np.ndarray, silhouette_avg: float, db_score: float, ch_score: float,
+                      clusters_info_df: pd.DataFrame):
     """Plot the cluster info"""
-    mosaic_str = """ab"""
+    mosaic_str = (f"ab\n"
+                  f"cc")
     df_row_len_20_quotient = (clusters_info_df.shape[0]-1)//20  # 20 is the number of rows of each column, and -2 is for excluding the title row and the last row
     fig_row = df_row_len_20_quotient+2
-    varied_figsize = (32, 10*(fig_row))
+    varied_figsize = (32, 5+10*(fig_row))
     for i in range(df_row_len_20_quotient+1):
-        mosaic_str += f"\n{chr(ord('c')+i)}{chr(ord('c')+i)}"
+        mosaic_str += f"\n{chr(ord('d')+i)}{chr(ord('d')+i)}"
     fig, axes = plt.subplot_mosaic(mosaic_str, figsize=varied_figsize, gridspec_kw={'hspace': 0.1, 'wspace': 0.2})
     fig.suptitle(f"Silhouette analysis for Hierarchy clustering on sample data with n_clusters={n_clusters} linkage={linkage} metric={cluster_metric}", fontsize=20, fontweight="bold", y=0.91)
     plot_silhouette(ax=axes['a'], n_clusters=n_clusters, data=data, silhouette_avg=silhouette_avg, sample_silhouette_values=sample_silhouette_values, each_sample_cluster_labels=each_sample_cluster_labels)
-    plot_cluster_scatters(ax=axes['b'], n_clusters=n_clusters, data=data, each_sample_cluster_labels=each_sample_cluster_labels, centers=cluster_centers)
-    after_2_axes = list(axes.values())[2:]
+    plot_cluster_scores(ax=axes['b'], silhouette_avg=silhouette_avg, db_score=db_score, ch_score=ch_score)
+    plot_cluster_scatters(ax=axes['c'], n_clusters=n_clusters, data=data, each_sample_cluster_labels=each_sample_cluster_labels, centers=cluster_centers)
+    table_axes = list(axes.values())[ord(max(mosaic_str))-97-df_row_len_20_quotient:]
     splitted_dfs = [clusters_info_df.iloc[i*20:(i+1)*20, :] for i in range(df_row_len_20_quotient+1)]
-    for ax, splitted_df in zip(after_2_axes, splitted_dfs):
+    for ax, splitted_df in zip(table_axes, splitted_dfs):
         display_df = splitted_df.iloc[::, :10]  # display the first 10 columns
         plot_table(ax=ax, df=display_df)
     plt.show()

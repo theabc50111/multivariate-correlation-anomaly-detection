@@ -149,7 +149,6 @@ def gen_pca_cluster_filtered_samples_each_cluster(pca_input_data: pd.DataFrame, 
     DF_LOGGER.info("========== display_comparison_df ==========")
     DF_LOGGER.info(display_comparison_df)
 
-
     if filter_on == "items":
         assert pca_input_data_samples[0].count(" & ") == 0, f"pca_input_data_samples[0] should not contains ' & ', pca_input_data_samples[0]: {pca_input_data_samples[0]}"
         integrated_items = {"items": integrated_samples_each_cluster, "items_idx": integrated_samples_idx_each_cluster}
@@ -194,3 +193,32 @@ def gen_pca_cluster_samples_with_given_sample(pca_input_data: pd.DataFrame, give
     DF_LOGGER.info(display_comparison_df)
 
     return ret_cluster_samples
+
+
+def gen_pca_cluster_samples(pca_input_data: pd.DataFrame, pca_kwargs: dict, cluster_kwargs: dict):
+    """
+    Generate samples by pca_cluster(), and return samples of each cluster
+    """
+    _, _, clusters_info_df, _, _, each_sample_cluster_labels = pca_cluster(pca_input_data=pca_input_data, pca_kwargs=pca_kwargs, cluster_kwargs=cluster_kwargs)
+    pca_input_data_samples = pca_input_data.index
+    all_clusters_labels = clusters_info_df.loc[::, 'cluster_label'].tolist()
+    all_clusters_samples_df = pd.DataFrame()
+    ret_samples_each_cluster = {}
+    comparison_df = pd.DataFrame({"pca_input_data_samples_idx": list(range(len(pca_input_data_samples))), "pca_input_data_samples": pca_input_data_samples})
+    for cluster_label in all_clusters_labels:
+        cl_key = f"cluster_label_{cluster_label}"
+        cluster_samples = pca_input_data_samples[each_sample_cluster_labels == cluster_label].tolist()
+        cluster_samples_idx = pca_input_data_samples.isin(cluster_samples).nonzero()[0].tolist()
+        ret_samples_each_cluster.update({cl_key: {"samples": cluster_samples,
+                                                  "samples_idx": cluster_samples_idx}})
+        comparison_df[f"{cl_key}_samples"] = comparison_df["pca_input_data_samples"].where(comparison_df["pca_input_data_samples"].isin(ret_samples_each_cluster[cl_key]["samples"]))
+        all_clusters_samples_df = pd.concat([all_clusters_samples_df, pd.DataFrame({f"{cl_key}_samples": cluster_samples})], axis=1)
+    display_comparison_df = comparison_df.dropna(axis=0, thresh=3)
+
+    LOGGER.info("================================= Info of pca_cluster_filtered_samples_each_cluster  =================================")
+    DF_LOGGER.info("========== all_clusters_samples_df ==========")
+    DF_LOGGER.info(all_clusters_samples_df)
+    DF_LOGGER.info("========== display_comparison_df ==========")
+    DF_LOGGER.info(display_comparison_df)
+
+    return ret_samples_each_cluster
