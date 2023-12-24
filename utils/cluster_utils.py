@@ -259,7 +259,7 @@ def pca_cluster(pca_input_data: pd.DataFrame, pca_kwargs: dict, cluster_kwargs: 
                           "linkage": cluster_kwargs["linkage"], "cluster_metric": cluster_kwargs["cluster_metric"]}
     hrchy_ret = calc_hrchy_cluster_given_n_clusters(n_clusters=cluster_kwargs["n_clusters"], data=reducted_data_df, cluster_conds=cluster_conditions)
     each_sample_cluster_labels, cluster_centers, silhouette_avg, sample_silhouette_values, db_score, ch_score, clusters_info_df = hrchy_ret
-    filtered_1_clusters_info_df = filtered_small_n_samples_and_silhouette_min_cluster(clusters_info_df=clusters_info_df, min_cluster_n_samples=3, min_cluster_silhouette=0)
+    filtered_1_clusters_info_df = filtered_small_n_samples_and_silhouette_min_cluster(clusters_info_df=clusters_info_df, min_cluster_n_samples=0, min_cluster_silhouette=0)
     selected_cluter_labels, max_cluster_dist, filtered_2_clusters_info_df = select_cluster_labels_with_max_dist(filtered_1_clusters_info_df)
 
     return selected_cluter_labels, max_cluster_dist, clusters_info_df, filtered_1_clusters_info_df, filtered_2_clusters_info_df, each_sample_cluster_labels

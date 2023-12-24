@@ -4,17 +4,14 @@ from datetime import datetime, timedelta
 from itertools import chain, product, repeat
 from pprint import pprint
 
-data_implement_list = ['--data_implement RAND_1_PCA_CLUSTER_PAIRS_0', '--data_implement RAND_1_PCA_CLUSTER_PAIRS_1',
- '--data_implement RAND_1_PCA_CLUSTER_PAIRS_2', '--data_implement RAND_1_PCA_CLUSTER_PAIRS_3',
- '--data_implement RAND_1_PCA_CLUSTER_PAIRS_4', '--data_implement RAND_1_PCA_CLUSTER_PAIRS_5',
- '--data_implement RAND_1_PCA_CLUSTER_PAIRS_6', '--data_implement RAND_1_PCA_CLUSTER_PAIRS_7',
- '--data_implement RAND_1_PCA_CLUSTER_PAIRS_8', '--data_implement RAND_1_PCA_CLUSTER_PAIRS_9',
- '--data_implement RAND_1_PCA_CLUSTER_PAIRS_10', '--data_implement RAND_1_PCA_CLUSTER_PAIRS_11',
- '--data_implement RAND_1_PCA_CLUSTER_PAIRS_12', '--data_implement RAND_1_PCA_CLUSTER_PAIRS_13',
- '--data_implement RAND_1_PCA_CLUSTER_PAIRS_14', '--data_implement RAND_1_PCA_CLUSTER_PAIRS_15',
- '--data_implement RAND_1_PCA_CLUSTER_PAIRS_16', '--data_implement RAND_1_PCA_CLUSTER_PAIRS_17',
- '--data_implement RAND_1_PCA_CLUSTER_PAIRS_18', '--data_implement RAND_1_PCA_CLUSTER_PAIRS_19',
- '--data_implement RAND_1_PCA_CLUSTER_PAIRS_20']  # ["", "--data_implement LINEAR_REG_ONE_CLUSTER_DIM_30_BKPS_0_NOISE_STD_30"]
+data_implement_list = ['--data_implement ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_0', '--data_implement ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_1', '--data_implement ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_2',
+ '--data_implement ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_3', '--data_implement ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_4', '--data_implement ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_5',
+ '--data_implement ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_6', '--data_implement ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_7', '--data_implement ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_8',
+ '--data_implement ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_9', '--data_implement ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_10', '--data_implement ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_11',
+ '--data_implement ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_12', '--data_implement ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_13', '--data_implement ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_14',
+ '--data_implement ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_15', '--data_implement ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_16', '--data_implement ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_17',
+ '--data_implement ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_18', '--data_implement ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_19', '--data_implement ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_20',
+ '--data_implement ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_21', '--data_implement ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_22', '--data_implement ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_23']  # ["", "--data_implement LINEAR_REG_ONE_CLUSTER_DIM_30_BKPS_0_NOISE_STD_30"]
 batch_size_list = [""]
 n_folds_list = [""]  # ["", "--n_folds 2", "--n_folds 3"]
 tr_epochs_list = [""]  # ["", "--tr_epochs 200"]
