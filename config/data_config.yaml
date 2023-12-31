@@ -329,6 +329,39 @@ DATASETS:
         PCA_SETTINGS: {n_samples: 45, n_featues: 1209, pca_explanation_variance_thres: 0.01, scaler: 'MinMaxScaler'}
         CLUSTER_SETTINGS: {n_samples: 45, n_features: 23, n_clusters: 21, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_label: 20}
         OUTPUT_FILE_NAME_BASIS: "rand_1_pca_cluster_pairs_20"
+
+
+
+
+    RAND_1_PCA_CLUSTER_PAIRS_0_V2:
+        FILE_PATH: *sp500_20112015_rand_1_corr_s1_w50_file_path
+        ALL_SET: []
+        TRAIN_PAIRS_SET: ['AFL & MDLZ', 'DISH & FFIV', 'FFIV & MRK', 'MDLZ & MRK', 'MDLZ & PPL', 'MRK & PPL']
+        TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_RAND_1"]
+        PCA_SETTINGS: {n_samples: 45, n_featues: 1209, pca_explanation_variance_thres: 0.01, scaler: 'MinMaxScaler'}
+        CLUSTER_SETTINGS: {n_samples: 45, n_features: 23, n_clusters: 3, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_label: 0}
+        OUTPUT_FILE_NAME_BASIS: "rand_1_pca_cluster_pairs_0_v2"
+    RAND_1_PCA_CLUSTER_PAIRS_1_V2:
+        FILE_PATH: *sp500_20112015_rand_1_corr_s1_w50_file_path
+        ALL_SET: []
+        TRAIN_PAIRS_SET: ['ADBE & FFIV', 'ADBE & LMT', 'ADBE & MDLZ', 'ADBE & MSFT', 'ADBE & PPL', 'AFL & FFIV', 'DISH & MDLZ', 'DISH & MRK', 'DISH & PNC', 'DISH & PPL', 'FFIV & LMT', 'FFIV & MDLZ', 'FFIV & PPL', 'LMT & MDLZ', 'LMT & PNC', 'LMT & PPL', 'MDLZ & MSFT', 'MDLZ & PNC', 'MRK & MSFT', 'MSFT & PNC', 'MSFT & PPL', 'PNC & PPL']
+        TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_RAND_1"]
+        PCA_SETTINGS: {n_samples: 45, n_featues: 1209, pca_explanation_variance_thres: 0.01, scaler: 'MinMaxScaler'}
+        CLUSTER_SETTINGS: {n_samples: 45, n_features: 23, n_clusters: 3, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_label: 1}
+        OUTPUT_FILE_NAME_BASIS: "rand_1_pca_cluster_pairs_1_v2"
+    RAND_1_PCA_CLUSTER_PAIRS_2_V2:
+        FILE_PATH: *sp500_20112015_rand_1_corr_s1_w50_file_path
+        ALL_SET: []
+        TRAIN_PAIRS_SET: ['ADBE & AFL', 'ADBE & DISH', 'ADBE & MRK', 'ADBE & PNC', 'AFL & DISH', 'AFL & LMT', 'AFL & MRK', 'AFL & MSFT', 'AFL & PNC', 'AFL & PPL', 'DISH & LMT', 'DISH & MSFT', 'FFIV & MSFT', 'FFIV & PNC', 'LMT & MRK', 'LMT & MSFT', 'MRK & PNC']
+        TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_RAND_1"]
+        PCA_SETTINGS: {n_samples: 45, n_featues: 1209, pca_explanation_variance_thres: 0.01, scaler: 'MinMaxScaler'}
+        CLUSTER_SETTINGS: {n_samples: 45, n_features: 23, n_clusters: 3, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_label: 2}
+        OUTPUT_FILE_NAME_BASIS: "rand_1_pca_cluster_pairs_2_v2"
+
+
+
+
+
     ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_0:
         FILE_PATH: &sp500_20112015_corr_mean_above_moderate_positive_keep_corr_s1_w50_file_path "{DIRS.PIPELINE_DATA_DIR}/sp500_20112015_corr_mean_above_moderate_positive_keep-train_train/pearson/corr_data/corr_s1_w50.csv"
         ALL_SET: []
@@ -524,6 +557,58 @@ DATASETS:
 
 
 
+    ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_0_V2:
+        FILE_PATH: *sp500_20112015_corr_mean_above_moderate_positive_keep_corr_s1_w50_file_path
+        ALL_SET: []
+        TRAIN_PAIRS_SET: ['ADBE & AFL', 'ADBE & COF', 'ADBE & EL', 'ADBE & IPG', 'ADBE & IT', 'ADBE & TSCO', 'AFL & COF', 'AFL & IPG', 'AFL & ZBH', 'COF & IPG', 'COF & IT', 'COF & ITW', 'COF & MAS', 'COF & ZBH', 'EL & IT', 'EL & ITW', 'EL & TSCO', 'EL & ZBH', 'IPG & IT', 'IPG & ITW', 'IPG & TSCO', 'IPG & ZBH', 'IT & MAS', 'IT & TSCO', 'ITW & TSCO', 'ITW & ZBH']
+        TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_CORR_MEAN_ABOVE_MODERATE_POSITIVE_KEEP"]
+        PCA_SETTINGS: {n_samples: 45, n_featues: 1209, pca_explanation_variance_thres: 0.01, scaler: 'MinMaxScaler'}
+        CLUSTER_SETTINGS: {n_samples: 45, n_features: 22, n_clusters: 3, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_label: 0}
+        OUTPUT_FILE_NAME_BASIS: "above_mod_posi_pca_cluster_pairs_0_v2"
+    ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_1_V2:
+        FILE_PATH: *sp500_20112015_corr_mean_above_moderate_positive_keep_corr_s1_w50_file_path
+        ALL_SET: []
+        TRAIN_PAIRS_SET: ['ADBE & ITW', 'ADBE & MAS', 'ADBE & ZBH', 'AFL & EL', 'AFL & IT', 'AFL & ITW', 'AFL & MAS', 'COF & EL', 'EL & IPG', 'EL & MAS', 'IPG & MAS', 'IT & ITW', 'IT & ZBH', 'ITW & MAS', 'MAS & ZBH', 'TSCO & ZBH']
+        TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_CORR_MEAN_ABOVE_MODERATE_POSITIVE_KEEP"]
+        PCA_SETTINGS: {n_samples: 45, n_featues: 1209, pca_explanation_variance_thres: 0.01, scaler: 'MinMaxScaler'}
+        CLUSTER_SETTINGS: {n_samples: 45, n_features: 22, n_clusters: 3, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_label: 1}
+        OUTPUT_FILE_NAME_BASIS: "above_mod_posi_pca_cluster_pairs_1_v2"
+    ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_2_V2:
+        FILE_PATH: *sp500_20112015_corr_mean_above_moderate_positive_keep_corr_s1_w50_file_path
+        ALL_SET: []
+        TRAIN_PAIRS_SET: ['AFL & TSCO', 'COF & TSCO', 'MAS & TSCO']
+        TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_CORR_MEAN_ABOVE_MODERATE_POSITIVE_KEEP"]
+        PCA_SETTINGS: {n_samples: 45, n_featues: 1209, pca_explanation_variance_thres: 0.01, scaler: 'MinMaxScaler'}
+        CLUSTER_SETTINGS: {n_samples: 45, n_features: 22, n_clusters: 3, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_label: 2}
+        OUTPUT_FILE_NAME_BASIS: "above_mod_posi_pca_cluster_pairs_2_v2"
+
+
+
+
+    BELOW_MOD_POSI_PCA_CLUSTER_PAIRS_0_V2:
+        FILE_PATH: &sp500_20112015_corr_mean_below_moderate_positive_keep_corr_s1_w50_file_path "{DIRS.PIPELINE_DATA_DIR}/sp500_20112015_corr_mean_below_moderate_positive_keep-train_train/pearson/corr_data/corr_s1_w50.csv"
+        ALL_SET: []
+        TRAIN_PAIRS_SET: ['AAP & CMG', 'AAP & EQR', 'AAP & INCY', 'AAP & RMD', 'CMG & FFIV', 'CMG & KSS', 'CMG & LEN', 'CMG & PVH', 'EQR & LEN', 'EQR & RMD', 'FFIV & INCY', 'FFIV & PVH', 'INCY & KSS', 'INCY & LEN', 'INCY & PVH', 'INCY & RMD', 'LEN & RMD']
+        TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_CORR_MEAN_BELOW_MODERATE_POSITIVE_KEEP"]
+        PCA_SETTINGS: {n_samples: 45, n_featues: 1209, pca_explanation_variance_thres: 0.01, scaler: 'MinMaxScaler'}
+        CLUSTER_SETTINGS: {n_samples: 45, n_features: 24, n_clusters: 3, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_label: 0}
+        OUTPUT_FILE_NAME_BASIS: "below_mod_posi_pca_cluster_pairs_0_v2"
+    BELOW_MOD_POSI_PCA_CLUSTER_PAIRS_1_V2:
+        FILE_PATH: *sp500_20112015_corr_mean_below_moderate_positive_keep_corr_s1_w50_file_path
+        ALL_SET: []
+        TRAIN_PAIRS_SET: ['AAP & KSS', 'BRK & CMG', 'BRK & EQR', 'BRK & FFIV', 'BRK & INCY', 'BRK & KSS', 'BRK & LEN', 'BRK & PVH', 'BRK & RMD', 'CMG & RMD', 'EQR & FFIV', 'EQR & PVH', 'FFIV & KSS', 'FFIV & LEN', 'FFIV & RMD', 'KSS & LEN', 'KSS & PVH', 'PVH & RMD']
+        TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_CORR_MEAN_BELOW_MODERATE_POSITIVE_KEEP"]
+        PCA_SETTINGS: {n_samples: 45, n_featues: 1209, pca_explanation_variance_thres: 0.01, scaler: 'MinMaxScaler'}
+        CLUSTER_SETTINGS: {n_samples: 45, n_features: 24, n_clusters: 3, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_label: 1}
+        OUTPUT_FILE_NAME_BASIS: "below_mod_posi_pca_cluster_pairs_1_v2"
+    BELOW_MOD_POSI_PCA_CLUSTER_PAIRS_2_V2:
+        FILE_PATH: *sp500_20112015_corr_mean_below_moderate_positive_keep_corr_s1_w50_file_path
+        ALL_SET: []
+        TRAIN_PAIRS_SET: ['AAP & BRK', 'AAP & FFIV', 'AAP & LEN', 'AAP & PVH', 'CMG & EQR', 'CMG & INCY', 'EQR & INCY', 'EQR & KSS', 'KSS & RMD', 'LEN & PVH']
+        TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_CORR_MEAN_BELOW_MODERATE_POSITIVE_KEEP"]
+        PCA_SETTINGS: {n_samples: 45, n_featues: 1209, pca_explanation_variance_thres: 0.01, scaler: 'MinMaxScaler'}
+        CLUSTER_SETTINGS: {n_samples: 45, n_features: 24, n_clusters: 3, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_label: 2}
+        OUTPUT_FILE_NAME_BASIS: "below_mod_posi_pca_cluster_pairs_2_v2"
 
 
 
