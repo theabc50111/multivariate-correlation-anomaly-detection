@@ -12,7 +12,7 @@ train_model_list = ["--train_model CNNONEDIMGRURESMAPCORRCLASS"]  # ["", "--trai
 corr_type_list = ["--corr_type pearson"]  # ["--corr_type pearson", "--corr_type cross_corr"]
 seq_len_list = ["--seq_len 30"]  # ["--seq_len 5", "--seq_len 10"]
 model_input_cus_bins_list = [""]  # ["", "--model_input_cus_bins -1 --model_input_cus_bins 0 --model_input_cus_bins 1", "--model_input_cus_bins -1 --model_input_cus_bins -0.3 --model_input_cus_bins 0.3 --model_input_cus_bins 1", "--model_input_cus_bins -1 --model_input_cus_bins -0.5 --model_input_cus_bins 0 --model_input_cus_bins 0.5 --model_input_cus_bins 1"]
-target_mats_path_list = ["--target_mats_path pearson/custom_discretize_corr_data/bins_-10_-03_03_10"]  # ["", "--target_mats_path pearson/custom_discretize_corr_data/bins_-10_-025_025_10", "--target_mats_path pearson/quan_discretize_corr_data/bin3"]
+target_mats_path_list = ["--target_mats_path pearson/custom_discretize_corr_data/bins_-10_-07_-03_03_07_10"]  # ["", "--target_mats_path pearson/custom_discretize_corr_data/bins_-10_-025_025_10", "--target_mats_path pearson/quan_discretize_corr_data/bin3"]
 learning_rate_list = [""]  # ["", "--learning_rate 0.0001", "--learning_rate 0.0005"]
 weight_decay_list = [""]  # ["--weight_decay 0.0001", "--weight_decay 0.0005", "--weight_decay 0.001", "--weight_decay 0.005", "--weight_decay 0.01", "--weight_decay 0.05", "--weight_decay 0.1"]
 use_optim_scheduler_list = [""]  # ["", "--use_optim_scheduler true"]
@@ -53,7 +53,7 @@ if set(map(lambda x: x['gru_l'], args_list)) != {""}:
     model_timedelta_list = [timedelta(hours=1, minutes=0), timedelta(hours=3, minutes=0)]  # The order of elements of model_timedelta_list should comply with the order of elements of args_list
 else:
     num_models = len(args_list)
-    model_timedelta_list = [timedelta(hours=0, minutes=55)]
+    model_timedelta_list = [timedelta(hours=0, minutes=50)]
 
 model_timedelta_list = list(chain.from_iterable(repeat(x, num_models) for x in model_timedelta_list))
 model_timedelta_list = [model_timedelta_list[-1]] + model_timedelta_list  # Use the last element of model_timedelta_list to fill the first element of model_timedelta_list for repeating the whole experiments.
