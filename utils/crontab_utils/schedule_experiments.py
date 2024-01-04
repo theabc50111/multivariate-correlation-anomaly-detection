@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from itertools import chain, product, repeat
 from pprint import pprint
 
-data_implement_list = ['--data_implement ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_1_V2', '--data_implement ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_2_V2', '--data_implement BELOW_MOD_POSI_PCA_CLUSTER_PAIRS_0_V2', '--data_implement BELOW_MOD_POSI_PCA_CLUSTER_PAIRS_1_V2', '--data_implement BELOW_MOD_POSI_PCA_CLUSTER_PAIRS_2_V2']  # ["", "--data_implement LINEAR_REG_ONE_CLUSTER_DIM_30_BKPS_0_NOISE_STD_30"]
+data_implement_list = ['--data_implement RAND_1_PCA_CLUSTER_PAIRS_0_V2', '--data_implement RAND_1_PCA_CLUSTER_PAIRS_1_V2', '--data_implement RAND_1_PCA_CLUSTER_PAIRS_2_V2', '--data_implement ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_0_V2', '--data_implement ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_1_V2', '--data_implement ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_2_V2', '--data_implement BELOW_MOD_POSI_PCA_CLUSTER_PAIRS_0_V2', '--data_implement BELOW_MOD_POSI_PCA_CLUSTER_PAIRS_1_V2', '--data_implement BELOW_MOD_POSI_PCA_CLUSTER_PAIRS_2_V2']  # ["", "--data_implement LINEAR_REG_ONE_CLUSTER_DIM_30_BKPS_0_NOISE_STD_30"]
 batch_size_list = [""]
 n_folds_list = [""]  # ["", "--n_folds 2", "--n_folds 3"]
 tr_epochs_list = [""]  # ["", "--tr_epochs 200"]
@@ -53,7 +53,7 @@ if set(map(lambda x: x['gru_l'], args_list)) != {""}:
     model_timedelta_list = [timedelta(hours=1, minutes=0), timedelta(hours=3, minutes=0)]  # The order of elements of model_timedelta_list should comply with the order of elements of args_list
 else:
     num_models = len(args_list)
-    model_timedelta_list = [timedelta(hours=0, minutes=50)]
+    model_timedelta_list = [timedelta(hours=0, minutes=40)]
 
 model_timedelta_list = list(chain.from_iterable(repeat(x, num_models) for x in model_timedelta_list))
 model_timedelta_list = [model_timedelta_list[-1]] + model_timedelta_list  # Use the last element of model_timedelta_list to fill the first element of model_timedelta_list for repeating the whole experiments.
