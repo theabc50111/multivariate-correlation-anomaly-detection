@@ -54,6 +54,7 @@ def set_plot_log_data(log_path: Path):
 
     return return_dict
 
+
 def plot_heatmap(preds: np.ndarray, labels: np.ndarray, num_classes: int, pic_title: str, save_fig_path: Path, can_show_conf_mat: bool = False):
     """Plots the heatmap of the confusion matrix."""
     assert num_classes % 2 != 0, "the number of classes should be odd"
@@ -74,6 +75,7 @@ def plot_heatmap(preds: np.ndarray, labels: np.ndarray, num_classes: int, pic_ti
         plt.savefig(save_fig_path)
     plt.show()
     plt.close()
+
 
 def plot_gru_tr_process(main_title: str, model_struct: str, metrics_history: dict, best_epoch: int):
     data_info_dict = [{"sub_title": 'train loss_history & edge_acc_history',
@@ -141,6 +143,71 @@ def plot_gru_tr_process(main_title: str, model_struct: str, metrics_history: dic
     fig.tight_layout(rect=(0, 0, 0, 0))
     plt.show()
     plt.close()
+
+
+def plot_gru_tr_val_loss_cruve(main_title: str, model_struct: str, metrics_history: dict, best_epoch: int):
+    data_info_dict = [{"sub_title": 'train loss',
+                       "data": {'tr_loss_history': metrics_history['tr_loss_history']},
+                       "xticks": None,
+                       "xlabel": "epochs",
+                       "double_y": True},
+                      {"sub_title": 'val loss',
+                       "data": {'val_loss_history': metrics_history['val_loss_history']},
+                       "xticks": None,
+                       "xlabel": "epochs",
+                       "double_y": True}]
+
+    # figrue settings
+    line_style = {"linewidth": 2, "alpha": 0.5}
+    axvline_style = {"color": 'k', "linewidth": 5, "linestyle": '--', "alpha": 0.3}
+    fig, axes = plt.subplot_mosaic("""
+                                   ab
+                                   cc
+                                   """,
+                                   figsize=(30, 20), gridspec_kw={'hspace': 0.2, 'wspace': 0.2})
+    fig.suptitle(main_title, fontsize=30)
+
+    try:
+        for ax, data_plot in zip(axes.values(), data_info_dict):
+            ax.set_title(data_plot["sub_title"], fontsize=30)
+            ax.yaxis.offsetText.set_fontsize(18)
+            ax.tick_params(axis='both', which='major', labelsize=24)
+            if isinstance(data_plot["data"], dict) and data_plot.get("double_y"):
+                for i, key in enumerate(data_plot["data"]):
+                    if i == 0:
+                        ax.plot(data_plot["data"][key], label=key, **line_style)
+                        ax.set_ylabel(key, fontsize=24)
+                        ax.legend(fontsize=18)
+                    else:
+                        new_ax = ax.twinx()
+                        new_ax.plot(data_plot["data"][key], label=key, color='r')
+                        new_ax.set_ylabel(key, color='r', fontsize=24)
+                        new_ax.legend(fontsize=18)
+                        new_ax.tick_params(axis='both', colors='r', which='major', labelsize=24)
+            elif isinstance(data_plot["data"], dict):
+                [ax.plot(data_plot["data"][key], label=key, **line_style) for key in data_plot["data"]]
+                ax.legend(fontsize=18)
+            elif isinstance(data_plot["data"], str):
+                ax.annotate(text=f"{data_plot['data']}",
+                            xy=(0.15, 0.5), bbox={'facecolor': 'green', 'alpha': 0.4, 'pad': 5},
+                            fontsize=20, fontfamily='monospace', xycoords='axes fraction', va='center')
+            else:
+                ax.plot(data_plot["data"], **line_style)
+            if pos_tuple := data_plot.get("axvline"):
+                for x_pos in pos_tuple:
+                    ax.axvline(x=x_pos, **axvline_style)
+            if xlabel := data_plot.get("xlabel"):
+                ax.set_xlabel(xlabel, fontsize=24)
+            if t := data_plot.get("xticks"):
+                ax.set_xticks(ticks=range(0, len(t["label"])*t["intv"], t["intv"]), labels=t["label"], rotation=45)
+    except Exception as e:
+        LOGGER.error(f"Encounter error when draw figure of {data_plot['sub_title']}")
+        raise e
+
+    fig.tight_layout(rect=(0, 0, 0, 0))
+    plt.show()
+    plt.close()
+
 
 def plot_cluster_labels_distribution(trained_cluster_model: sklearn.base.ClusterMixin, cluster_name: str, fig_title: str, save_dir: Path = None):
     x_major_locator = MultipleLocator(1)

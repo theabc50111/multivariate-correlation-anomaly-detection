@@ -576,9 +576,6 @@ DATASETS:
         PCA_SETTINGS: {n_samples: 45, n_featues: 1209, pca_explanation_variance_thres: 0.01, scaler: 'MinMaxScaler'}
         CLUSTER_SETTINGS: {n_samples: 45, n_features: 22, n_clusters: 24, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_label: 23}
         OUTPUT_FILE_NAME_BASIS: "above_mod_posi_pca_cluster_pairs_23"
-
-
-
     ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_0_V2:
         FILE_PATH: *sp500_20112015_corr_mean_above_moderate_positive_keep_corr_s1_w50_file_path
         ALL_SET: []
