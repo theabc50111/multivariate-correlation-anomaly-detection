@@ -94,17 +94,20 @@ class GRUCorrClass(torch.nn.Module):
                                 "gru_h": self.model_cfg['gru_h'],
                                 "loss_fns": [fn.__name__ if hasattr(fn, '__name__') else str(fn) for fn in loss_fns["fns"]],
                                 "loss_weight": [{fn.__name__ if hasattr(fn, '__name__') else str(fn): str(getattr(fn, "weight", None))} for fn in loss_fns["fns"]],
-                                "tol_edge_acc_loss_atol": self.model_cfg['tol_edge_acc_loss_atol'],
                                 "drop_pos": self.model_cfg["drop_pos"],
                                 "drop_p": self.model_cfg["drop_p"],
                                 "max_val_edge_acc": float("-inf"),
                                 "output_type": self.model_cfg['output_type'],
                                 "model_input_cus_bins": self.model_cfg['model_input_cus_bins'],
                                 "target_data_bins": self.model_cfg['target_data_bins']}
+        if self.model_cfg.get("tol_edge_acc_loss_atol"):
+            self.best_model_info["tol_edge_acc_loss_atol"] = self.model_cfg.get("tol_edge_acc_loss_atol")
         if self.model_cfg.get("custom_indices_loss_indices"):
             self.best_model_info["custom_indices_loss_indices"] = self.model_cfg.get("custom_indices_loss_indices")
         if self.model_cfg.get("metric_fn"):
             self.best_model_info["metric_fn"] = str(self.model_cfg.get("metric_fn"))
+        if self.model_cfg.get("tol_edge_acc_metric_atol"):
+            self.best_model_info["tol_edge_acc_metric_atol"] = self.model_cfg.get("tol_edge_acc_metric_atol")
         if self.model_cfg.get("custom_indices_metric_indices"):
             self.best_model_info["custom_indices_metric_indices"] = self.model_cfg.get("custom_indices_metric_indices")
         if hasattr(self, 'scheduler'):
@@ -330,7 +333,6 @@ class GRUCorrClass(torch.nn.Module):
                 best_model = ret_model
             # show training process
             self.show_training_process(epoch_i, batch_idx, batch_data, last_batch_output)
-
         # check if best_model is empty
         assert bool(best_model), "best_model is empty"
 
@@ -376,7 +378,6 @@ class GRUCorrClass(torch.nn.Module):
         LOGGER.info(f"model has been saved in:{model_dir}")
 
         return saved_model_name_prefix
-
 
     @staticmethod
     def yield_batch_data(model_input_data: np.ndarray, target_data: np.ndarray, seq_len: int = 10, batch_size: int = 5):
@@ -506,7 +507,6 @@ class GRUCorrClassOneFeature(GRUCorrClass):
                     epoch_metrics["fc_dec_gradient"] += sum(p.grad.abs().sum() for p in getattr(self, attr).parameters() if p.grad is not None)/num_batches
                 elif re.match(r"gru\d+_class_fc\d+", attr) and isinstance(getattr(self, attr), Sequential):
                     epoch_metrics["class_fc_gradient"] += sum(p.grad.abs().sum() for p in getattr(self, attr).parameters() if p.grad is not None)/num_batches
-
         elif rec_stage == "val":
             epoch_metrics['val_edge_acc'] += batch_edge_acc/num_batches
             epoch_metrics['val_loss'] += batch_loss/num_batches
@@ -530,9 +530,7 @@ class GRUCorrCoefPred(GRUCorrClass):
 
     def forward(self, x, *unused_args, **unused_kwargs):
         gru_output, _ = self.gru(x)
-        for data_batch_idx in range(x.shape[0]):
-            pred = self.fc_decoder(gru_output[data_batch_idx, -1, :])  # gru_output[-1] => only take last time-step
-            batch_preds = pred.reshape(1, -1) if data_batch_idx == 0 else torch.cat((batch_preds, pred.reshape(1, -1)), dim=0)
+        batch_preds = self.fc_decoder(gru_output[:, -1, :])  # gru_output[-1] => only take last time-step
 
         return batch_preds
 
@@ -584,17 +582,21 @@ class GRUCorrCoefPred(GRUCorrClass):
             epoch_metrics[(rec_stage+"_"+fn_name)] += loss/num_batches
 
     def train(self, mode: bool = True, train_data: np.ndarray = None, val_data: np.ndarray = None, loss_fns: dict = None, epochs: int = 1000, **unused_kwargs):
+        """
+        Train model
+        """
         # In order to make original function of nn.Module.train() work, we need to override it
         super().train(mode=mode)
         if train_data is None:
             return self
+        # Train on epochs
         assert self.model_cfg['output_type'] == "corr_coef", "output_type must be corr_coef"
         assert self.num_labels_classes == 0, "num_labels_classes must be equal to 0 in {self.__class__}, but self.num_labels_classes={self.num_labels_classes}"
         self.init_best_model_info(train_data, val_data, loss_fns, epochs)
         self.show_model_config()
         best_model = []
-        # Train on epochs
-        for epoch_i in tqdm(range(epochs)):
+        tqdm_out = TqdmToLogger(LOGGER)
+        for epoch_i in tqdm(range(epochs), file=tqdm_out, miniters=10, desc="Training progress"):
             self.train()
             self.init_epoch_metrics(loss_fns)
             # Train on batches
@@ -607,7 +609,7 @@ class GRUCorrCoefPred(GRUCorrClass):
                 self.record_epoch_metrics_each_batch(batch_loss, batch_loss_each_loss_fn, batch_edge_acc, self.num_tr_batches, rec_stage="train")
             # Validation
             _, _, val_preds, val_labels = self.test(val_data, loss_fns=loss_fns, test_data_split="val")
-            # record training history and save best model
+            # record training history
             last_batch_output = {'tr_preds': batch_preds, 'tr_labels': batch_y_labels, 'val_preds': val_preds, 'val_labels': val_labels}
             self.record_history(last_batch_output, epoch_i)
             # get best model
@@ -649,3 +651,59 @@ class GRUCorrCoefPred(GRUCorrClass):
         return test_loss, test_edge_acc, test_preds, test_y_labels
 
 
+class GRUCorrCoefPredOneFeature(GRUCorrCoefPred):
+    """
+    GRU model with one input feature for predicting correlation coefficient
+    """
+
+    def __init__(self, model_cfg: dict, **unused_kwargs):
+        super(GRUCorrCoefPredOneFeature, self).__init__(model_cfg, **unused_kwargs)
+        # set model config
+        self.model_cfg = model_cfg
+        del self.model_cfg["gru_in_dim"]
+        self.num_gru = self.model_cfg["num_gru"]
+        self.gru_in_dim = 1
+        self.fc_dec_out_dim = self.gru_in_dim
+        # set model components
+        del_attr_names = ["gru", "fc_decoder"]
+        for attr_name in dir(self):
+            if attr_name in del_attr_names:
+                delattr(self, attr_name)
+        for gru_i in range(self.num_gru):
+            setattr(self, f"gru{gru_i}", GRU(input_size=self.gru_in_dim, hidden_size=self.model_cfg["gru_h"], num_layers=self.model_cfg["gru_l"], dropout=self.model_cfg["drop_p"] if "gru" in self.model_cfg["drop_pos"] else 0, batch_first=True))
+            setattr(self, f"gru{gru_i}_fc_decoder", Sequential(Linear(self.model_cfg["gru_h"], self.fc_dec_out_dim), Dropout(self.model_cfg["drop_p"] if "fc_decoder" in self.model_cfg["drop_pos"] else 0)))
+        if type(self) == GRUCorrCoefPredOneFeature:
+            self.init_optimizer()
+
+    def forward(self, x, *unused_args, **unused_kwargs):
+        split_x = torch.split(x, 1, dim=2)  # (batch_size, 1, seq_len)*num_pairs
+        assert len(split_x) == self.model_cfg["num_gru"], f"len(split_x): {len(split_x)}, but it should be {self.model_cfg['num_gru']}"
+        for gru_i, x_each_pair in enumerate(split_x):
+            gru_input = x_each_pair  # (batch_size, seq_len, gru_in_dim)
+            gru_output, _ = getattr(self, f"gru{gru_i}")(gru_input)  # (batch_size, seq_len, gru_h)
+            fc_dec_output = getattr(self, f"gru{gru_i}_fc_decoder")(gru_output[:, -1, :])  # (batch_size, fc_dec_out_dim), gru_output[-1] => only take last time-step
+            batch_preds = fc_dec_output if gru_i == 0 else torch.cat((batch_preds, fc_dec_output), dim=1)  # (batch_size, num_gru*fc_dec_out_dim)
+
+        return batch_preds
+
+    def record_epoch_metrics_each_batch(self, batch_loss: torch.Tensor, batch_loss_each_loss_fn, batch_edge_acc: torch.Tensor, num_batches: int, rec_stage: str):
+        """
+        Record metrics at each batch and update to `epoch_metrics`.
+        """
+        assert rec_stage in ["train", "val", "test"], "rec_stage must be 'train' or 'val' or 'test'"
+        epoch_metrics = self.epoch_metrics
+        if rec_stage == "train":
+            epoch_metrics["tr_edge_acc"] += batch_edge_acc/num_batches
+            epoch_metrics["tr_loss"] += batch_loss/num_batches
+            for attr in dir(self):
+                if re.match(r"gru\d+", attr) and isinstance(getattr(self, attr), GRU):
+                    epoch_metrics["gru_gradient"] += sum(p.grad.abs().sum() for p in getattr(self, attr).parameters() if p.grad is not None)/num_batches
+                elif re.match(r"gru\d+_fc_decoder", attr) and isinstance(getattr(self, attr), Sequential):
+                    epoch_metrics["fc_dec_gradient"] += sum(p.grad.abs().sum() for p in getattr(self, attr).parameters() if p.grad is not None)/num_batches
+        elif rec_stage == "val":
+            epoch_metrics['val_edge_acc'] += batch_edge_acc/num_batches
+            epoch_metrics['val_loss'] += batch_loss/num_batches
+        elif rec_stage == "test":
+            pass
+        for fn_name, loss in batch_loss_each_loss_fn.items():
+            epoch_metrics[(rec_stage+"_"+fn_name)] += loss/num_batches

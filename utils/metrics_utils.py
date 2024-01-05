@@ -26,11 +26,25 @@ class TolEdgeAccuracyLoss(torch.nn.Module):
         super(TolEdgeAccuracyLoss, self).__init__()
 
     def forward(self, input: torch.Tensor, target: torch.Tensor, atol: float = 0.05) -> torch.Tensor:
-        raise NotImplementedError("This function is not implemented yet.")
+        raise NotImplementedError
         ###edge_acc = torch.isclose(input, target, atol=atol, rtol=0).to(torch.float64).mean()
         ###edge_acc.requires_grad = True
         ###loss = 1 - edge_acc
         ###return loss
+
+
+class TolEdgeAccuracy(torch.nn.Module):
+    """ 
+    This metric function is used to compute the edge accuracy of the prediction.
+    """
+    def __init__(self, atol: float = 0.05):
+        super(TolEdgeAccuracy, self).__init__()
+        self.atol = atol
+
+    def forward(self, input: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
+        edge_acc = torch.isclose(input, target, atol=self.atol, rtol=0).to(torch.float64).mean()
+        return edge_acc
+
 
 class CustomIndicesCrossEntropyLoss(torch.nn.Module):
     def __init__(self, num_classes: int, selected_indices: list, weight: torch.Tensor):

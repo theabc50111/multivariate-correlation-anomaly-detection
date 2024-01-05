@@ -20,11 +20,12 @@ from torch.nn import CrossEntropyLoss, MSELoss
 from models.cnn_gru_models import (CNNOneDimGRUCorrClass,
                                    CNNOneDimGRUResMapCorrClass)
 from models.gru_models import (GRUCorrClass, GRUCorrClassCustomFeatures,
-                               GRUCorrClassOneFeature, GRUCorrCoefPred)
+                               GRUCorrClassOneFeature, GRUCorrCoefPred,
+                               GRUCorrCoefPredOneFeature)
 from utils.assorted_utils import load_data_cfg, split_data
 from utils.log_utils import Log
 from utils.metrics_utils import (CustomIndicesCrossEntropyLoss,
-                                 CustomIndicesEdgeAccuracy,
+                                 CustomIndicesEdgeAccuracy, TolEdgeAccuracy,
                                  TolEdgeAccuracyLoss)
 from utils.plot_utils import plot_heatmap
 
@@ -40,6 +41,7 @@ LOGGER = Log().init_logger(logger_name=__name__, update_config=[(deque(["root", 
 
 class ModelType(Enum):
     GRUCORRCOEFPRED = auto()
+    GRUCORRCOEFPREDONEFEATURE = auto()
     GRUCORRCLASS = auto()
     GRUCORRCLASSCUSTOMFEATURES = auto()
     GRUCORRCLASSONEFEATURE = auto()
@@ -49,6 +51,8 @@ class ModelType(Enum):
     def set_model(self, basic_model_cfg, args):
         gru_corr_coef_cfg = basic_model_cfg.copy()
         gru_corr_coef_cfg["gru_in_dim"] = basic_model_cfg["num_pairs"]
+        gru_corr_coef_one_feature_cfg = gru_corr_coef_cfg.copy()
+        gru_corr_coef_one_feature_cfg["num_gru"] = basic_model_cfg["num_pairs"]
         gru_corr_class_cfg = gru_corr_coef_cfg.copy()
         gru_corr_class_cfg["num_labels_classes"] = basic_model_cfg["target_data_bins"].replace("bins_", "").count("_") if basic_model_cfg["target_data_bins"] else None
         gru_corr_class_custom_feature_cfg = gru_corr_class_cfg.copy()
@@ -60,6 +64,7 @@ class ModelType(Enum):
         cnn_one_dim_gru_corr_class_cfg["cnn_in_channels"] = basic_model_cfg["num_pairs"]
         cnn_one_dim_gru_res_map_corr_class_cfg = cnn_one_dim_gru_corr_class_cfg.copy()
         model_dict = {"GRUCORRCOEFPRED": GRUCorrCoefPred(gru_corr_coef_cfg),
+                      "GRUCORRCOEFPREDONEFEATURE": GRUCorrCoefPredOneFeature(gru_corr_coef_one_feature_cfg),
                       "GRUCORRCLASS": GRUCorrClass(gru_corr_class_cfg),
                       "GRUCORRCLASSCUSTOMFEATURES": GRUCorrClassCustomFeatures(gru_corr_class_custom_feature_cfg),
                       "GRUCORRCLASSONEFEATURE": GRUCorrClassOneFeature(gru_corr_class_one_feature_cfg),
@@ -72,6 +77,7 @@ class ModelType(Enum):
 
     def set_save_model_dir(self, save_model_base_dir, output_file_name, corr_type, s_l, w_l, folds_settings):
         save_model_dir_base_dict = {"GRUCORRCOEFPRED": "gru_corr_coef_pred",
+                                    "GRUCORRCOEFPREDONEFEATURE": "gru_corr_coef_pred_one_feature",
                                     "GRUCORRCLASS": "gru_corr_class",
                                     "GRUCORRCLASSCUSTOMFEATURES": "gru_corr_class_custom_features",
                                     "GRUCORRCLASSONEFEATURE": "gru_corr_class_one_features",
@@ -89,10 +95,8 @@ class ModelType(Enum):
 def rename_and_move_log_file(args: argparse.Namespace, model_log_dir: Path, folds_settings: str):
     if args.train_model is not None and args.save_model:
         if args.n_folds is None and globals().get("saved_model_name_prefix"):
-            ###ori_log_file_path = THIS_FILE_DIR/"models/model_train_info.log"
             new_log_file_path = model_log_dir/f"{saved_model_name_prefix}.log"
         elif args.n_folds is not None:
-            ###ori_log_file_path = THIS_FILE_DIR/"models/model_train_info.log"
             new_log_file_path = model_log_dir/f"{folds_settings}.log"
         os.replace(ORI_LOG_FILE_PATH, new_log_file_path)
 
@@ -124,8 +128,8 @@ if __name__ == "__main__":
     args_parser.add_argument("--cuda_device", type=int, nargs='?', default=0,
                              help="input the number of cuda device")
     args_parser.add_argument("--train_model", type=str, nargs='?', default=None,
-                             choices=["GRUCORRCOEFPRED", "GRUCORRCLASS", "GRUCORRCLASSCUSTOMFEATURES", "GRUCORRCLASSONEFEATURE", "CNNONEDIMGRUCORRCLASS", "CNNONEDIMGRURESMAPCORRCLASS"],
-                             help="input to decide which models to train, the choices are [GRUCORRCOEFPRED, GRUCORRCLASS, GRUCORRCLASSCUSTOMFEATURES, GRUCORRCLASSONEFEATURE, CNNONEDIMGRUCORRCLASS, CNNONEDIMGRURESMAPCORRCLASS]")
+                             choices=["GRUCORRCOEFPRED", "GRUCORRCOEFPREDONEFEATURE", "GRUCORRCLASS", "GRUCORRCLASSCUSTOMFEATURES", "GRUCORRCLASSONEFEATURE", "CNNONEDIMGRUCORRCLASS", "CNNONEDIMGRURESMAPCORRCLASS"],
+                             help="input to decide which models to train, the choices are [GRUCORRCOEFPRED, GRUCORRCOEFPREDONEFEATURE, GRUCORRCLASS, GRUCORRCLASSCUSTOMFEATURES, GRUCORRCLASSONEFEATURE, CNNONEDIMGRUCORRCLASS, CNNONEDIMGRURESMAPCORRCLASS]")
     args_parser.add_argument("--learning_rate", type=float, nargs='?', default=0.001,
                              help="input the learning rate of training")
     args_parser.add_argument("--weight_decay", type=float, nargs='?', default=0,
@@ -151,14 +155,16 @@ if __name__ == "__main__":
                              help="input --use_weighted_loss to use CrossEntropyLoss weight")
     args_parser.add_argument("--custom_indices_metric_indices", type=int, nargs='*', default=[],
                              help="input the indices of CustomIndicesEdgeAccuracy")
+    args_parser.add_argument("--tol_edge_acc_metric_atol", type=float, nargs='?', default=None,
+                             help="input the absolute tolerance of TolEdgeAccuracy")
     args_parser.add_argument("--output_type", type=str, nargs='?', default=None,
                              choices=["corr_coef", "class_probability"],
                              help="input the type of output, the choices are [class_probability]")
     args_parser.add_argument("--save_model", type=bool, default=False, action=argparse.BooleanOptionalAction,  # setting of output files
                              help="input --save_model to save model weight and model info")
     args_parser.add_argument("--inference_models", type=str, nargs='+', default=[],
-                             choices=["GRUCORRCOEFPRED", "GRUCORRCLASS", "GRUCORRCLASSCUSTOMFEATURES", "GRUCORRCLASSONEFEATURE", "CNNONEDIMGRUCORRCLASS", "CNNONEDIMGRURESMAPCORRCLASS"],
-                             help="input to decide which models to inference, the choices are [GRUCORRCOEFPRED, GRUCORRCLASS, GRUCORRCLASSCUSTOMFEATURES, GRUCORRCLASSONEFEATURE, CNNONEDIMGRUCORRCLASS, CNNONEDIMGRURESMAPCORRCLASS]")
+                             choices=["GRUCORRCOEFPRED", "GRUCORRCOEFPREDONEFEATURE", "GRUCORRCLASS", "GRUCORRCLASSCUSTOMFEATURES", "GRUCORRCLASSONEFEATURE", "CNNONEDIMGRUCORRCLASS", "CNNONEDIMGRURESMAPCORRCLASS"],
+                             help="input to decide which models to inference, the choices are [GRUCORRCOEFPRED, GRUCORRCOEFPREDONEFEATURE, GRUCORRCLASS, GRUCORRCLASSCUSTOMFEATURES, GRUCORRCLASSONEFEATURE, CNNONEDIMGRUCORRCLASS, CNNONEDIMGRURESMAPCORRCLASS]")
     args_parser.add_argument("--inference_model_paths", type=str, nargs='+', default=[],
                              help="input the path of inference model weight")
     args_parser.add_argument("--inference_data_split", type=str, nargs='?', default="val",
@@ -166,7 +172,8 @@ if __name__ == "__main__":
     ARGS = args_parser.parse_args()
     assert bool(ARGS.train_model) != bool(ARGS.inference_models), "train_model and inference_models must be input one of them"
     assert bool(ARGS.drop_pos) == bool(ARGS.drop_p), "drop_pos and drop_p must be both input or not input"
-    assert ("GRUCORRCOEFPRED" not in [ARGS.train_model]+ARGS.inference_models) or (ARGS.output_type == "corr_coef"), "output_type must be corr_coef when train_model|inferene_models is GRUCORRCOEFPRED"
+    assert "corr_coef" != ARGS.output_type or ARGS.target_mats_path is None, "output_type must be class_probability when target_mats_path is input"
+    assert bool(set([ARGS.train_model]+ARGS.inference_models) - {"GRUCORRCOEFPRED", "GRUCORRCOEFPREDONEFEATURE"}) or (ARGS.output_type == "corr_coef"), "output_type must be corr_coef when train_model|inferene_models is not GRUCORRCOEFPRED or GRUCORRCOEFPREDONEFEATURE"
     assert bool(set([ARGS.train_model]+ARGS.inference_models) - {"GRUCORRCLASS", "GRUCORRCLASSCUSTOMFEATURES", "GRUCORRCLASSONEFEATURE", "CNNONEDIMGRUCORRCLASS", "CNNONEDIMGRURESMAPCORRCLASS"}) or (ARGS.output_type == "class_probability"), "output_type must be class_probability when train_model|inferene_models is not GRUCORRCLASSCUSTOMFEATURES or GRUCORRCLASSONEFEATURE"
     assert "class_fc" not in ARGS.drop_pos or ARGS.output_type == "class_probability", "output_type must be class_probability when class_fc in drop_pos"
     assert ("GRUCORRCLASS" not in [ARGS.train_model]+ARGS.inference_models) or ARGS.gru_input_feature_idx is None, "gru_input_feature_idx must be None when train_model|inferene_models is GRUCORRCLASS"
@@ -228,8 +235,7 @@ if __name__ == "__main__":
                            "gru_l": ARGS.gru_l,
                            "gru_h": ARGS.gru_h if ARGS.gru_h else ARGS.gra_enc_l*ARGS.gra_enc_h,
                            "output_type": ARGS.output_type,
-                           "target_data_bins": ARGS.target_mats_path.split("/")[-1] if ARGS.target_mats_path else None,
-                           "tol_edge_acc_loss_atol": ARGS.tol_edge_acc_loss_atol}
+                           "target_data_bins": ARGS.target_mats_path.split("/")[-1] if ARGS.target_mats_path else None}
 
         # setting of loss function of model
         if ARGS.use_weighted_loss:
@@ -248,8 +254,9 @@ if __name__ == "__main__":
                 loss_fns_dict["fns"].append(CrossEntropyLoss(loss_weight if ARGS.use_weighted_loss else None))
                 loss_fns_dict["fn_args"].update({"CrossEntropyLoss()": {}})
         elif ARGS.tol_edge_acc_loss_atol is not None:
-            loss_fns_dict["fns"].append(TolEdgeAccuracyLoss())
-            loss_fns_dict["fn_args"].update({"TolEdgeAccuracyLoss()": {"atol": ARGS.tol_edge_acc_loss_atol}})
+            loss_fns_dict["fns"].append(TolEdgeAccuracyLoss(atol=ARGS.tol_edge_acc_loss_atol))
+            loss_fns_dict["fn_args"].update({"TolEdgeAccuracyLoss()": {}})
+            basic_model_cfg["tol_edge_acc_loss_atol"] = ARGS.tol_edge_acc_loss_atol
         basic_model_cfg["loss_fns"] = loss_fns_dict
 
         # setting of metric function of edge_accuracy of model
@@ -257,6 +264,9 @@ if __name__ == "__main__":
             num_labels_classes = ARGS.target_mats_path.split("/")[-1].replace("bins_", "").count("_") if ARGS.target_mats_path else None
             basic_model_cfg["metric_fn"] = CustomIndicesEdgeAccuracy(selected_indices=ARGS.custom_indices_metric_indices, num_classes=num_labels_classes)
             basic_model_cfg["custom_indices_metric_indices"] = ARGS.custom_indices_metric_indices
+        elif ARGS.tol_edge_acc_metric_atol is not None:
+            basic_model_cfg["metric_fn"] = TolEdgeAccuracy(atol=ARGS.tol_edge_acc_metric_atol)
+            basic_model_cfg["tol_edge_acc_metric_atol"] = ARGS.tol_edge_acc_metric_atol
 
         # show info
         LOGGER.info(f"===== file_name basis:{output_file_name} =====")
@@ -341,4 +351,5 @@ if __name__ == "__main__":
             LOGGER.info(f"metric_fn:{basic_model_cfg['metric_fn'] if 'metric_fn' in basic_model_cfg.keys() else None}")
             LOGGER.info(f"Special args of loss_fns: {[(loss_fn, loss_args) for loss_fn, loss_args in loss_fns_dict['fn_args'].items() for arg in loss_args if arg not in ['input', 'target']]}")
             LOGGER.info(f"loss:{loss}, edge_acc:{edge_acc}")
-    rename_and_move_log_file(ARGS, model_log_dir, folds_settings)
+    if locals().get("model_log_dir"):
+        rename_and_move_log_file(ARGS, model_log_dir, folds_settings)
