@@ -21,17 +21,17 @@ class CNNOneDimGRUCorrClass(GRUCorrClass):
         self.gru_in_dim = 1
         self.fc_dec_out_dim = self.gru_in_dim
         self.class_fc_out_dim = self.gru_in_dim
+        self.conv1_kernel_size = self.model_cfg["kernel_size"]  # kernel_size==2*padding+1 if stride==1
+        self.conv1_padding = self.model_cfg["kernel_pad"]
+        self.conv1_stride = self.model_cfg["kernel_stride"]
         # set model components
         del_attr_names = ["gru", "fc_decoder"] + [f"class_fc{class_i}" for class_i in range(self.num_labels_classes)]
         for attr_name in dir(self):
             if attr_name in del_attr_names:
                 delattr(self, attr_name)
-        conv1_kernel_size = 1  # kernel_size==2*padding+1 if stride==1
-        conv1_padding = 0
-        conv1_stride = 1
-        conv1_out_seq_len = floor(((self.seq_len+2*conv1_padding-conv1_kernel_size)/conv1_stride)+1)
+        conv1_out_seq_len = floor(((self.seq_len+2*self.conv1_padding-self.conv1_kernel_size)/self.conv1_stride)+1)
         assert conv1_out_seq_len == self.seq_len, f"conv1_out_seq_len: {conv1_out_seq_len}, self.seq_len: {self.seq_len} and they should be equal"
-        self.conv1 = Conv1d(in_channels=self.model_cfg["cnn_in_channels"], out_channels=self.model_cfg["cnn_in_channels"], kernel_size=conv1_kernel_size, padding=conv1_padding, stride=conv1_stride)
+        self.conv1 = Conv1d(in_channels=self.model_cfg["cnn_in_channels"], out_channels=self.model_cfg["cnn_in_channels"], kernel_size=self.conv1_kernel_size, padding=self.conv1_padding, stride=self.conv1_stride)
         for channel_i in range(self.conv1.out_channels):
             setattr(self, f"channel{channel_i}_gru", GRU(input_size=self.gru_in_dim, hidden_size=self.model_cfg["gru_h"], num_layers=self.model_cfg["gru_l"], dropout=self.model_cfg["drop_p"] if "gru" in self.model_cfg["drop_pos"] else 0, batch_first=True))
             setattr(self, f"channel{channel_i}_fc_decoder", Sequential(Linear(self.model_cfg["gru_h"], self.fc_dec_out_dim), Dropout(self.model_cfg["drop_p"] if "fc_decoder" in self.model_cfg["drop_pos"] else 0)))
@@ -60,6 +60,15 @@ class CNNOneDimGRUCorrClass(GRUCorrClass):
         assert torch.isclose(batch_pred_probs.sum(dim=1), torch.ones(batch_size, self.conv1.out_channels*self.class_fc_out_dim)).all(), f"batch_pred_probs.sum(dim=1): {batch_pred_probs.sum(dim=1)}, but it should all be 1"
 
         return batch_pred_probs
+
+    def init_best_model_info(self, train_data: dict, val_data: dict, loss_fns: dict, epochs: int):
+        """
+        Initialize best_model_info
+        """
+        super().init_best_model_info(train_data, val_data, loss_fns, epochs)
+        self.best_model_info.update({"kernel_size": self.conv1_kernel_size, "kernel_pad": self.conv1_padding, "kernel_stride": self.conv1_stride})
+
+        return self.best_model_info
 
     def init_epoch_metrics(self, loss_fns: dict):
         """
@@ -129,30 +138,21 @@ class CNNOneDimGRUResMapCorrClass(CNNOneDimGRUCorrClass):
 
         return batch_pred_probs
 
-class CNNOneDimGRUResMapCorrCoefPred(GRUCorrCoefPred):
+class CNNOneDimGRUResMapCorrCoefPred(GRUCorrCoefPred, CNNOneDimGRUResMapCorrClass):
     """
     CNN-GRU model with residual mapping for correlation coefficient prediction
     """
     def __init__(self, model_cfg: dict, **unused_kwargs):
         super(CNNOneDimGRUResMapCorrCoefPred, self).__init__(model_cfg, **unused_kwargs)
-        # set model config
-        self.model_cfg = model_cfg
-        del self.model_cfg["gru_in_dim"]
-        self.seq_len = self.model_cfg["seq_len"]
-        self.gru_in_dim = 1
-        self.fc_dec_out_dim = self.gru_in_dim
-        self.class_fc_out_dim = self.gru_in_dim
-        # set model components
-        del_attr_names = ["gru", "fc_decoder"] + [f"class_fc{class_i}" for class_i in range(self.num_labels_classes)]
-        for attr_name in dir(self):
-            if attr_name in del_attr_names:
-                delattr(self, attr_name)
-        conv1_kernel_size = 1  # kernel_size==2*padding+1 if stride==1
-        conv1_padding = 0
-        conv1_stride = 1
-        conv1_out_seq_len = floor(((self.seq_len+2*conv1_padding-conv1_kernel_size)/conv1_stride)+1)
-        assert conv1_out_seq_len == self.seq_len, f"conv1_out_seq_len: {conv1_out_seq_len}, self.seq_len: {self.seq_len} and they should be equal"
-        self.conv1 = Conv1d(in_channels=self.model_cfg["cnn_in_channels"], out_channels=self.model_cfg["cnn_in_channels"], kernel_size=conv1_kernel_size, padding=conv1_padding, stride=conv1_stride)
-        for channel_i in range(self.conv1.out_channels):
-            setattr(self, f"channel{channel_i}_gru", GRU(input_size=self.gru_in_dim, hidden_size=self.model_cfg["gru_h"], num_layers=self.model_cfg["gru_l"], dropout=self.model_cfg["drop_p"] if "gru" in self.model_cfg["drop_pos"] else 0, batch_first=True))
-            setattr(self, f"channel{channel_i}_fc_decoder", Sequential(Linear(self.model_cfg["gru_h"], self.fc_dec_out_dim), Dropout(self.model_cfg["drop_p"] if "fc_decoder" in self.model_cfg["
+        if type(self) == CNNOneDimGRUResMapCorrCoefPred:
+            self.init_optimizer()
+
+    def forward(self, x, *unused_args, **unused_kwargs):
+        batch_size, seq_len, num_pairs = x.shape
+        conv_input = x.permute(0, 2, 1)
+        conv_output = self.conv1(conv_input)
+        split_conv_output = torch.split(conv_output, 1, dim=1)
+        split_x = torch.split(x, 1, dim=2)
+        assert len(split_conv_output) == len(split_x) == self.conv1.out_channels, f"len(split_conv_output): {len(split_conv_output)}, len(split_x): {len(split_x)}, self.conv1.out_channels: {self.conv1.out_channels} and they should be equal"
+        for channel_i, (conv_output_each_channel, x_each_pair) in enumerate(zip(split_conv_output, split_x)):
+            pass

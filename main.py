@@ -147,6 +147,12 @@ if __name__ == "__main__":
                              help="input the number of gru hidden size")
     args_parser.add_argument("--gru_input_feature_idx", type=int, nargs='*', default=None,
                              help="input the order of input features of gru, the order is from 0 to combination(num_nodes, 2)-1")
+    args_parser.add_argument("--kernel_size", type=int, nargs='?', default=1,
+                             help="input the size of cnn kernel")
+    args_parser.add_argument("--kernel_stride", type=int, nargs='?', default=1,
+                             help="input the stride of cnn kernel")
+    args_parser.add_argument("--kernel_pad", type=int, nargs='?', default=0,
+                             help="input the padding of cnn kernel")
     args_parser.add_argument("--tol_edge_acc_loss_atol", type=float, nargs='?', default=None,
                              help="input the absolute tolerance of TolEdgeAccuracyLoss")
     args_parser.add_argument("--custom_indices_loss_indices", type=int, nargs='*', default=[],
@@ -234,6 +240,9 @@ if __name__ == "__main__":
                            "drop_p": ARGS.drop_p,
                            "gru_l": ARGS.gru_l,
                            "gru_h": ARGS.gru_h if ARGS.gru_h else ARGS.gra_enc_l*ARGS.gra_enc_h,
+                           "kernel_size": ARGS.kernel_size,
+                           "kernel_stride": ARGS.kernel_stride,
+                           "kernel_pad": ARGS.kernel_pad,
                            "output_type": ARGS.output_type,
                            "target_data_bins": ARGS.target_mats_path.split("/")[-1] if ARGS.target_mats_path else None}
 
