@@ -138,6 +138,7 @@ class CNNOneDimGRUResMapCorrClass(CNNOneDimGRUCorrClass):
 
         return batch_pred_probs
 
+
 class CNNOneDimGRUResMapCorrCoefPred(GRUCorrCoefPred, CNNOneDimGRUResMapCorrClass):
     """
     CNN-GRU model with residual mapping for correlation coefficient prediction
@@ -155,4 +156,33 @@ class CNNOneDimGRUResMapCorrCoefPred(GRUCorrCoefPred, CNNOneDimGRUResMapCorrClas
         split_x = torch.split(x, 1, dim=2)
         assert len(split_conv_output) == len(split_x) == self.conv1.out_channels, f"len(split_conv_output): {len(split_conv_output)}, len(split_x): {len(split_x)}, self.conv1.out_channels: {self.conv1.out_channels} and they should be equal"
         for channel_i, (conv_output_each_channel, x_each_pair) in enumerate(zip(split_conv_output, split_x)):
+            trans_conv_output_each_channel = conv_output_each_channel.permute(0, 2, 1)
+            assert trans_conv_output_each_channel.shape == x_each_pair.shape, f"trans_conv_output_each_channel.shape: {trans_conv_output_each_channel.shape}, x_each_pair.shape: {x_each_pair.shape} and they should be equal"
+            gru_input = trans_conv_output_each_channel+x_each_pair  # (batch_size, seq_len, gru_in_dim)
+            gru_output, _ = getattr(self, f"channel{channel_i}_gru")(gru_input)  # (batch_size, seq_len, gru_h)
+            fc_dec_output = getattr(self, f"channel{channel_i}_fc_decoder")(gru_output[:, -1, :])  # (batch_size,  fc_dec_out_dim), gru_output[-1] => only take last time-step
+            batch_preds = fc_dec_output if channel_i == 0 else torch.cat((batch_preds, fc_dec_output), dim=1)  # (batch_size, num_out_channels*fc_dec_out_dim)
+
+        return batch_preds
+
+    def record_epoch_metrics_each_batch(self, batch_loss: torch.Tensor, batch_loss_each_loss_fn, batch_edge_acc: torch.Tensor, num_batches: int, rec_stage: str):
+        """
+        Record metrics at each batch and update to `epoch_metrics`.
+        """
+        assert rec_stage in ["train", "val", "test"], "rec_stage must be 'train' or 'val' or 'test'"
+        epoch_metrics = self.epoch_metrics
+        if rec_stage == "train":
+            epoch_metrics["tr_edge_acc"] += batch_edge_acc/num_batches
+            epoch_metrics["tr_loss"] += batch_loss/num_batches
+            for attr in dir(self):
+                if re.match(r"gru\d+", attr) and isinstance(getattr(self, attr), GRU):
+                    epoch_metrics["gru_gradient"] += sum(p.grad.abs().sum() for p in getattr(self, attr).parameters() if p.grad is not None)/num_batches
+                elif re.match(r"gru\d+_fc_decoder", attr) and isinstance(getattr(self, attr), Sequential):
+                    epoch_metrics["fc_dec_gradient"] += sum(p.grad.abs().sum() for p in getattr(self, attr).parameters() if p.grad is not None)/num_batches
+        elif rec_stage == "val":
+            epoch_metrics['val_edge_acc'] += batch_edge_acc/num_batches
+            epoch_metrics['val_loss'] += batch_loss/num_batches
+        elif rec_stage == "test":
             pass
+        for fn_name, loss in batch_loss_each_loss_fn.items():
+            epoch_metrics[(rec_stage+"_"+fn_name)] += loss/num_batches
