@@ -16,13 +16,12 @@ class AttnOneDimGRUResMapCorrClass(GRUCorrClass):
         # set model config
         self.model_cfg = model_cfg
         del self.model_cfg["gru_in_dim"]
-        self.seq_len = self.model_cfg["seq_len"]
         self.gru_in_dim = 1
         self.fc_dec_out_dim = self.gru_in_dim
         self.class_fc_out_dim = self.gru_in_dim
         self.attn_num_heads = 1
-        self.attn_embed_dim = self.seq_len
-        self.attn_out_len = self.model_cfg["num_gru"]
+        self.attn_embed_dim = self.model_cfg["seq_len"]
+        self.attn_out_len = self.model_cfg["attn_out_len"]
         # set model components
         del_attr_names = ["gru", "fc_decoder"] + [f"class_fc{class_i}" for class_i in range(self.num_labels_classes)]
         for attr_name in dir(self):
@@ -46,7 +45,7 @@ class AttnOneDimGRUResMapCorrClass(GRUCorrClass):
         attn1_out, attn1_weights = self.attn1(attn_input, attn_input, attn_input)  # (batch_size, num_pairs, attn_embed_dim), (batch_size, num_pairs, seq_len) ps. attn_embed_dim == seq_len
         split_attn1_out = torch.split(attn1_out, 1, dim=1)  # (batch_size, 1, attn_embed_dim) * num_pairs, ps. attn_embed_dim == seq_len
         split_x = torch.split(x, 1, dim=2)  # (batch_size, seq_len, 1) * num_pairs
-        for attn_len_i, attn1_out_i, x_each_pair in enumerate(zip(split_attn1_out, split_x)):
+        for attn_len_i, (attn1_out_i, x_each_pair) in enumerate(zip(split_attn1_out, split_x)):
             trans_attn1_out_i = attn1_out_i.permute(0, 2, 1)  # (batch_size, attn_embed_dim, 1), ps. attn_embed_dim == seq_len
             assert trans_attn1_out_i.shape == x_each_pair.shape, f"trans_attn1_out_i.shape:{trans_attn1_out_i.shape}, x_each_pair.shape:{x_each_pair.shape} are not equal and cannot be element-wise added."
             gru_input = trans_attn1_out_i + x_each_pair  # residual mapping
