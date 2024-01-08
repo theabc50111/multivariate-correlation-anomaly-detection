@@ -50,7 +50,6 @@ class ModelType(Enum):
     CNNONEDIMGRURESMAPCORRCLASS = auto()
     CNNONEDIMGRURESMAPCORRCOEFPRED = auto()
 
-
     def set_model(self, basic_model_cfg, args):
         gru_corr_coef_cfg = basic_model_cfg.copy()
         gru_corr_coef_cfg["gru_in_dim"] = basic_model_cfg["num_pairs"]

@@ -3,7 +3,7 @@ import re
 from math import floor
 
 import torch
-from torch.nn import GRU, Conv1d, Dropout, Linear, Sequential, Softmax
+from torch.nn import GRU, Conv1d, Dropout, Linear, Sequential
 
 from .gru_models import GRUCorrClass, GRUCorrCoefPred
 
@@ -24,20 +24,19 @@ class CNNOneDimGRUCorrClass(GRUCorrClass):
         self.conv1_kernel_size = self.model_cfg["kernel_size"]  # kernel_size==2*padding+1 if stride==1
         self.conv1_padding = self.model_cfg["kernel_pad"]
         self.conv1_stride = self.model_cfg["kernel_stride"]
+        conv1_out_seq_len = floor(((self.seq_len+2*self.conv1_padding-self.conv1_kernel_size)/self.conv1_stride)+1)
+        assert conv1_out_seq_len == self.seq_len, f"conv1_out_seq_len: {conv1_out_seq_len}, self.seq_len: {self.seq_len} and they should be equal"
         # set model components
         del_attr_names = ["gru", "fc_decoder"] + [f"class_fc{class_i}" for class_i in range(self.num_labels_classes)]
         for attr_name in dir(self):
             if attr_name in del_attr_names:
                 delattr(self, attr_name)
-        conv1_out_seq_len = floor(((self.seq_len+2*self.conv1_padding-self.conv1_kernel_size)/self.conv1_stride)+1)
-        assert conv1_out_seq_len == self.seq_len, f"conv1_out_seq_len: {conv1_out_seq_len}, self.seq_len: {self.seq_len} and they should be equal"
         self.conv1 = Conv1d(in_channels=self.model_cfg["cnn_in_channels"], out_channels=self.model_cfg["cnn_in_channels"], kernel_size=self.conv1_kernel_size, padding=self.conv1_padding, stride=self.conv1_stride)
         for channel_i in range(self.conv1.out_channels):
             setattr(self, f"channel{channel_i}_gru", GRU(input_size=self.gru_in_dim, hidden_size=self.model_cfg["gru_h"], num_layers=self.model_cfg["gru_l"], dropout=self.model_cfg["drop_p"] if "gru" in self.model_cfg["drop_pos"] else 0, batch_first=True))
             setattr(self, f"channel{channel_i}_fc_decoder", Sequential(Linear(self.model_cfg["gru_h"], self.fc_dec_out_dim), Dropout(self.model_cfg["drop_p"] if "fc_decoder" in self.model_cfg["drop_pos"] else 0)))
             for class_i in range(self.num_labels_classes):
                 setattr(self, f"channel{channel_i}_class_fc{class_i}", Sequential(Linear(self.fc_dec_out_dim, self.class_fc_out_dim), Dropout(self.model_cfg["drop_p"] if "class_fc" in self.model_cfg["drop_pos"] else 0)))
-        self.softmax = Softmax(dim=1)
         if type(self) == CNNOneDimGRUCorrClass:
             self.init_optimizer()
 
@@ -125,13 +124,13 @@ class CNNOneDimGRUResMapCorrClass(CNNOneDimGRUCorrClass):
         for channel_i, (conv_output_each_channel, x_each_pair) in enumerate(zip(split_conv_output, split_x)):
             trans_conv_output_each_channel = conv_output_each_channel.permute(0, 2, 1)
             assert trans_conv_output_each_channel.shape == x_each_pair.shape, f"trans_conv_output_each_channel.shape: {trans_conv_output_each_channel.shape}, x_each_pair.shape: {x_each_pair.shape} and they should be equal"
-            gru_input = trans_conv_output_each_channel+x_each_pair  # (batch_size, seq_len, gru_in_dim)
+            gru_input = trans_conv_output_each_channel+x_each_pair  # (batch_size, seq_len, gru_in_dim), it's' residual mapping
             gru_output, _ = getattr(self, f"channel{channel_i}_gru")(gru_input)  # (batch_size, seq_len, gru_h)
             fc_dec_output = getattr(self, f"channel{channel_i}_fc_decoder")(gru_output[:, -1, :]).unsqueeze(1)  # (batch_size, 1, fc_dec_out_dim), gru_output[-1] => only take last time-step
             for class_i in range(self.num_labels_classes):
-                class_fc_output = getattr(self, f"channel{channel_i}_class_fc{class_i}")(fc_dec_output)  # (batch_size, 1, class_fc_out_dim)
+                class_fc_output = getattr(self, f"channel{channel_i}_class_fc{class_i}")(fc_dec_output)  # (batch_size, 1, class_fc_out_dim), ps. class_fc_out_dim == 1
                 channel_logits = class_fc_output if class_i == 0 else torch.cat((channel_logits, class_fc_output), dim=1)  # (batch_size, num_labels_classes, class_fc_out_dim)
-            logits = channel_logits if channel_i == 0 else torch.cat((logits, channel_logits), dim=2)  # (batch_size, num_labels_classes, num_out_channels*class_fc_out_dim)
+            logits = channel_logits if channel_i == 0 else torch.cat((logits, channel_logits), dim=2)  # (batch_size, num_labels_classes, num_out_channels*class_fc_out_dim), ps.  class_fc_out_dim == 1
         batch_pred_probs = self.softmax(logits)
         assert batch_pred_probs.shape == (batch_size, self.num_labels_classes, self.conv1.out_channels*self.class_fc_out_dim), f"batch_pred_probs.shape: {batch_pred_probs.shape}, but it should be (batch_size, self.num_labels_classes, self.conv1.out_channels*class_fc_out_dim)"
         assert torch.isclose(batch_pred_probs.sum(dim=1), torch.ones(batch_size, self.conv1.out_channels*self.class_fc_out_dim)).all(), f"batch_pred_probs.sum(dim=1): {batch_pred_probs.sum(dim=1)}, but it should all be 1"
