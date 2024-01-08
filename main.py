@@ -16,12 +16,6 @@ import numpy as np
 import pandas as pd
 import torch
 from torch.nn import CrossEntropyLoss, MSELoss
-from utils.assorted_utils import load_data_cfg, split_data
-from utils.log_utils import Log
-from utils.metrics_utils import (CustomIndicesCrossEntropyLoss,
-                                 CustomIndicesEdgeAccuracy, TolEdgeAccuracy,
-                                 TolEdgeAccuracyLoss)
-from utils.plot_utils import plot_heatmap
 
 from models.attn_gru_models import AttnOneDimGRUResMapCorrClass
 from models.cnn_gru_models import (CNNOneDimGRUCorrClass,
@@ -30,6 +24,12 @@ from models.cnn_gru_models import (CNNOneDimGRUCorrClass,
 from models.gru_models import (GRUCorrClass, GRUCorrClassCustomFeatures,
                                GRUCorrClassOneFeature, GRUCorrCoefPred,
                                GRUCorrCoefPredOneFeature)
+from utils.assorted_utils import load_data_cfg, split_data
+from utils.log_utils import Log
+from utils.metrics_utils import (CustomIndicesCrossEntropyLoss,
+                                 CustomIndicesEdgeAccuracy, TolEdgeAccuracy,
+                                 TolEdgeAccuracyLoss)
+from utils.plot_utils import plot_heatmap
 
 warnings.simplefilter("ignore")
 SCRIPT_START_TIME = datetime.strftime(datetime.now(), "%Y%m%d%H%M%S")
@@ -166,6 +166,8 @@ if __name__ == "__main__":
                              help="input the padding of cnn kernel")
     args_parser.add_argument("--tol_edge_acc_loss_atol", type=float, nargs='?', default=None,
                              help="input the absolute tolerance of TolEdgeAccuracyLoss")
+    args_parser.add_argument("--attn_num_heads", type=int, nargs='?', default=1,
+                             help="input the number of attention heads")
     args_parser.add_argument("--custom_indices_loss_indices", type=int, nargs='*', default=[],
                              help="input the indices of CustomIndicesCrossEntropyLoss")
     args_parser.add_argument("--use_weighted_loss", type=bool, default=False, action=argparse.BooleanOptionalAction,
@@ -254,6 +256,7 @@ if __name__ == "__main__":
                            "kernel_size": ARGS.kernel_size,
                            "kernel_stride": ARGS.kernel_stride,
                            "kernel_pad": ARGS.kernel_pad,
+                           "attn_num_heads": ARGS.attn_num_heads,
                            "output_type": ARGS.output_type,
                            "target_data_bins": ARGS.target_mats_path.split("/")[-1] if ARGS.target_mats_path else None}
 

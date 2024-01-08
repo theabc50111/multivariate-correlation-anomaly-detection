@@ -8,7 +8,7 @@ data_implement_list = ['--data_implement SP500_20112015_RAND_1', '--data_impleme
 batch_size_list = [""]
 n_folds_list = [""]  # ["", "--n_folds 2", "--n_folds 3"]
 tr_epochs_list = [""]  # ["", "--tr_epochs 200"]
-train_model_list = ["--train_model GRUCORRCLASSONEFEATURE"]  # ["", "--train_model GRUCORRCLASS"]
+train_model_list = ["--train_model ATTNONEDIMGRURESMAPCORRCLASS"]  # ["", "--train_model GRUCORRCLASS"]
 corr_type_list = ["--corr_type pearson"]  # ["--corr_type pearson", "--corr_type cross_corr"]
 seq_len_list = ["--seq_len 30"]  # ["--seq_len 5", "--seq_len 10"]
 model_input_cus_bins_list = [""]  # ["", "--model_input_cus_bins -1 --model_input_cus_bins 0 --model_input_cus_bins 1", "--model_input_cus_bins -1 --model_input_cus_bins -0.3 --model_input_cus_bins 0.3 --model_input_cus_bins 1", "--model_input_cus_bins -1 --model_input_cus_bins -0.5 --model_input_cus_bins 0 --model_input_cus_bins 0.5 --model_input_cus_bins 1"]
@@ -18,12 +18,13 @@ weight_decay_list = [""]  # ["--weight_decay 0.0001", "--weight_decay 0.0005", "
 use_optim_scheduler_list = [""]  # ["", "--use_optim_scheduler true"]
 drop_pos_list = [""]  # ["", "--drop_pos gru", "--drop_pos decoder --drop_pos gru", "--drop_pos gru --drop_pos decoder"]
 drop_p_list = [""]  # ["--drop_p 0.33", "--drop_p 0.5", "--drop_p 0.66"]
-gru_l_list = ["--gru_l 1"]  # ["--gru_l 1", "--gru_l 2", "--gru_l 3", "--gru_l 4", "--gru_l 5"]
+gru_l_list = [""]  # ["--gru_l 1", "--gru_l 2", "--gru_l 3", "--gru_l 4", "--gru_l 5"]
 gru_h_list = [""]  # ["--gru_h 40", "--gru_h 80", "--gru_h 100", "--gru_h 320", "--gru_h 640"]
 gru_input_feature_idx_list = [""]  # ["--input_idx 0", "--input_idx 1", "--input_idx 2", "--input_idx 0 --input_idx 1 --input_idx 2 --input_idx 3"]
 kernel_size_list = [""]  # ["--kernel_size 3", "--kernel_size 5", "--kernel_size 7"]
 kernel_pad_list = [""]  # ["--kernel_pad 1", "--kernel_pad 2", "--kernel_pad 3"]
-use_weighted_loss_list = ["--use_weighted_loss true"]  # ["", "--use_weighted_loss true"]
+attn_num_heads_list = ["--attn_num_heads 1"]  # ["--attn_num_heads 1", "--attn_num_heads 2", "--attn_num_heads 3", "--attn_num_heads 4", "--attn_num_heads 5"]
+use_weighted_loss_list = ["", "--use_weighted_loss true"]  # ["", "--use_weighted_loss true"]
 tol_edge_acc_loss_atol_list = [""]  # ["", "--tol_edge_acc_loss_atol 0.05", "--tol_edge_acc_loss_atol 0.1", "--tol_edge_acc_loss_atol 0.33"]
 custom_indices_loss_idx_list = [""]  # ["", "--custom_indices_loss_idx 0", "--custom_indices_loss_idx 0 --custom_indices_loss_idx 1 --custom_indices_loss_idx 2"]
 tol_edge_acc_metric_atol_list = [""]  # ["", "--tol_edge_acc_metric_atol 0.05", "--tol_edge_acc_metric_atol 0.1", "--tol_edge_acc_metric_atol 0.33"]
@@ -33,12 +34,12 @@ output_type_list = ["--output_type class_probability"]  # ["--output_type corr_c
 
 args_values = list(product(data_implement_list, batch_size_list, n_folds_list, tr_epochs_list, train_model_list, corr_type_list, seq_len_list, model_input_cus_bins_list,
                            target_mats_path_list, learning_rate_list, weight_decay_list, use_optim_scheduler_list,
-                           drop_pos_list, drop_p_list, gru_l_list, gru_h_list, gru_input_feature_idx_list, kernel_size_list, kernel_pad_list,
+                           drop_pos_list, drop_p_list, gru_l_list, gru_h_list, gru_input_feature_idx_list, kernel_size_list, kernel_pad_list, attn_num_heads_list,
                            use_weighted_loss_list, tol_edge_acc_loss_atol_list, custom_indices_loss_idx_list, tol_edge_acc_metric_atol_list, custom_indices_metric_idx_list,
                            output_type_list))
 args_keys = ["data_implement", "batch_size", "n_folds", "tr_epochs", "train_model", "corr_type", "seq_len", "model_input_cus_bins", "target_mats_path",
-             "learning_rate", "weight_decay", "use_optim_scheduler", "drop_pos", "drop_p", "gru_l", "gru_h", "gru_input_feature_idx", "kernel_size", "kernel_pad", "use_weighted_loss",
-             "tol_edge_acc_loss_atol", "custom_indices_loss_idx", "tol_edge_acc_metric_atol", "custom_indices_metric_idx", "output_type"]
+             "learning_rate", "weight_decay", "use_optim_scheduler", "drop_pos", "drop_p", "gru_l", "gru_h", "gru_input_feature_idx", "kernel_size", "kernel_pad", "attn_num_heads",
+             "use_weighted_loss", "tol_edge_acc_loss_atol", "custom_indices_loss_idx", "tol_edge_acc_metric_atol", "custom_indices_metric_idx", "output_type"]
 args_list = []
 for args_value in args_values:
     args_dict = dict(zip(args_keys, args_value))

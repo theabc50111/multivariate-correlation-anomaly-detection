@@ -19,7 +19,7 @@ class AttnOneDimGRUResMapCorrClass(GRUCorrClass):
         self.gru_in_dim = 1
         self.fc_dec_out_dim = self.gru_in_dim
         self.class_fc_out_dim = self.gru_in_dim
-        self.attn_num_heads = 1
+        self.attn_num_heads = self.model_cfg["attn_num_heads"]
         self.attn_embed_dim = self.model_cfg["seq_len"]
         self.attn_out_len = self.model_cfg["attn_out_len"]
         # set model components
