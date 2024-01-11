@@ -27,8 +27,8 @@ def split_data_with_varied_ratio(model_input_df: pd.DataFrame, batch_size: int, 
 
     for val_test_pct in np.linspace(0.1, 0.3, 21):
         if int(all_timesteps*val_test_pct) > 2*batch_size:
-            train_pct = 1 - val_test_pct
-            val_pct = train_pct + (val_test_pct / 2)
+            train_pct = 1-val_test_pct
+            val_pct = train_pct+(val_test_pct/2)
             break
     train_dataset = {"model_input": model_input_mat[::, :int(all_timesteps*train_pct)]}
     val_dataset = {"model_input": model_input_mat[::, int(all_timesteps*train_pct):int(all_timesteps*val_pct)]}
@@ -44,7 +44,12 @@ def split_data_with_varied_ratio(model_input_df: pd.DataFrame, batch_size: int, 
         val_dataset["target"] = val_dataset["model_input"]
         test_dataset["target"] = test_dataset["model_input"]
 
+    model_dates = model_input_df.columns
+    tr_dates_range = (model_dates[0:int(all_timesteps*train_pct)])
+    val_dates_range = (model_dates[int(all_timesteps*train_pct):int(all_timesteps*val_pct)])
+    test_dates_range = (model_dates[int(all_timesteps*val_pct):])
     LOGGER.info(f"split ratio: train:{train_pct}, val:{val_pct-train_pct}, test {1-val_pct}")
+    LOGGER.info(f"tr_dates_range: {tr_dates_range[0]}~{tr_dates_range[-1]}, val_dates_range: {val_dates_range[0]}~{val_dates_range[-1]}, test_dates_range: {test_dates_range[0]}~{test_dates_range[-1]}")
     LOGGER.info("="*80)
 
     return train_dataset, val_dataset, test_dataset

@@ -71,6 +71,7 @@ def plot_heatmap(preds: np.ndarray, labels: np.ndarray, num_classes: int, pic_ti
         total_data_confusion_matrix.index.name = 'Ground Truth'
         total_data_confusion_matrix.columns.name = 'Prediction'
         LOGGER.info(f"\nconfusion_matrix:\n{total_data_confusion_matrix}")
+        LOGGER.info("-"*50)
     if save_fig_path:
         plt.savefig(save_fig_path)
     plt.show()
@@ -280,6 +281,33 @@ def plot_silhouette(ax: mpl.axes._axes.Axes, n_clusters: int, data: np.ndarray, 
     ax.set_xticks(np.linspace(-1, 1, 11))
 
 
+def plot_mix_loss_curve(log_path_list: list, samples_weights: tuple, loss_history_len: int, fig_title: str):
+    assert len(log_path_list) == len(samples_weights), f"len(log_path_list) should be same as len(samples_weights), but len(log_path_list):{len(log_path_list)}, len(samples_weights):{len(samples_weights)}"
+    tol_tr_loss_history = np.zeros((loss_history_len,))
+    tol_val_loss_history = np.zeros((loss_history_len,))
+    for log_path, weight in zip(log_path_list, samples_weights):
+        with open(log_path, "r") as source:
+            log_dict = json.load(source)
+            tr_loss_each_log = np.array(log_dict["tr_loss_history"])*weight
+            val_loss_each_log = np.array(log_dict["val_loss_history"])*weight
+            tol_tr_loss_history += tr_loss_each_log
+            tol_val_loss_history += val_loss_each_log
+    tol_tr_loss_history /= sum(samples_weights)
+    tol_val_loss_history /= sum(samples_weights)
+    plt.rcParams.update({'font.size': 18})
+    plt.figure(figsize=(10, 6))
+    plt.plot(tol_tr_loss_history, label="tr_loss")
+    plt.plot(tol_val_loss_history, label="val_loss")
+    plt.title(fig_title, size=24, y=1.02)
+    # plt.suptitle('Amazing Stats', size=16, y=1.12)
+    plt.xlabel("epochs")
+    plt.legend()
+    plt.show()
+    plt.close()
+
+    return tol_tr_loss_history, tol_val_loss_history
+
+
 def plot_cluster_scatters(ax: mpl.axes._axes.Axes, n_clusters: int, data: np.ndarray, each_sample_cluster_labels: np.ndarray, centers: np.ndarray):
     """Plot the cluster scatters"""
     cmp = mpl.colormaps['rainbow']
@@ -318,6 +346,7 @@ def plot_table(ax: mpl.axes._axes.Axes, df: pd.DataFrame):
     table.set_fontsize(14)
     table.scale(1, 1.5)
     ax.axis('off')
+
 
 def plot_cluster_info(data: np.ndarray, each_sample_cluster_labels: np.ndarray, cluster_centers: np.ndarray,
                       n_clusters: int, linkage: str, cluster_metric: str,
