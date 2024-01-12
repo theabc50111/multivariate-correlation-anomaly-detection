@@ -105,3 +105,35 @@ class AttnOneDimGRUResMapCorrClass(GRUCorrClass):
         for fn_name, loss in batch_loss_each_loss_fn.items():
             epoch_metrics[(rec_stage+"_"+fn_name)] += loss/num_batches
 
+
+class AttnOneDimGRUCorrClass(AttnOneDimGRUResMapCorrClass):
+    """
+    GRU with attention for correlation classification.
+    """
+    def __init__(self, model_cfg: dict, **unused_kwargs):
+        super(AttnOneDimGRUCorrClass, self).__init__(model_cfg, **unused_kwargs)
+        if type(self) == AttnOneDimGRUCorrClass:
+            self.init_optimizer()
+
+    def forward(self, x: torch.Tensor, *unused_args, **unused_kwargs) -> torch.Tensor:
+        """
+        Forward pass of the model.
+        """
+        batch_size, seq_len, num_pairs = x.shape
+        attn_input = x.permute(0, 2, 1)  # (batch_size, num_pairs, seq_len)
+        attn1_out, attn1_weights = self.attn1(attn_input, attn_input, attn_input)  # (batch_size, num_pairs, attn_embed_dim), (batch_size, num_pairs, seq_len) ps. attn_embed_dim == seq_len
+        split_attn1_out = torch.split(attn1_out, 1, dim=1)  # (batch_size, 1, attn_embed_dim) * num_pairs, ps. attn_embed_dim == seq_len
+        for attn_len_i, attn1_out_i in enumerate(split_attn1_out):
+            trans_attn1_out_i = attn1_out_i.permute(0, 2, 1)  # (batch_size, attn_embed_dim, 1), ps. attn_embed_dim == seq_len
+            gru_input = trans_attn1_out_i
+            gru_output, _ = getattr(self, f"attn_l_id{attn_len_i}_gru")(gru_input)  # (batch_size, seq_len, gru_h)
+            fc_dec_output = getattr(self, f"attn_l_id{attn_len_i}_fc_decoder")(gru_output[:, -1, :]).unsqueeze(1)  # (batch_size, 1, fc_dec_out_dim), gru_output[:, -1, :] == (batch_size, gru_h)
+            for class_i in range(self.num_labels_classes):
+                class_fc_output = getattr(self, f"attn_l_id{attn_len_i}_class_fc{class_i}")(fc_dec_output)  # (batch_size, 1, class_fc_out_dim)
+                attn_len_i_logits = class_fc_output if class_i == 0 else torch.cat([attn_len_i_logits, class_fc_output], dim=1)  # (batch_size, num_labels_classes, class_fc_out_dim), ps.  class_fc_out_dim == 1
+            logits = attn_len_i_logits if attn_len_i == 0 else torch.cat([logits, attn_len_i_logits], dim=2)  # (batch_size, num_labels_classes, attn_out_len*class_fc_out_dim), ps.  class_fc_out_dim == 1
+        batch_pred_probs = self.softmax(logits)
+        assert batch_pred_probs.shape == (batch_size, self.num_labels_classes, self.attn_out_len*self.class_fc_out_dim), f"batch_pred_probs.shape:{batch_pred_probs.shape} is not equal to (batch_size, self.num_labels_classes, self.attn_out_len*self.class_fc_out_dim):{(batch_size, self.num_labels_classes, self.attn_out_len*self.class_fc_out_dim)}, ps. self.class_fc_out_dim=={self.class_fc_out_dim}"
+        assert torch.allclose(torch.sum(batch_pred_probs, dim=1), torch.ones(batch_size, self.attn_out_len*self.class_fc_out_dim)), f"batch_pred_probs.sum(dim=1):{batch_pred_probs.sum(dim=1)} is not equal to 1."
+
+        return batch_pred_probs
