@@ -161,6 +161,224 @@ DATASETS:
         CLUSTER_SETTINGS: {n_samples: 4950, n_features: 34, n_clusters: 2193, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_label: 959}
         OTHER_SETTINGS: {designated_sample: "ADBE & ZBH", designated_sample_idx: 158}
         OUTPUT_FILE_NAME_BASIS: "sp500_20112015_pca_cluster_pairs_given_pair_2"
+    SP500_20112015_PCA_CLUSTER_MIX_GIVEN_ITEMS:
+        FILE_PATH: *sp500_20112015_file_path
+        ALL_SET: *sp500_20082017_train_set
+        TRAIN_SET: ['AAP', 'ADBE', 'CRM', 'DISH', 'EMR', 'HUM', 'LMT', 'LRCX', 'TAP', 'TSCO', 'VTR']
+        GIVEN_PAIRS_IDX: [29]
+        TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_PCA_CLUSTER_PAIRS_GIVEN_PAIR", "SP500_20112015_RAND_1"]
+        PCA_SETTINGS: {n_samples:100 , n_featues:1258, pca_explanation_variance_thres: 0.1, scaler: 'MinMaxScaler'}
+        CLUSTER_SETTINGS: {n_samples: 100, n_features: 1, n_clusters: 19, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_labels: [1, 3], selected_cluter_sample: {'cluster_label_1': ['ADBE', 'CRM', 'DISH', 'EMR', 'LRCX', 'TAP', 'TSCO', 'VTR'], 'cluster_label_3': ['AAP', 'HUM', 'LMT']}}
+        OTHER_SETTINGS: {rand_seed: *default_seed, designated_samples: ["DISH", "LMT"]}
+        OUTPUT_FILE_NAME_BASIS: "sp500_20112015_pca_cluster_mix_given_items"
+    SP500_20112015_PCA_CLUSTER_MIX_GIVEN_ITEMS_2:
+        FILE_PATH: *sp500_20112015_file_path
+        ALL_SET: *sp500_20082017_train_set
+        TRAIN_SET: ['ADBE', 'AMZN', 'AOS', 'ATVI', 'CNP', 'CRM', 'CSCO', 'DISH', 'EMR', 'GLW', 'KR', 'LRCX', 'MAS', 'MCHP', 'TAP', 'TSCO', 'VTR']
+        GIVEN_PAIRS_IDX: [12]
+        TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_PCA_CLUSTER_PAIRS_GIVEN_PAIR_2", "SP500_20112015"]
+        PCA_SETTINGS: {n_samples:100 , n_featues:1258, pca_explanation_variance_thres: 0.1, scaler: 'MinMaxScaler'}
+        CLUSTER_SETTINGS: {n_samples: 100, n_features: 1, n_clusters: 19, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_labels: [1, 9], selected_cluter_sample: {'cluster_label_1': ['ADBE', 'CRM', 'DISH', 'EMR', 'LRCX', 'TAP', 'TSCO', 'VTR'], 'cluster_label_9': ['AMZN', 'AOS', 'ATVI', 'CNP', 'CSCO', 'GLW', 'KR', 'MAS', 'MCHP']}}
+        OTHER_SETTINGS: {rand_seed: *default_seed, designated_samples: ['ADBE', 'MCHP']}
+        OUTPUT_FILE_NAME_BASIS: "sp500_20112015_pca_cluster_mix_given_items_2"
+    RAND_1_PCA_CLUSTER_PAIRS_0_V2:
+        FILE_PATH: *sp500_20112015_rand_1_corr_s1_w50_file_path
+        ALL_SET: []
+        TRAIN_PAIRS_SET: ['AFL & MDLZ', 'DISH & FFIV', 'FFIV & MRK', 'MDLZ & MRK', 'MDLZ & PPL', 'MRK & PPL']
+        TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_RAND_1"]
+        PCA_SETTINGS: {n_samples: 45, n_featues: 1209, pca_explanation_variance_thres: 0.01, scaler: 'MinMaxScaler'}
+        CLUSTER_SETTINGS: {n_samples: 45, n_features: 23, n_clusters: 3, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_label: 0}
+        OUTPUT_FILE_NAME_BASIS: "rand_1_pca_cluster_pairs_0_v2"
+    RAND_1_PCA_CLUSTER_PAIRS_1_V2:
+        FILE_PATH: *sp500_20112015_rand_1_corr_s1_w50_file_path
+        ALL_SET: []
+        TRAIN_PAIRS_SET: ['ADBE & FFIV', 'ADBE & LMT', 'ADBE & MDLZ', 'ADBE & MSFT', 'ADBE & PPL', 'AFL & FFIV', 'DISH & MDLZ', 'DISH & MRK', 'DISH & PNC', 'DISH & PPL', 'FFIV & LMT', 'FFIV & MDLZ', 'FFIV & PPL', 'LMT & MDLZ', 'LMT & PNC', 'LMT & PPL', 'MDLZ & MSFT', 'MDLZ & PNC', 'MRK & MSFT', 'MSFT & PNC', 'MSFT & PPL', 'PNC & PPL']
+        TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_RAND_1"]
+        PCA_SETTINGS: {n_samples: 45, n_featues: 1209, pca_explanation_variance_thres: 0.01, scaler: 'MinMaxScaler'}
+        CLUSTER_SETTINGS: {n_samples: 45, n_features: 23, n_clusters: 3, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_label: 1}
+        OUTPUT_FILE_NAME_BASIS: "rand_1_pca_cluster_pairs_1_v2"
+    RAND_1_PCA_CLUSTER_PAIRS_2_V2:
+        FILE_PATH: *sp500_20112015_rand_1_corr_s1_w50_file_path
+        ALL_SET: []
+        TRAIN_PAIRS_SET: ['ADBE & AFL', 'ADBE & DISH', 'ADBE & MRK', 'ADBE & PNC', 'AFL & DISH', 'AFL & LMT', 'AFL & MRK', 'AFL & MSFT', 'AFL & PNC', 'AFL & PPL', 'DISH & LMT', 'DISH & MSFT', 'FFIV & MSFT', 'FFIV & PNC', 'LMT & MRK', 'LMT & MSFT', 'MRK & PNC']
+        TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_RAND_1"]
+        PCA_SETTINGS: {n_samples: 45, n_featues: 1209, pca_explanation_variance_thres: 0.01, scaler: 'MinMaxScaler'}
+        CLUSTER_SETTINGS: {n_samples: 45, n_features: 23, n_clusters: 3, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_label: 2}
+        OUTPUT_FILE_NAME_BASIS: "rand_1_pca_cluster_pairs_2_v2"
+    RAND_2_PCA_CLUSTER_PAIRS_0_V2:
+        FILE_PATH: &sp500_20112015_rand_2_corr_s1_w50_file_path "{DIRS.PIPELINE_DATA_DIR}/sp500_20112015_rand_2-train_train/pearson/corr_data/corr_s1_w50.csv"
+        ALL_SET: []
+        TRAIN_PAIRS_SET: ['ADBE & CMG', 'ADBE & COF', 'ADBE & DISH', 'ADBE & FL', 'ADBE & INCY', 'ADBE & IPGP', 'ADBE & LEN', 'ADBE & LMT', 'ADBE & MCHP', 'ADBE & MDLZ', 'ADBE & PVH', 'ADBE & VZ', 'AIV & ALB', 'AIV & CMG', 'AIV & COF', 'AIV & DISH', 'AIV & ES', 'AIV & EXR', 'AIV & FL', 'AIV & IPGP', 'AIV & LEN', 'AIV & LMT', 'AIV & MA', 'AIV & MAC', 'AIV & MDLZ', 'AIV & MSCI', 'AIV & PPL', 'AIV & UDR', 'AIV & VZ', 'ALB & CMG', 'ALB & COF', 'ALB & CRM', 'ALB & DISH', 'ALB & ES', 'ALB & EXR', 'ALB & FFIV', 'ALB & FL', 'ALB & HBI', 'ALB & IFF', 'ALB & INCY', 'ALB & IPGP', 'ALB & LEN', 'ALB & LMT', 'ALB & MAC', 'ALB & MCHP', 'ALB & MDLZ', 'ALB & MSCI', 'ALB & OKE', 'ALB & PPL', 'ALB & PVH', 'ALB & UDR', 'ALB & VZ', 'ALB & ZBH', 'ATVI & COF', 'ATVI & EXR', 'ATVI & FFIV', 'ATVI & FL', 'ATVI & INCY', 'ATVI & LEN', 'ATVI & LMT', 'ATVI & MDLZ', 'ATVI & PVH', 'ATVI & VZ', 'CMG & COF', 'CMG & CRM', 'CMG & DISH', 'CMG & ES', 'CMG & EXR', 'CMG & FFIV', 'CMG & HBI', 'CMG & IFF', 'CMG & INCY', 'CMG & IPGP', 'CMG & LEN', 'CMG & LMT', 'CMG & MA', 'CMG & MAC', 'CMG & MCHP', 'CMG & MDLZ', 'CMG & MSCI', 'CMG & PPL', 'CMG & UDR', 'CMG & VZ', 'CMG & ZBH', 'COF & ES', 'COF & EXR', 'COF & FFIV', 'COF & FL', 'COF & HBI', 'COF & IFF', 'COF & INCY', 'COF & IPGP', 'COF & LEN', 'COF & LMT', 'COF & MAC', 'COF & MCHP', 'COF & MDLZ', 'COF & MSCI', 'COF & PPL', 'COF & PVH', 'COF & UDR', 'COF & VZ', 'COF & ZBH', 'CRM & FFIV', 'CRM & FL', 'CRM & IFF', 'CRM & INCY', 'CRM & LEN', 'CRM & MCHP', 'CRM & PVH', 'CRM & VZ', 'DISH & ES', 'DISH & EXR', 'DISH & FFIV', 'DISH & FL', 'DISH & HBI', 'DISH & IFF', 'DISH & INCY', 'DISH & IPGP', 'DISH & LMT', 'DISH & MAC', 'DISH & PPL', 'DISH & PVH', 'DISH & UDR', 'DISH & VZ', 'ES & EXR', 'ES & FL', 'ES & IFF', 'ES & IPGP', 'ES & LEN', 'ES & LMT', 'ES & MAC', 'ES & MDLZ', 'ES & PPL', 'ES & UDR', 'ES & VZ', 'EXR & FL', 'EXR & IPGP', 'EXR & LEN', 'EXR & LMT', 'EXR & MAC', 'EXR & MDLZ', 'EXR & MSCI', 'EXR & PPL', 'EXR & UDR', 'EXR & VZ', 'FFIV & FL', 'FFIV & IFF', 'FFIV & INCY', 'FFIV & IPGP', 'FFIV & LEN', 'FFIV & MA', 'FFIV & MDLZ', 'FFIV & MSCI', 'FFIV & PVH', 'FFIV & VZ', 'FL & HBI', 'FL & IFF', 'FL & INCY', 'FL & IPGP', 'FL & LEN', 'FL & LMT', 'FL & MAC', 'FL & MCHP', 'FL & MDLZ', 'FL & MSCI', 'FL & OKE', 'FL & PPL', 'FL & PVH', 'FL & UDR', 'FL & VZ', 'FL & ZBH', 'HBI & IFF', 'HBI & INCY', 'HBI & IPGP', 'HBI & LMT', 'HBI & MSCI', 'HBI & PVH', 'IFF & INCY', 'IFF & IPGP', 'IFF & LMT', 'IFF & MCHP', 'IFF & MDLZ', 'IFF & MSCI', 'IFF & OKE', 'IFF & PPL', 'IFF & VZ', 'IFF & ZBH', 'INCY & IPGP', 'INCY & LEN', 'INCY & LMT', 'INCY & MCHP', 'INCY & MSCI', 'IPGP & LMT', 'IPGP & MAC', 'IPGP & MDLZ', 'IPGP & MSCI', 'IPGP & OKE', 'IPGP & PPL', 'IPGP & PVH', 'IPGP & UDR', 'IPGP & VZ', 'IPGP & ZBH', 'LEN & MAC', 'LEN & MCHP', 'LEN & MDLZ', 'LEN & MSCI', 'LEN & OKE', 'LEN & PPL', 'LEN & UDR', 'LEN & VZ', 'LMT & MAC', 'LMT & MDLZ', 'LMT & MSCI', 'LMT & PPL', 'LMT & PVH', 'LMT & UDR', 'LMT & VZ', 'LMT & ZBH', 'MA & MDLZ', 'MA & PVH', 'MA & RRC', 'MA & UDR', 'MA & VZ', 'MAC & MDLZ', 'MAC & MSCI', 'MAC & PPL', 'MAC & UDR', 'MAC & VZ', 'MCHP & MSCI', 'MCHP & PVH', 'MCHP & VZ', 'MDLZ & MSCI', 'MDLZ & OKE', 'MDLZ & PPL', 'MDLZ & UDR', 'MDLZ & VZ', 'MSCI & OKE', 'MSCI & PPL', 'MSCI & PVH', 'MSCI & UDR', 'MSCI & VZ', 'MSCI & ZBH', 'OKE & RRC', 'OKE & VZ', 'PPL & UDR', 'PPL & VZ', 'RRC & VZ', 'UDR & VZ', 'VZ & ZBH']
+        TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_RAND_2"]
+        PCA_SETTINGS: {n_samples: 435, n_featues: 1209, pca_explanation_variance_thres: 0.01, scaler: 'MinMaxScaler'}
+        CLUSTER_SETTINGS: {n_samples: 435, n_features: 30, n_clusters: 3, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_label: 0}
+        OUTPUT_FILE_NAME_BASIS: "rand_2_pca_cluster_pairs_0_v2"
+    RAND_2_PCA_CLUSTER_PAIRS_1_V2:
+        FILE_PATH: *sp500_20112015_rand_2_corr_s1_w50_file_path
+        ALL_SET: []
+        TRAIN_PAIRS_SET: ['ADBE & ATVI', 'ADBE & HBI', 'ADBE & IFF', 'ADBE & MA', 'ADBE & RRC', 'ADBE & ZBH', 'AIV & ATVI', 'AIV & CRM', 'AIV & HBI', 'AIV & INCY', 'AIV & PVH', 'AIV & RRC', 'ALB & ATVI', 'ALB & MA', 'ALB & RRC', 'ATVI & CMG', 'ATVI & HBI', 'ATVI & IFF', 'ATVI & IPGP', 'ATVI & MA', 'ATVI & MAC', 'ATVI & MCHP', 'ATVI & MSCI', 'ATVI & RRC', 'ATVI & UDR', 'ATVI & ZBH', 'CMG & FL', 'CMG & OKE', 'CMG & PVH', 'CMG & RRC', 'COF & MA', 'COF & RRC', 'CRM & EXR', 'CRM & IPGP', 'CRM & MAC', 'CRM & MDLZ', 'CRM & PPL', 'CRM & RRC', 'CRM & UDR', 'DISH & MA', 'DISH & RRC', 'ES & INCY', 'ES & PVH', 'ES & RRC', 'EXR & HBI', 'EXR & INCY', 'EXR & PVH', 'EXR & RRC', 'FFIV & RRC', 'FL & MA', 'FL & RRC', 'HBI & MA', 'HBI & MDLZ', 'HBI & RRC', 'HBI & UDR', 'IFF & MA', 'IFF & PVH', 'IFF & RRC', 'INCY & MA', 'INCY & MAC', 'INCY & MDLZ', 'INCY & PPL', 'INCY & PVH', 'INCY & RRC', 'INCY & UDR', 'INCY & VZ', 'IPGP & MA', 'IPGP & MCHP', 'IPGP & RRC', 'LEN & MA', 'LEN & PVH', 'LEN & RRC', 'LMT & MA', 'LMT & RRC', 'MA & MSCI', 'MA & ZBH', 'MAC & PVH', 'MAC & RRC', 'MCHP & RRC', 'MCHP & ZBH', 'MDLZ & PVH', 'MDLZ & RRC', 'MSCI & RRC', 'OKE & PVH', 'PPL & PVH', 'PPL & RRC', 'PVH & RRC', 'PVH & UDR', 'PVH & VZ', 'PVH & ZBH', 'RRC & UDR', 'RRC & ZBH']
+        TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_RAND_2"]
+        PCA_SETTINGS: {n_samples: 435, n_featues: 1209, pca_explanation_variance_thres: 0.01, scaler: 'MinMaxScaler'}
+        CLUSTER_SETTINGS: {n_samples: 435, n_features: 30, n_clusters: 3, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_label: 1}
+        OUTPUT_FILE_NAME_BASIS: "rand_2_pca_cluster_pairs_1_v2"
+    RAND_2_PCA_CLUSTER_PAIRS_2_V2:
+        FILE_PATH: *sp500_20112015_rand_2_corr_s1_w50_file_path
+        ALL_SET: []
+        TRAIN_PAIRS_SET: ['ADBE & AIV', 'ADBE & ALB', 'ADBE & CRM', 'ADBE & ES', 'ADBE & EXR', 'ADBE & FFIV', 'ADBE & MAC', 'ADBE & MSCI', 'ADBE & OKE', 'ADBE & PPL', 'ADBE & UDR', 'AIV & FFIV', 'AIV & IFF', 'AIV & MCHP', 'AIV & OKE', 'AIV & ZBH', 'ATVI & CRM', 'ATVI & DISH', 'ATVI & ES', 'ATVI & OKE', 'ATVI & PPL', 'COF & CRM', 'COF & DISH', 'COF & OKE', 'CRM & DISH', 'CRM & ES', 'CRM & HBI', 'CRM & LMT', 'CRM & MA', 'CRM & MSCI', 'CRM & OKE', 'CRM & ZBH', 'DISH & LEN', 'DISH & MCHP', 'DISH & MDLZ', 'DISH & MSCI', 'DISH & OKE', 'DISH & ZBH', 'ES & FFIV', 'ES & HBI', 'ES & MA', 'ES & MCHP', 'ES & MSCI', 'ES & OKE', 'ES & ZBH', 'EXR & FFIV', 'EXR & IFF', 'EXR & MA', 'EXR & MCHP', 'EXR & OKE', 'EXR & ZBH', 'FFIV & HBI', 'FFIV & LMT', 'FFIV & MAC', 'FFIV & MCHP', 'FFIV & OKE', 'FFIV & PPL', 'FFIV & UDR', 'FFIV & ZBH', 'HBI & LEN', 'HBI & MAC', 'HBI & MCHP', 'HBI & OKE', 'HBI & PPL', 'HBI & VZ', 'HBI & ZBH', 'IFF & LEN', 'IFF & MAC', 'IFF & UDR', 'INCY & OKE', 'INCY & ZBH', 'IPGP & LEN', 'LEN & LMT', 'LEN & ZBH', 'LMT & MCHP', 'LMT & OKE', 'MA & MAC', 'MA & MCHP', 'MA & OKE', 'MA & PPL', 'MAC & MCHP', 'MAC & OKE', 'MAC & ZBH', 'MCHP & MDLZ', 'MCHP & OKE', 'MCHP & PPL', 'MCHP & UDR', 'MDLZ & ZBH', 'OKE & PPL', 'OKE & UDR', 'OKE & ZBH', 'PPL & ZBH', 'UDR & ZBH']
+        TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_RAND_2"]
+        PCA_SETTINGS: {n_samples: 435, n_featues: 1209, pca_explanation_variance_thres: 0.01, scaler: 'MinMaxScaler'}
+        CLUSTER_SETTINGS: {n_samples: 435, n_features: 30, n_clusters: 3, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_label: 1}
+        OUTPUT_FILE_NAME_BASIS: "rand_2_pca_cluster_pairs_2_v2"
+    ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_0_V2:
+        FILE_PATH: *sp500_20112015_corr_mean_above_moderate_positive_keep_corr_s1_w50_file_path
+        ALL_SET: []
+        TRAIN_PAIRS_SET: ['ADBE & AFL', 'ADBE & COF', 'ADBE & EL', 'ADBE & IPG', 'ADBE & IT', 'ADBE & TSCO', 'AFL & COF', 'AFL & IPG', 'AFL & ZBH', 'COF & IPG', 'COF & IT', 'COF & ITW', 'COF & MAS', 'COF & ZBH', 'EL & IT', 'EL & ITW', 'EL & TSCO', 'EL & ZBH', 'IPG & IT', 'IPG & ITW', 'IPG & TSCO', 'IPG & ZBH', 'IT & MAS', 'IT & TSCO', 'ITW & TSCO', 'ITW & ZBH']
+        TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_CORR_MEAN_ABOVE_MODERATE_POSITIVE_KEEP"]
+        PCA_SETTINGS: {n_samples: 45, n_featues: 1209, pca_explanation_variance_thres: 0.01, scaler: 'MinMaxScaler'}
+        CLUSTER_SETTINGS: {n_samples: 45, n_features: 22, n_clusters: 3, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_label: 0}
+        OUTPUT_FILE_NAME_BASIS: "above_mod_posi_pca_cluster_pairs_0_v2"
+    ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_1_V2:
+        FILE_PATH: *sp500_20112015_corr_mean_above_moderate_positive_keep_corr_s1_w50_file_path
+        ALL_SET: []
+        TRAIN_PAIRS_SET: ['ADBE & ITW', 'ADBE & MAS', 'ADBE & ZBH', 'AFL & EL', 'AFL & IT', 'AFL & ITW', 'AFL & MAS', 'COF & EL', 'EL & IPG', 'EL & MAS', 'IPG & MAS', 'IT & ITW', 'IT & ZBH', 'ITW & MAS', 'MAS & ZBH', 'TSCO & ZBH']
+        TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_CORR_MEAN_ABOVE_MODERATE_POSITIVE_KEEP"]
+        PCA_SETTINGS: {n_samples: 45, n_featues: 1209, pca_explanation_variance_thres: 0.01, scaler: 'MinMaxScaler'}
+        CLUSTER_SETTINGS: {n_samples: 45, n_features: 22, n_clusters: 3, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_label: 1}
+        OUTPUT_FILE_NAME_BASIS: "above_mod_posi_pca_cluster_pairs_1_v2"
+    ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_2_V2:
+        FILE_PATH: *sp500_20112015_corr_mean_above_moderate_positive_keep_corr_s1_w50_file_path
+        ALL_SET: []
+        TRAIN_PAIRS_SET: ['AFL & TSCO', 'COF & TSCO', 'MAS & TSCO']
+        TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_CORR_MEAN_ABOVE_MODERATE_POSITIVE_KEEP"]
+        PCA_SETTINGS: {n_samples: 45, n_featues: 1209, pca_explanation_variance_thres: 0.01, scaler: 'MinMaxScaler'}
+        CLUSTER_SETTINGS: {n_samples: 45, n_features: 22, n_clusters: 3, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_label: 2}
+        OUTPUT_FILE_NAME_BASIS: "above_mod_posi_pca_cluster_pairs_2_v2"
+    BELOW_MOD_POSI_PCA_CLUSTER_PAIRS_0_V2:
+        FILE_PATH: &sp500_20112015_corr_mean_below_moderate_positive_keep_corr_s1_w50_file_path "{DIRS.PIPELINE_DATA_DIR}/sp500_20112015_corr_mean_below_moderate_positive_keep-train_train/pearson/corr_data/corr_s1_w50.csv"
+        ALL_SET: []
+        TRAIN_PAIRS_SET: ['AAP & CMG', 'AAP & EQR', 'AAP & INCY', 'AAP & RMD', 'CMG & FFIV', 'CMG & KSS', 'CMG & LEN', 'CMG & PVH', 'EQR & LEN', 'EQR & RMD', 'FFIV & INCY', 'FFIV & PVH', 'INCY & KSS', 'INCY & LEN', 'INCY & PVH', 'INCY & RMD', 'LEN & RMD']
+        TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_CORR_MEAN_BELOW_MODERATE_POSITIVE_KEEP"]
+        PCA_SETTINGS: {n_samples: 45, n_featues: 1209, pca_explanation_variance_thres: 0.01, scaler: 'MinMaxScaler'}
+        CLUSTER_SETTINGS: {n_samples: 45, n_features: 24, n_clusters: 3, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_label: 0}
+        OUTPUT_FILE_NAME_BASIS: "below_mod_posi_pca_cluster_pairs_0_v2"
+    BELOW_MOD_POSI_PCA_CLUSTER_PAIRS_1_V2:
+        FILE_PATH: *sp500_20112015_corr_mean_below_moderate_positive_keep_corr_s1_w50_file_path
+        ALL_SET: []
+        TRAIN_PAIRS_SET: ['AAP & KSS', 'BRK & CMG', 'BRK & EQR', 'BRK & FFIV', 'BRK & INCY', 'BRK & KSS', 'BRK & LEN', 'BRK & PVH', 'BRK & RMD', 'CMG & RMD', 'EQR & FFIV', 'EQR & PVH', 'FFIV & KSS', 'FFIV & LEN', 'FFIV & RMD', 'KSS & LEN', 'KSS & PVH', 'PVH & RMD']
+        TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_CORR_MEAN_BELOW_MODERATE_POSITIVE_KEEP"]
+        PCA_SETTINGS: {n_samples: 45, n_featues: 1209, pca_explanation_variance_thres: 0.01, scaler: 'MinMaxScaler'}
+        CLUSTER_SETTINGS: {n_samples: 45, n_features: 24, n_clusters: 3, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_label: 1}
+        OUTPUT_FILE_NAME_BASIS: "below_mod_posi_pca_cluster_pairs_1_v2"
+    BELOW_MOD_POSI_PCA_CLUSTER_PAIRS_2_V2:
+        FILE_PATH: *sp500_20112015_corr_mean_below_moderate_positive_keep_corr_s1_w50_file_path
+        ALL_SET: []
+        TRAIN_PAIRS_SET: ['AAP & BRK', 'AAP & FFIV', 'AAP & LEN', 'AAP & PVH', 'CMG & EQR', 'CMG & INCY', 'EQR & INCY', 'EQR & KSS', 'KSS & RMD', 'LEN & PVH']
+        TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_CORR_MEAN_BELOW_MODERATE_POSITIVE_KEEP"]
+        PCA_SETTINGS: {n_samples: 45, n_featues: 1209, pca_explanation_variance_thres: 0.01, scaler: 'MinMaxScaler'}
+        CLUSTER_SETTINGS: {n_samples: 45, n_features: 24, n_clusters: 3, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_label: 2}
+        OUTPUT_FILE_NAME_BASIS: "below_mod_posi_pca_cluster_pairs_2_v2"
+    SYNTHETIC_COLL2_POW1_WAVY:
+        FILE_PATH: "{DIRS.DATASET_DIR}/is_pre_data/synthetic/dim10/collections_2/power_collection/basis_pw_rand_wavy/power_1_0/bkps0-noise_scale5.csv"
+        ALL_SET: []
+        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
+        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["power_collection"], basis_timeseries: "pw_rand_wavy", power: 1.0, bkps: 0, noise_scale: 5}
+        OUTPUT_FILE_NAME_BASIS: "synthetic_coll2_pow1_wavy"
+    SYNTHETIC_COLL2_POW1_WAVY_2:
+        FILE_PATH: "{DIRS.DATASET_DIR}/is_pre_data/synthetic/dim10/collections_2/power_collection/basis_pw_rand_wavy/power_1_0/bkps0-noise_scale30.csv"
+        ALL_SET: []
+        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
+        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["power_collection"], basis_timeseries: "pw_rand_wavy", power: 1.0, bkps: 0, noise_scale: 30}
+        OUTPUT_FILE_NAME_BASIS: "synthetic_coll2_pow1_wavy_2"
+    SYNTHETIC_COLL2_LAG7_WAVY:
+        FILE_PATH: "{DIRS.DATASET_DIR}/is_pre_data/synthetic/dim10/collections_2/t_shift_collection/basis_pw_rand_wavy/lag_7/bkps0-noise_scale5.csv"
+        ALL_SET: []
+        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
+        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "pw_rand_wavy", t_shift_lag_period: 7, bkps: 0, noise_scale: 5}
+        OUTPUT_FILE_NAME_BASIS: "synthetic_coll2_lag7_wavy"
+    SYNTHETIC_COLL2_LAG7_WAVY_2:
+        FILE_PATH: "{DIRS.DATASET_DIR}/is_pre_data/synthetic/dim10/collections_2/t_shift_collection/basis_pw_rand_wavy/lag_7/bkps0-noise_scale30.csv"
+        ALL_SET: []
+        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
+        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "pw_rand_wavy", t_shift_lag_period: 7, bkps: 0, noise_scale: 30}
+        OUTPUT_FILE_NAME_BASIS: "synthetic_coll2_lag7_wavy_2"
+    SYNTHETIC_COLL2_LAG19_WAVY:
+        FILE_PATH: "{DIRS.DATASET_DIR}/is_pre_data/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_19/bkps0-noise_scale5.csv"
+        ALL_SET: []
+        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
+        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 19, bkps: 0, noise_scale: 5}
+        OUTPUT_FILE_NAME_BASIS: "synthetic_coll2_lag19_wavy"
+    SYNTHETIC_COLL2_LAG19_WAVY_2:
+        FILE_PATH: "{DIRS.DATASET_DIR}/is_pre_data/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_19/bkps0-noise_scale30.csv"
+        ALL_SET: []
+        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
+        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 19, bkps: 0, noise_scale: 30}
+        OUTPUT_FILE_NAME_BASIS: "synthetic_coll2_lag19_wavy_2"
+    SYNTHETIC_COLL2_LAG59_WAVY:
+        FILE_PATH: "{DIRS.DATASET_DIR}/is_pre_data/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_59/bkps0-noise_scale5.csv"
+        ALL_SET: []
+        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
+        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 59, bkps: 0, noise_scale: 5}
+        OUTPUT_FILE_NAME_BASIS: "synthetic_coll2_lag59_wavy"
+    SYNTHETIC_COLL2_LAG59_WAVY_2:
+        FILE_PATH: "{DIRS.DATASET_DIR}/is_pre_data/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_59/bkps0-noise_scale30.csv"
+        ALL_SET: []
+        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
+        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 59, bkps: 0, noise_scale: 30}
+        OUTPUT_FILE_NAME_BASIS: "synthetic_coll2_lag59_wavy_2"
+    SYNTHETIC_COLL2_POW1_LAG7_WAVY:
+        FILE_PATH: "{DIRS.DATASET_DIR}/is_pre_data/synthetic/dim10/collections_2/power_and_t_shift_collection/basis_pw_rand_wavy/power_1_0/lag_7/bkps0-noise_scale5.csv"
+        ALL_SET: []
+        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
+        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["power_and_t_shift_collection"], basis_timeseries: "pw_rand_wavy", power: 1.0, t_shift_lag_period: 7, bkps: 0, noise_scale: 5}
+        OUTPUT_FILE_NAME_BASIS: "synthetic_coll2_pow1_lag7_wavy"
+    SYNTHETIC_COLL2_POW1_LAG7_WAVY_2:
+        FILE_PATH: "{DIRS.DATASET_DIR}/is_pre_data/synthetic/dim10/collections_2/power_and_t_shift_collection/basis_pw_rand_wavy/power_1_0/lag_7/bkps0-noise_scale30.csv"
+        ALL_SET: []
+        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
+        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["power_and_t_shift_collection"], basis_timeseries: "pw_rand_wavy", power: 1.0, t_shift_lag_period: 7, bkps: 0, noise_scale: 30}
+        OUTPUT_FILE_NAME_BASIS: "synthetic_coll2_pow1_lag7_wavy_2"
+    SYNTHETIC_COLL2_POW1_LAG19_WAVY:
+        FILE_PATH: "{DIRS.DATASET_DIR}/is_pre_data/synthetic/dim10/collections_2/power_and_t_shift_collection/basis_nike_ts/power_1_0/lag_19/bkps0-noise_scale5.csv"
+        ALL_SET: []
+        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
+        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["power_and_t_shift_collection"], basis_timeseries: "nike_ts", power: 1.0, t_shift_lag_period: 19, bkps: 0, noise_scale: 5}
+        OUTPUT_FILE_NAME_BASIS: "synthetic_coll2_pow1_lag19_wavy"
+    SYNTHETIC_COLL2_POW1_LAG19_WAVY_2:
+        FILE_PATH: "{DIRS.DATASET_DIR}/is_pre_data/synthetic/dim10/collections_2/power_and_t_shift_collection/basis_nike_ts/power_1_0/lag_19/bkps0-noise_scale30.csv"
+        ALL_SET: []
+        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
+        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["power_and_t_shift_collection"], basis_timeseries: "nike_ts", power: 1.0, t_shift_lag_period: 19, bkps: 0, noise_scale: 30}
+        OUTPUT_FILE_NAME_BASIS: "synthetic_coll2_pow1_lag19_wavy_2"
+    SYNTHETIC_COLL2_POW1_LAG59_WAVY:
+        FILE_PATH: "{DIRS.DATASET_DIR}/is_pre_data/synthetic/dim10/collections_2/power_and_t_shift_collection/basis_nike_ts/power_1_0/lag_59/bkps0-noise_scale5.csv"
+        ALL_SET: []
+        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
+        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["power_and_t_shift_collection"], basis_timeseries: "nike_ts", power: 1.0, t_shift_lag_period: 59, bkps: 0, noise_scale: 5}
+        OUTPUT_FILE_NAME_BASIS: "synthetic_coll2_pow1_lag59_wavy"
+    SYNTHETIC_COLL2_POW1_LAG59_WAVY_2:
+        FILE_PATH: "{DIRS.DATASET_DIR}/is_pre_data/synthetic/dim10/collections_2/power_and_t_shift_collection/basis_nike_ts/power_1_0/lag_59/bkps0-noise_scale30.csv"
+        ALL_SET: []
+        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
+        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["power_and_t_shift_collection"], basis_timeseries: "nike_ts", power: 1.0, t_shift_lag_period: 59, bkps: 0, noise_scale: 30}
+        OUTPUT_FILE_NAME_BASIS: "synthetic_coll2_pow1_lag59_wavy_2"
+
+
+
+################################################### Temporary Datasets should be deleted after observation its distribution #####################################################
+
+    TMP_SP500_20112015_RAND_1_ABOVE_MODERATE_BELOW_MODERATE:
+        FILE_PATH: ""
+        ALL_SET: []
+        TRAIN_SET: []
+        TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_RAND_1", "SP500_20112015_CORR_MEAN_ABOVE_MODERATE_POSITIVE_KEEP", "SP500_20112015_CORR_MEAN_BELOW_MODERATE_POSITIVE_KEEP"]
+        OUTPUT_FILE_NAME_BASIS: "tmp_sp500_20112015_rand_1_above_moderate_below_moderate"
+
+################################################### Temporary Datasets should be deleted after observation its distribution #####################################################
+
+
+
+################################################### Deprecated Datasets should be deleted after proper time #####################################################
+
     RAND_1_PCA_CLUSTER_PAIRS_0:
         FILE_PATH: &sp500_20112015_rand_1_corr_s1_w50_file_path "{DIRS.PIPELINE_DATA_DIR}/sp500_20112015_rand_1-train_train/pearson/corr_data/corr_s1_w50.csv"
         ALL_SET: []
@@ -329,59 +547,6 @@ DATASETS:
         PCA_SETTINGS: {n_samples: 45, n_featues: 1209, pca_explanation_variance_thres: 0.01, scaler: 'MinMaxScaler'}
         CLUSTER_SETTINGS: {n_samples: 45, n_features: 23, n_clusters: 21, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_label: 20}
         OUTPUT_FILE_NAME_BASIS: "rand_1_pca_cluster_pairs_20"
-    RAND_1_PCA_CLUSTER_PAIRS_0_V2:
-        FILE_PATH: *sp500_20112015_rand_1_corr_s1_w50_file_path
-        ALL_SET: []
-        TRAIN_PAIRS_SET: ['AFL & MDLZ', 'DISH & FFIV', 'FFIV & MRK', 'MDLZ & MRK', 'MDLZ & PPL', 'MRK & PPL']
-        TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_RAND_1"]
-        PCA_SETTINGS: {n_samples: 45, n_featues: 1209, pca_explanation_variance_thres: 0.01, scaler: 'MinMaxScaler'}
-        CLUSTER_SETTINGS: {n_samples: 45, n_features: 23, n_clusters: 3, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_label: 0}
-        OUTPUT_FILE_NAME_BASIS: "rand_1_pca_cluster_pairs_0_v2"
-    RAND_1_PCA_CLUSTER_PAIRS_1_V2:
-        FILE_PATH: *sp500_20112015_rand_1_corr_s1_w50_file_path
-        ALL_SET: []
-        TRAIN_PAIRS_SET: ['ADBE & FFIV', 'ADBE & LMT', 'ADBE & MDLZ', 'ADBE & MSFT', 'ADBE & PPL', 'AFL & FFIV', 'DISH & MDLZ', 'DISH & MRK', 'DISH & PNC', 'DISH & PPL', 'FFIV & LMT', 'FFIV & MDLZ', 'FFIV & PPL', 'LMT & MDLZ', 'LMT & PNC', 'LMT & PPL', 'MDLZ & MSFT', 'MDLZ & PNC', 'MRK & MSFT', 'MSFT & PNC', 'MSFT & PPL', 'PNC & PPL']
-        TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_RAND_1"]
-        PCA_SETTINGS: {n_samples: 45, n_featues: 1209, pca_explanation_variance_thres: 0.01, scaler: 'MinMaxScaler'}
-        CLUSTER_SETTINGS: {n_samples: 45, n_features: 23, n_clusters: 3, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_label: 1}
-        OUTPUT_FILE_NAME_BASIS: "rand_1_pca_cluster_pairs_1_v2"
-    RAND_1_PCA_CLUSTER_PAIRS_2_V2:
-        FILE_PATH: *sp500_20112015_rand_1_corr_s1_w50_file_path
-        ALL_SET: []
-        TRAIN_PAIRS_SET: ['ADBE & AFL', 'ADBE & DISH', 'ADBE & MRK', 'ADBE & PNC', 'AFL & DISH', 'AFL & LMT', 'AFL & MRK', 'AFL & MSFT', 'AFL & PNC', 'AFL & PPL', 'DISH & LMT', 'DISH & MSFT', 'FFIV & MSFT', 'FFIV & PNC', 'LMT & MRK', 'LMT & MSFT', 'MRK & PNC']
-        TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_RAND_1"]
-        PCA_SETTINGS: {n_samples: 45, n_featues: 1209, pca_explanation_variance_thres: 0.01, scaler: 'MinMaxScaler'}
-        CLUSTER_SETTINGS: {n_samples: 45, n_features: 23, n_clusters: 3, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_label: 2}
-        OUTPUT_FILE_NAME_BASIS: "rand_1_pca_cluster_pairs_2_v2"
-
-
-
-
-    RAND_2_PCA_CLUSTER_PAIRS_0_V2:
-        FILE_PATH: &sp500_20112015_rand_2_corr_s1_w50_file_path "{DIRS.PIPELINE_DATA_DIR}/sp500_20112015_rand_2-train_train/pearson/corr_data/corr_s1_w50.csv"
-        ALL_SET: []
-        TRAIN_PAIRS_SET: ['ADBE & CMG', 'ADBE & COF', 'ADBE & DISH', 'ADBE & FL', 'ADBE & INCY', 'ADBE & IPGP', 'ADBE & LEN', 'ADBE & LMT', 'ADBE & MCHP', 'ADBE & MDLZ', 'ADBE & PVH', 'ADBE & VZ', 'AIV & ALB', 'AIV & CMG', 'AIV & COF', 'AIV & DISH', 'AIV & ES', 'AIV & EXR', 'AIV & FL', 'AIV & IPGP', 'AIV & LEN', 'AIV & LMT', 'AIV & MA', 'AIV & MAC', 'AIV & MDLZ', 'AIV & MSCI', 'AIV & PPL', 'AIV & UDR', 'AIV & VZ', 'ALB & CMG', 'ALB & COF', 'ALB & CRM', 'ALB & DISH', 'ALB & ES', 'ALB & EXR', 'ALB & FFIV', 'ALB & FL', 'ALB & HBI', 'ALB & IFF', 'ALB & INCY', 'ALB & IPGP', 'ALB & LEN', 'ALB & LMT', 'ALB & MAC', 'ALB & MCHP', 'ALB & MDLZ', 'ALB & MSCI', 'ALB & OKE', 'ALB & PPL', 'ALB & PVH', 'ALB & UDR', 'ALB & VZ', 'ALB & ZBH', 'ATVI & COF', 'ATVI & EXR', 'ATVI & FFIV', 'ATVI & FL', 'ATVI & INCY', 'ATVI & LEN', 'ATVI & LMT', 'ATVI & MDLZ', 'ATVI & PVH', 'ATVI & VZ', 'CMG & COF', 'CMG & CRM', 'CMG & DISH', 'CMG & ES', 'CMG & EXR', 'CMG & FFIV', 'CMG & HBI', 'CMG & IFF', 'CMG & INCY', 'CMG & IPGP', 'CMG & LEN', 'CMG & LMT', 'CMG & MA', 'CMG & MAC', 'CMG & MCHP', 'CMG & MDLZ', 'CMG & MSCI', 'CMG & PPL', 'CMG & UDR', 'CMG & VZ', 'CMG & ZBH', 'COF & ES', 'COF & EXR', 'COF & FFIV', 'COF & FL', 'COF & HBI', 'COF & IFF', 'COF & INCY', 'COF & IPGP', 'COF & LEN', 'COF & LMT', 'COF & MAC', 'COF & MCHP', 'COF & MDLZ', 'COF & MSCI', 'COF & PPL', 'COF & PVH', 'COF & UDR', 'COF & VZ', 'COF & ZBH', 'CRM & FFIV', 'CRM & FL', 'CRM & IFF', 'CRM & INCY', 'CRM & LEN', 'CRM & MCHP', 'CRM & PVH', 'CRM & VZ', 'DISH & ES', 'DISH & EXR', 'DISH & FFIV', 'DISH & FL', 'DISH & HBI', 'DISH & IFF', 'DISH & INCY', 'DISH & IPGP', 'DISH & LMT', 'DISH & MAC', 'DISH & PPL', 'DISH & PVH', 'DISH & UDR', 'DISH & VZ', 'ES & EXR', 'ES & FL', 'ES & IFF', 'ES & IPGP', 'ES & LEN', 'ES & LMT', 'ES & MAC', 'ES & MDLZ', 'ES & PPL', 'ES & UDR', 'ES & VZ', 'EXR & FL', 'EXR & IPGP', 'EXR & LEN', 'EXR & LMT', 'EXR & MAC', 'EXR & MDLZ', 'EXR & MSCI', 'EXR & PPL', 'EXR & UDR', 'EXR & VZ', 'FFIV & FL', 'FFIV & IFF', 'FFIV & INCY', 'FFIV & IPGP', 'FFIV & LEN', 'FFIV & MA', 'FFIV & MDLZ', 'FFIV & MSCI', 'FFIV & PVH', 'FFIV & VZ', 'FL & HBI', 'FL & IFF', 'FL & INCY', 'FL & IPGP', 'FL & LEN', 'FL & LMT', 'FL & MAC', 'FL & MCHP', 'FL & MDLZ', 'FL & MSCI', 'FL & OKE', 'FL & PPL', 'FL & PVH', 'FL & UDR', 'FL & VZ', 'FL & ZBH', 'HBI & IFF', 'HBI & INCY', 'HBI & IPGP', 'HBI & LMT', 'HBI & MSCI', 'HBI & PVH', 'IFF & INCY', 'IFF & IPGP', 'IFF & LMT', 'IFF & MCHP', 'IFF & MDLZ', 'IFF & MSCI', 'IFF & OKE', 'IFF & PPL', 'IFF & VZ', 'IFF & ZBH', 'INCY & IPGP', 'INCY & LEN', 'INCY & LMT', 'INCY & MCHP', 'INCY & MSCI', 'IPGP & LMT', 'IPGP & MAC', 'IPGP & MDLZ', 'IPGP & MSCI', 'IPGP & OKE', 'IPGP & PPL', 'IPGP & PVH', 'IPGP & UDR', 'IPGP & VZ', 'IPGP & ZBH', 'LEN & MAC', 'LEN & MCHP', 'LEN & MDLZ', 'LEN & MSCI', 'LEN & OKE', 'LEN & PPL', 'LEN & UDR', 'LEN & VZ', 'LMT & MAC', 'LMT & MDLZ', 'LMT & MSCI', 'LMT & PPL', 'LMT & PVH', 'LMT & UDR', 'LMT & VZ', 'LMT & ZBH', 'MA & MDLZ', 'MA & PVH', 'MA & RRC', 'MA & UDR', 'MA & VZ', 'MAC & MDLZ', 'MAC & MSCI', 'MAC & PPL', 'MAC & UDR', 'MAC & VZ', 'MCHP & MSCI', 'MCHP & PVH', 'MCHP & VZ', 'MDLZ & MSCI', 'MDLZ & OKE', 'MDLZ & PPL', 'MDLZ & UDR', 'MDLZ & VZ', 'MSCI & OKE', 'MSCI & PPL', 'MSCI & PVH', 'MSCI & UDR', 'MSCI & VZ', 'MSCI & ZBH', 'OKE & RRC', 'OKE & VZ', 'PPL & UDR', 'PPL & VZ', 'RRC & VZ', 'UDR & VZ', 'VZ & ZBH']
-        TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_RAND_2"]
-        PCA_SETTINGS: {n_samples: 435, n_featues: 1209, pca_explanation_variance_thres: 0.01, scaler: 'MinMaxScaler'}
-        CLUSTER_SETTINGS: {n_samples: 435, n_features: 30, n_clusters: 3, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_label: 0}
-        OUTPUT_FILE_NAME_BASIS: "rand_2_pca_cluster_pairs_0_v2"
-    RAND_2_PCA_CLUSTER_PAIRS_1_V2:
-        FILE_PATH: *sp500_20112015_rand_2_corr_s1_w50_file_path
-        ALL_SET: []
-        TRAIN_PAIRS_SET: ['ADBE & ATVI', 'ADBE & HBI', 'ADBE & IFF', 'ADBE & MA', 'ADBE & RRC', 'ADBE & ZBH', 'AIV & ATVI', 'AIV & CRM', 'AIV & HBI', 'AIV & INCY', 'AIV & PVH', 'AIV & RRC', 'ALB & ATVI', 'ALB & MA', 'ALB & RRC', 'ATVI & CMG', 'ATVI & HBI', 'ATVI & IFF', 'ATVI & IPGP', 'ATVI & MA', 'ATVI & MAC', 'ATVI & MCHP', 'ATVI & MSCI', 'ATVI & RRC', 'ATVI & UDR', 'ATVI & ZBH', 'CMG & FL', 'CMG & OKE', 'CMG & PVH', 'CMG & RRC', 'COF & MA', 'COF & RRC', 'CRM & EXR', 'CRM & IPGP', 'CRM & MAC', 'CRM & MDLZ', 'CRM & PPL', 'CRM & RRC', 'CRM & UDR', 'DISH & MA', 'DISH & RRC', 'ES & INCY', 'ES & PVH', 'ES & RRC', 'EXR & HBI', 'EXR & INCY', 'EXR & PVH', 'EXR & RRC', 'FFIV & RRC', 'FL & MA', 'FL & RRC', 'HBI & MA', 'HBI & MDLZ', 'HBI & RRC', 'HBI & UDR', 'IFF & MA', 'IFF & PVH', 'IFF & RRC', 'INCY & MA', 'INCY & MAC', 'INCY & MDLZ', 'INCY & PPL', 'INCY & PVH', 'INCY & RRC', 'INCY & UDR', 'INCY & VZ', 'IPGP & MA', 'IPGP & MCHP', 'IPGP & RRC', 'LEN & MA', 'LEN & PVH', 'LEN & RRC', 'LMT & MA', 'LMT & RRC', 'MA & MSCI', 'MA & ZBH', 'MAC & PVH', 'MAC & RRC', 'MCHP & RRC', 'MCHP & ZBH', 'MDLZ & PVH', 'MDLZ & RRC', 'MSCI & RRC', 'OKE & PVH', 'PPL & PVH', 'PPL & RRC', 'PVH & RRC', 'PVH & UDR', 'PVH & VZ', 'PVH & ZBH', 'RRC & UDR', 'RRC & ZBH']
-        TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_RAND_2"]
-        PCA_SETTINGS: {n_samples: 435, n_featues: 1209, pca_explanation_variance_thres: 0.01, scaler: 'MinMaxScaler'}
-        CLUSTER_SETTINGS: {n_samples: 435, n_features: 30, n_clusters: 3, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_label: 1}
-        OUTPUT_FILE_NAME_BASIS: "rand_2_pca_cluster_pairs_1_v2"
-    RAND_2_PCA_CLUSTER_PAIRS_2_V2:
-        FILE_PATH: *sp500_20112015_rand_2_corr_s1_w50_file_path
-        ALL_SET: []
-        TRAIN_PAIRS_SET: ['ADBE & AIV', 'ADBE & ALB', 'ADBE & CRM', 'ADBE & ES', 'ADBE & EXR', 'ADBE & FFIV', 'ADBE & MAC', 'ADBE & MSCI', 'ADBE & OKE', 'ADBE & PPL', 'ADBE & UDR', 'AIV & FFIV', 'AIV & IFF', 'AIV & MCHP', 'AIV & OKE', 'AIV & ZBH', 'ATVI & CRM', 'ATVI & DISH', 'ATVI & ES', 'ATVI & OKE', 'ATVI & PPL', 'COF & CRM', 'COF & DISH', 'COF & OKE', 'CRM & DISH', 'CRM & ES', 'CRM & HBI', 'CRM & LMT', 'CRM & MA', 'CRM & MSCI', 'CRM & OKE', 'CRM & ZBH', 'DISH & LEN', 'DISH & MCHP', 'DISH & MDLZ', 'DISH & MSCI', 'DISH & OKE', 'DISH & ZBH', 'ES & FFIV', 'ES & HBI', 'ES & MA', 'ES & MCHP', 'ES & MSCI', 'ES & OKE', 'ES & ZBH', 'EXR & FFIV', 'EXR & IFF', 'EXR & MA', 'EXR & MCHP', 'EXR & OKE', 'EXR & ZBH', 'FFIV & HBI', 'FFIV & LMT', 'FFIV & MAC', 'FFIV & MCHP', 'FFIV & OKE', 'FFIV & PPL', 'FFIV & UDR', 'FFIV & ZBH', 'HBI & LEN', 'HBI & MAC', 'HBI & MCHP', 'HBI & OKE', 'HBI & PPL', 'HBI & VZ', 'HBI & ZBH', 'IFF & LEN', 'IFF & MAC', 'IFF & UDR', 'INCY & OKE', 'INCY & ZBH', 'IPGP & LEN', 'LEN & LMT', 'LEN & ZBH', 'LMT & MCHP', 'LMT & OKE', 'MA & MAC', 'MA & MCHP', 'MA & OKE', 'MA & PPL', 'MAC & MCHP', 'MAC & OKE', 'MAC & ZBH', 'MCHP & MDLZ', 'MCHP & OKE', 'MCHP & PPL', 'MCHP & UDR', 'MDLZ & ZBH', 'OKE & PPL', 'OKE & UDR', 'OKE & ZBH', 'PPL & ZBH', 'UDR & ZBH']
-        TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_RAND_2"]
-        PCA_SETTINGS: {n_samples: 435, n_featues: 1209, pca_explanation_variance_thres: 0.01, scaler: 'MinMaxScaler'}
-        CLUSTER_SETTINGS: {n_samples: 435, n_features: 30, n_clusters: 3, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_label: 1}
-        OUTPUT_FILE_NAME_BASIS: "rand_2_pca_cluster_pairs_2_v2"
-
 
 
     ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_0:
@@ -576,1360 +741,8 @@ DATASETS:
         PCA_SETTINGS: {n_samples: 45, n_featues: 1209, pca_explanation_variance_thres: 0.01, scaler: 'MinMaxScaler'}
         CLUSTER_SETTINGS: {n_samples: 45, n_features: 22, n_clusters: 24, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_label: 23}
         OUTPUT_FILE_NAME_BASIS: "above_mod_posi_pca_cluster_pairs_23"
-    ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_0_V2:
-        FILE_PATH: *sp500_20112015_corr_mean_above_moderate_positive_keep_corr_s1_w50_file_path
-        ALL_SET: []
-        TRAIN_PAIRS_SET: ['ADBE & AFL', 'ADBE & COF', 'ADBE & EL', 'ADBE & IPG', 'ADBE & IT', 'ADBE & TSCO', 'AFL & COF', 'AFL & IPG', 'AFL & ZBH', 'COF & IPG', 'COF & IT', 'COF & ITW', 'COF & MAS', 'COF & ZBH', 'EL & IT', 'EL & ITW', 'EL & TSCO', 'EL & ZBH', 'IPG & IT', 'IPG & ITW', 'IPG & TSCO', 'IPG & ZBH', 'IT & MAS', 'IT & TSCO', 'ITW & TSCO', 'ITW & ZBH']
-        TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_CORR_MEAN_ABOVE_MODERATE_POSITIVE_KEEP"]
-        PCA_SETTINGS: {n_samples: 45, n_featues: 1209, pca_explanation_variance_thres: 0.01, scaler: 'MinMaxScaler'}
-        CLUSTER_SETTINGS: {n_samples: 45, n_features: 22, n_clusters: 3, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_label: 0}
-        OUTPUT_FILE_NAME_BASIS: "above_mod_posi_pca_cluster_pairs_0_v2"
-    ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_1_V2:
-        FILE_PATH: *sp500_20112015_corr_mean_above_moderate_positive_keep_corr_s1_w50_file_path
-        ALL_SET: []
-        TRAIN_PAIRS_SET: ['ADBE & ITW', 'ADBE & MAS', 'ADBE & ZBH', 'AFL & EL', 'AFL & IT', 'AFL & ITW', 'AFL & MAS', 'COF & EL', 'EL & IPG', 'EL & MAS', 'IPG & MAS', 'IT & ITW', 'IT & ZBH', 'ITW & MAS', 'MAS & ZBH', 'TSCO & ZBH']
-        TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_CORR_MEAN_ABOVE_MODERATE_POSITIVE_KEEP"]
-        PCA_SETTINGS: {n_samples: 45, n_featues: 1209, pca_explanation_variance_thres: 0.01, scaler: 'MinMaxScaler'}
-        CLUSTER_SETTINGS: {n_samples: 45, n_features: 22, n_clusters: 3, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_label: 1}
-        OUTPUT_FILE_NAME_BASIS: "above_mod_posi_pca_cluster_pairs_1_v2"
-    ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_2_V2:
-        FILE_PATH: *sp500_20112015_corr_mean_above_moderate_positive_keep_corr_s1_w50_file_path
-        ALL_SET: []
-        TRAIN_PAIRS_SET: ['AFL & TSCO', 'COF & TSCO', 'MAS & TSCO']
-        TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_CORR_MEAN_ABOVE_MODERATE_POSITIVE_KEEP"]
-        PCA_SETTINGS: {n_samples: 45, n_featues: 1209, pca_explanation_variance_thres: 0.01, scaler: 'MinMaxScaler'}
-        CLUSTER_SETTINGS: {n_samples: 45, n_features: 22, n_clusters: 3, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_label: 2}
-        OUTPUT_FILE_NAME_BASIS: "above_mod_posi_pca_cluster_pairs_2_v2"
 
 
 
 
-    BELOW_MOD_POSI_PCA_CLUSTER_PAIRS_0_V2:
-        FILE_PATH: &sp500_20112015_corr_mean_below_moderate_positive_keep_corr_s1_w50_file_path "{DIRS.PIPELINE_DATA_DIR}/sp500_20112015_corr_mean_below_moderate_positive_keep-train_train/pearson/corr_data/corr_s1_w50.csv"
-        ALL_SET: []
-        TRAIN_PAIRS_SET: ['AAP & CMG', 'AAP & EQR', 'AAP & INCY', 'AAP & RMD', 'CMG & FFIV', 'CMG & KSS', 'CMG & LEN', 'CMG & PVH', 'EQR & LEN', 'EQR & RMD', 'FFIV & INCY', 'FFIV & PVH', 'INCY & KSS', 'INCY & LEN', 'INCY & PVH', 'INCY & RMD', 'LEN & RMD']
-        TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_CORR_MEAN_BELOW_MODERATE_POSITIVE_KEEP"]
-        PCA_SETTINGS: {n_samples: 45, n_featues: 1209, pca_explanation_variance_thres: 0.01, scaler: 'MinMaxScaler'}
-        CLUSTER_SETTINGS: {n_samples: 45, n_features: 24, n_clusters: 3, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_label: 0}
-        OUTPUT_FILE_NAME_BASIS: "below_mod_posi_pca_cluster_pairs_0_v2"
-    BELOW_MOD_POSI_PCA_CLUSTER_PAIRS_1_V2:
-        FILE_PATH: *sp500_20112015_corr_mean_below_moderate_positive_keep_corr_s1_w50_file_path
-        ALL_SET: []
-        TRAIN_PAIRS_SET: ['AAP & KSS', 'BRK & CMG', 'BRK & EQR', 'BRK & FFIV', 'BRK & INCY', 'BRK & KSS', 'BRK & LEN', 'BRK & PVH', 'BRK & RMD', 'CMG & RMD', 'EQR & FFIV', 'EQR & PVH', 'FFIV & KSS', 'FFIV & LEN', 'FFIV & RMD', 'KSS & LEN', 'KSS & PVH', 'PVH & RMD']
-        TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_CORR_MEAN_BELOW_MODERATE_POSITIVE_KEEP"]
-        PCA_SETTINGS: {n_samples: 45, n_featues: 1209, pca_explanation_variance_thres: 0.01, scaler: 'MinMaxScaler'}
-        CLUSTER_SETTINGS: {n_samples: 45, n_features: 24, n_clusters: 3, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_label: 1}
-        OUTPUT_FILE_NAME_BASIS: "below_mod_posi_pca_cluster_pairs_1_v2"
-    BELOW_MOD_POSI_PCA_CLUSTER_PAIRS_2_V2:
-        FILE_PATH: *sp500_20112015_corr_mean_below_moderate_positive_keep_corr_s1_w50_file_path
-        ALL_SET: []
-        TRAIN_PAIRS_SET: ['AAP & BRK', 'AAP & FFIV', 'AAP & LEN', 'AAP & PVH', 'CMG & EQR', 'CMG & INCY', 'EQR & INCY', 'EQR & KSS', 'KSS & RMD', 'LEN & PVH']
-        TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_CORR_MEAN_BELOW_MODERATE_POSITIVE_KEEP"]
-        PCA_SETTINGS: {n_samples: 45, n_featues: 1209, pca_explanation_variance_thres: 0.01, scaler: 'MinMaxScaler'}
-        CLUSTER_SETTINGS: {n_samples: 45, n_features: 24, n_clusters: 3, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_label: 2}
-        OUTPUT_FILE_NAME_BASIS: "below_mod_posi_pca_cluster_pairs_2_v2"
-
-
-
-
-    SP500_20112015_PCA_CLUSTER_MIX_GIVEN_ITEMS:
-        FILE_PATH: *sp500_20112015_file_path
-        ALL_SET: *sp500_20082017_train_set
-        TRAIN_SET: ['AAP', 'ADBE', 'CRM', 'DISH', 'EMR', 'HUM', 'LMT', 'LRCX', 'TAP', 'TSCO', 'VTR']
-        GIVEN_PAIRS_IDX: [29]
-        TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_PCA_CLUSTER_PAIRS_GIVEN_PAIR", "SP500_20112015_RAND_1"]
-        PCA_SETTINGS: {n_samples:100 , n_featues:1258, pca_explanation_variance_thres: 0.1, scaler: 'MinMaxScaler'}
-        CLUSTER_SETTINGS: {n_samples: 100, n_features: 1, n_clusters: 19, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_labels: [1, 3], selected_cluter_sample: {'cluster_label_1': ['ADBE', 'CRM', 'DISH', 'EMR', 'LRCX', 'TAP', 'TSCO', 'VTR'], 'cluster_label_3': ['AAP', 'HUM', 'LMT']}}
-        OTHER_SETTINGS: {rand_seed: *default_seed, designated_samples: ["DISH", "LMT"]}
-        OUTPUT_FILE_NAME_BASIS: "sp500_20112015_pca_cluster_mix_given_items"
-    SP500_20112015_PCA_CLUSTER_MIX_GIVEN_ITEMS_2:
-        FILE_PATH: *sp500_20112015_file_path
-        ALL_SET: *sp500_20082017_train_set
-        TRAIN_SET: ['ADBE', 'AMZN', 'AOS', 'ATVI', 'CNP', 'CRM', 'CSCO', 'DISH', 'EMR', 'GLW', 'KR', 'LRCX', 'MAS', 'MCHP', 'TAP', 'TSCO', 'VTR']
-        GIVEN_PAIRS_IDX: [12]
-        TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_PCA_CLUSTER_PAIRS_GIVEN_PAIR_2", "SP500_20112015"]
-        PCA_SETTINGS: {n_samples:100 , n_featues:1258, pca_explanation_variance_thres: 0.1, scaler: 'MinMaxScaler'}
-        CLUSTER_SETTINGS: {n_samples: 100, n_features: 1, n_clusters: 19, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_labels: [1, 9], selected_cluter_sample: {'cluster_label_1': ['ADBE', 'CRM', 'DISH', 'EMR', 'LRCX', 'TAP', 'TSCO', 'VTR'], 'cluster_label_9': ['AMZN', 'AOS', 'ATVI', 'CNP', 'CSCO', 'GLW', 'KR', 'MAS', 'MCHP']}}
-        OTHER_SETTINGS: {rand_seed: *default_seed, designated_samples: ['ADBE', 'MCHP']}
-        OUTPUT_FILE_NAME_BASIS: "sp500_20112015_pca_cluster_mix_given_items_2"
-    SYNTHETIC_COLL2_POW1_WAVY:
-        FILE_PATH: "{DIRS.DATASET_DIR}/is_pre_data/synthetic/dim10/collections_2/power_collection/basis_pw_rand_wavy/power_1_0/bkps0-noise_scale5.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["power_collection"], basis_timeseries: "pw_rand_wavy", power: 1.0, bkps: 0, noise_scale: 5}
-        OUTPUT_FILE_NAME_BASIS: "synthetic_coll2_pow1_wavy"
-    SYNTHETIC_COLL2_POW1_WAVY_2:
-        FILE_PATH: "{DIRS.DATASET_DIR}/is_pre_data/synthetic/dim10/collections_2/power_collection/basis_pw_rand_wavy/power_1_0/bkps0-noise_scale30.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["power_collection"], basis_timeseries: "pw_rand_wavy", power: 1.0, bkps: 0, noise_scale: 30}
-        OUTPUT_FILE_NAME_BASIS: "synthetic_coll2_pow1_wavy_2"
-    SYNTHETIC_COLL2_LAG7_WAVY:
-        FILE_PATH: "{DIRS.DATASET_DIR}/is_pre_data/synthetic/dim10/collections_2/t_shift_collection/basis_pw_rand_wavy/lag_7/bkps0-noise_scale5.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "pw_rand_wavy", t_shift_lag_period: 7, bkps: 0, noise_scale: 5}
-        OUTPUT_FILE_NAME_BASIS: "synthetic_coll2_lag7_wavy"
-    SYNTHETIC_COLL2_LAG7_WAVY_2:
-        FILE_PATH: "{DIRS.DATASET_DIR}/is_pre_data/synthetic/dim10/collections_2/t_shift_collection/basis_pw_rand_wavy/lag_7/bkps0-noise_scale30.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "pw_rand_wavy", t_shift_lag_period: 7, bkps: 0, noise_scale: 30}
-        OUTPUT_FILE_NAME_BASIS: "synthetic_coll2_lag7_wavy_2"
-    SYNTHETIC_COLL2_LAG19_WAVY:
-        FILE_PATH: "{DIRS.DATASET_DIR}/is_pre_data/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_19/bkps0-noise_scale5.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 19, bkps: 0, noise_scale: 5}
-        OUTPUT_FILE_NAME_BASIS: "synthetic_coll2_lag19_wavy"
-    SYNTHETIC_COLL2_LAG19_WAVY_2:
-        FILE_PATH: "{DIRS.DATASET_DIR}/is_pre_data/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_19/bkps0-noise_scale30.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 19, bkps: 0, noise_scale: 30}
-        OUTPUT_FILE_NAME_BASIS: "synthetic_coll2_lag19_wavy_2"
-    SYNTHETIC_COLL2_LAG59_WAVY:
-        FILE_PATH: "{DIRS.DATASET_DIR}/is_pre_data/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_59/bkps0-noise_scale5.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 59, bkps: 0, noise_scale: 5}
-        OUTPUT_FILE_NAME_BASIS: "synthetic_coll2_lag59_wavy"
-    SYNTHETIC_COLL2_LAG59_WAVY_2:
-        FILE_PATH: "{DIRS.DATASET_DIR}/is_pre_data/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_59/bkps0-noise_scale30.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 59, bkps: 0, noise_scale: 30}
-        OUTPUT_FILE_NAME_BASIS: "synthetic_coll2_lag59_wavy_2"
-    SYNTHETIC_COLL2_POW1_LAG7_WAVY:
-        FILE_PATH: "{DIRS.DATASET_DIR}/is_pre_data/synthetic/dim10/collections_2/power_and_t_shift_collection/basis_pw_rand_wavy/power_1_0/lag_7/bkps0-noise_scale5.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["power_and_t_shift_collection"], basis_timeseries: "pw_rand_wavy", power: 1.0, t_shift_lag_period: 7, bkps: 0, noise_scale: 5}
-        OUTPUT_FILE_NAME_BASIS: "synthetic_coll2_pow1_lag7_wavy"
-    SYNTHETIC_COLL2_POW1_LAG7_WAVY_2:
-        FILE_PATH: "{DIRS.DATASET_DIR}/is_pre_data/synthetic/dim10/collections_2/power_and_t_shift_collection/basis_pw_rand_wavy/power_1_0/lag_7/bkps0-noise_scale30.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["power_and_t_shift_collection"], basis_timeseries: "pw_rand_wavy", power: 1.0, t_shift_lag_period: 7, bkps: 0, noise_scale: 30}
-        OUTPUT_FILE_NAME_BASIS: "synthetic_coll2_pow1_lag7_wavy_2"
-    SYNTHETIC_COLL2_POW1_LAG19_WAVY:
-        FILE_PATH: "{DIRS.DATASET_DIR}/is_pre_data/synthetic/dim10/collections_2/power_and_t_shift_collection/basis_nike_ts/power_1_0/lag_19/bkps0-noise_scale5.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["power_and_t_shift_collection"], basis_timeseries: "nike_ts", power: 1.0, t_shift_lag_period: 19, bkps: 0, noise_scale: 5}
-        OUTPUT_FILE_NAME_BASIS: "synthetic_coll2_pow1_lag19_wavy"
-    SYNTHETIC_COLL2_POW1_LAG19_WAVY_2:
-        FILE_PATH: "{DIRS.DATASET_DIR}/is_pre_data/synthetic/dim10/collections_2/power_and_t_shift_collection/basis_nike_ts/power_1_0/lag_19/bkps0-noise_scale30.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["power_and_t_shift_collection"], basis_timeseries: "nike_ts", power: 1.0, t_shift_lag_period: 19, bkps: 0, noise_scale: 30}
-        OUTPUT_FILE_NAME_BASIS: "synthetic_coll2_pow1_lag19_wavy_2"
-    SYNTHETIC_COLL2_POW1_LAG59_WAVY:
-        FILE_PATH: "{DIRS.DATASET_DIR}/is_pre_data/synthetic/dim10/collections_2/power_and_t_shift_collection/basis_nike_ts/power_1_0/lag_59/bkps0-noise_scale5.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["power_and_t_shift_collection"], basis_timeseries: "nike_ts", power: 1.0, t_shift_lag_period: 59, bkps: 0, noise_scale: 5}
-        OUTPUT_FILE_NAME_BASIS: "synthetic_coll2_pow1_lag59_wavy"
-    SYNTHETIC_COLL2_POW1_LAG59_WAVY_2:
-        FILE_PATH: "{DIRS.DATASET_DIR}/is_pre_data/synthetic/dim10/collections_2/power_and_t_shift_collection/basis_nike_ts/power_1_0/lag_59/bkps0-noise_scale30.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["power_and_t_shift_collection"], basis_timeseries: "nike_ts", power: 1.0, t_shift_lag_period: 59, bkps: 0, noise_scale: 30}
-        OUTPUT_FILE_NAME_BASIS: "synthetic_coll2_pow1_lag59_wavy_2"
-
-
-
-################################################### Temporary Datasets should be deleted after observation its distribution #####################################################
-
-
-    TEMP_OBS_SYNTHETIC_COLL2_LAG2_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_2/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 2, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag2_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG3_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_3/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 3, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag3_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG4_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_4/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 4, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag4_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG5_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_5/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 5, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag5_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG6_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_6/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 6, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag6_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG7_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_7/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 7, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag7_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG8_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_8/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 8, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag8_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG9_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_9/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 9, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag9_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG10_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_10/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 10, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag10_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG11_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_11/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 11, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag11_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG12_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_12/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 12, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag12_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG13_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_13/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 13, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag13_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG14_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_14/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 14, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag14_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG15_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_15/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 15, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag15_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG16_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_16/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 16, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag16_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG17_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_17/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 17, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag17_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG18_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_18/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 18, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag18_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG19_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_19/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 19, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag19_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG20_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_20/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 20, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag20_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG21_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_21/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 21, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag21_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG22_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_22/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 22, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag22_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG23_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_23/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 23, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag23_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG24_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_24/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 24, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag24_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG25_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_25/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 25, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag25_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG26_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_26/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 26, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag26_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG27_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_27/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 27, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag27_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG28_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_28/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 28, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag28_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG29_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_29/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 29, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag29_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG30_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_30/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 30, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag30_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG31_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_31/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 31, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag31_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG32_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_32/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 32, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag32_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG33_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_33/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 33, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag33_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG34_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_34/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 34, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag34_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG35_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_35/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 35, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag35_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG36_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_36/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 36, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag36_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG37_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_37/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 37, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag37_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG38_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_38/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 38, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag38_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG39_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_39/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 39, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag39_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG40_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_40/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 40, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag40_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG41_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_41/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 41, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag41_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG42_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_42/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 42, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag42_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG43_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_43/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 43, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag43_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG44_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_44/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 44, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag44_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG45_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_45/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 45, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag45_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG46_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_46/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 46, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag46_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG47_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_47/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 47, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag47_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG48_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_48/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 48, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag48_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG49_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_49/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 49, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag49_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG50_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_50/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 50, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag50_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG51_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_51/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 51, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag51_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG52_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_52/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 52, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag52_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG53_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_53/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 53, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag53_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG54_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_54/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 54, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag54_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG55_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_55/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 55, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag55_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG56_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_56/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 56, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag56_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG57_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_57/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 57, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag57_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG58_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_58/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 58, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag58_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG59_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_59/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 59, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag59_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG60_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_60/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 60, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag60_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG61_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_61/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 61, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag61_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG62_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_62/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 62, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag62_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG63_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_63/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 63, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag63_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG64_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_64/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 64, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag64_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG65_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_65/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 65, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag65_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG66_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_66/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 66, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag66_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG67_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_67/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 67, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag67_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG68_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_68/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 68, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag68_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG69_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_69/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 69, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag69_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG70_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_70/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 70, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag70_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG71_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_71/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 71, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag71_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG72_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_72/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 72, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag72_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG73_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_73/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 73, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag73_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG74_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_74/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 74, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag74_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG75_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_75/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 75, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag75_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG76_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_76/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 76, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag76_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG77_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_77/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 77, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag77_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG78_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_78/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 78, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag78_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG79_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_79/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 79, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag79_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG80_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_80/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 80, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag80_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG81_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_81/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 81, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag81_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG82_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_82/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 82, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag82_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG83_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_83/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 83, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag83_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG84_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_84/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 84, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag84_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG85_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_85/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 85, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag85_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG86_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_86/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 86, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag86_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG87_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_87/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 87, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag87_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG88_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_88/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 88, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag88_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG89_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_89/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 89, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag89_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG90_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_90/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 90, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag90_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG91_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_91/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 91, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag91_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG92_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_92/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 92, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag92_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG93_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_93/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 93, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag93_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG94_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_94/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 94, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag94_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG95_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_95/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 95, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag95_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG96_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_96/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 96, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag96_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG97_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_97/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 97, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag97_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG98_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_98/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 98, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag98_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG99_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_99/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 99, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag99_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG100_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_100/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 100, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag100_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG101_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_101/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 101, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag101_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG102_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_102/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 102, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag102_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG103_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_103/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 103, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag103_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG104_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_104/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 104, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag104_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG105_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_105/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 105, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag105_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG106_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_106/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 106, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag106_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG107_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_107/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 107, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag107_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG108_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_108/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 108, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag108_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG109_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_109/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 109, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag109_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG110_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_110/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 110, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag110_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG111_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_111/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 111, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag111_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG112_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_112/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 112, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag112_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG113_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_113/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 113, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag113_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG114_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_114/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 114, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag114_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG115_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_115/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 115, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag115_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG116_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_116/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 116, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag116_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG117_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_117/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 117, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag117_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG118_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_118/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 118, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag118_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG119_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_119/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 119, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag119_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG120_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_120/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 120, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag120_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG121_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_121/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 121, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag121_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG122_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_122/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 122, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag122_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG123_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_123/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 123, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag123_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG124_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_124/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 124, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag124_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG125_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_125/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 125, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag125_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG126_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_126/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 126, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag126_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG127_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_127/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 127, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag127_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG128_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_128/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 128, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag128_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG129_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_129/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 129, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag129_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG130_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_130/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 130, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag130_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG131_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_131/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 131, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag131_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG132_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_132/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 132, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag132_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG133_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_133/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 133, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag133_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG134_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_134/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 134, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag134_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG135_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_135/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 135, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag135_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG136_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_136/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 136, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag136_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG137_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_137/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 137, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag137_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG138_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_138/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 138, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag138_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG139_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_139/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 139, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag139_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG140_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_140/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 140, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag140_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG141_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_141/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 141, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag141_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG142_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_142/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 142, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag142_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG143_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_143/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 143, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag143_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG144_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_144/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 144, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag144_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG145_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_145/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 145, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag145_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG146_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_146/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 146, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag146_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG147_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_147/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 147, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag147_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG148_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_148/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 148, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag148_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG149_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_149/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 149, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag149_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG150_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_150/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 150, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag150_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG151_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_151/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 151, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag151_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG152_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_152/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 152, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag152_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG153_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_153/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 153, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag153_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG154_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_154/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 154, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag154_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG155_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_155/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 155, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag155_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG156_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_156/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 156, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag156_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG157_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_157/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 157, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag157_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG158_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_158/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 158, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag158_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG159_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_159/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 159, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag159_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG160_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_160/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 160, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag160_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG161_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_161/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 161, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag161_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG162_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_162/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 162, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag162_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG163_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_163/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 163, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag163_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG164_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_164/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 164, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag164_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG165_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_165/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 165, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag165_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG166_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_166/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 166, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag166_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG167_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_167/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 167, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag167_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG168_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_168/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 168, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag168_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG169_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_169/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 169, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag169_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG170_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_170/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 170, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag170_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG171_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_171/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 171, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag171_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG172_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_172/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 172, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag172_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG173_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_173/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 173, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag173_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG174_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_174/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 174, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag174_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG175_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_175/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 175, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag175_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG176_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_176/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 176, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag176_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG177_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_177/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 177, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag177_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG178_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_178/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 178, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag178_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG179_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_179/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 179, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag179_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG180_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_180/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 180, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag180_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG181_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_181/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 181, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag181_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG182_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_182/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 182, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag182_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG183_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_183/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 183, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag183_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG184_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_184/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 184, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag184_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG185_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_185/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 185, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag185_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG186_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_186/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 186, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag186_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG187_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_187/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 187, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag187_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG188_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_188/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 188, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag188_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG189_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_189/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 189, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag189_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG190_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_190/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 190, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag190_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG191_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_191/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 191, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag191_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG192_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_192/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 192, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag192_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG193_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_193/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 193, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag193_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG194_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_194/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 194, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag194_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG195_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_195/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 195, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag195_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG196_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_196/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 196, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag196_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG197_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_197/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 197, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag197_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG198_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_198/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 198, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag198_wavy_obs_dist"
-    TEMP_OBS_SYNTHETIC_COLL2_LAG199_WAVY_OBS_DIST:
-        FILE_PATH: "{DIRS.DATASET_DIR}/tmp/synthetic/dim10/collections_2/t_shift_collection/basis_nike_ts/lag_199/bkps0-noise_scale0.csv"
-        ALL_SET: []
-        TRAIN_SET: ['collection_0_var_0', 'collection_0_var_1', 'collection_0_var_2', 'collection_0_var_3', 'collection_0_var_4', 'collection_1_var_0', 'collection_1_var_1', 'collection_1_var_2', 'collection_1_var_3', 'collection_1_var_4']
-        COLLECTIONS_SETTINGS: {num_collections: 2, collection_types:["t_shift_collection"], basis_timeseries: "nike_ts", t_shift_lag_period: 199, bkps: 0, noise_scale: 0}
-        OUTPUT_FILE_NAME_BASIS: "temp_obs_synthetic_coll2_lag199_wavy_obs_dist"
-
-
-################################################### Temporary Datasets should be deleted after observation its distribution #####################################################
+################################################### Deprecated Datasets should be deleted after proper time #####################################################

@@ -294,3 +294,35 @@ def load_dirs(data_implement: str, retrieve_items_setting: str, corr_type: str, 
     clusters_dir = pipeline_corr_data_dir/f"clusters/corr_s{s_l}_w{w_l}"
 
     return pipeline_corr_data_dir, corr_dir, target_dir, corr_property_dir, cliques_dir, clusters_dir
+
+
+def concat_multiple_corr_target_df(data_implement_list: list, retrieve_items_setting:str, corr_type: str, target_df_bins: str, w_l: str, s_l: str, corr_ser_clac_method: str, save_dir_base: str):
+    concat_corr_df = pd.DataFrame()
+    concat_target_df = pd.DataFrame()
+    for data_implement in data_implement_list:
+        _, corr_df, target_df, _ = load_multiple_data(data_implement=data_implement,
+                                                      retrieve_items_setting=retrieve_items_setting,
+                                                      corr_type=corr_type, target_df_bins=target_df_bins,
+                                                      w_l=w_l, s_l=s_l,
+                                                      corr_ser_clac_method=corr_ser_clac_method)
+        concat_corr_df = pd.concat([concat_corr_df, corr_df], axis=0)
+        concat_target_df = pd.concat([concat_target_df, target_df], axis=0)
+
+    concat_corr_df = concat_corr_df.sort_index(axis=0)
+    concat_target_df = concat_target_df.sort_index(axis=0)
+
+    this_file_dir = Path(__file__).parent
+    save_dir_base = this_file_dir/f"../dataset/pipeline_dataset/{save_dir_base}/pearson"
+    corr_dir = save_dir_base/"corr_data"
+    target_dir = save_dir_base/f"custom_discretize_corr_data/{target_df_bins}"
+    corr_dir.mkdir(parents=True, exist_ok=True)
+    target_dir.mkdir(parents=True, exist_ok=True)
+    concat_corr_df.to_csv(corr_dir/f"corr_s{s_l}_w{w_l}.csv")
+    concat_target_df.to_csv(target_dir/f"corr_s{s_l}_w{w_l}.csv")
+    LOGGER.info(f"concat_corr_df has been saved to {corr_dir/f'corr_s{s_l}_w{w_l}.csv'}")
+    LOGGER.info(f"concat_target_df has been saved to {target_dir/f'corr_s{s_l}_w{w_l}.csv'}")
+    LOGGER.info(f"============================== concat_corr_df.shape: {concat_corr_df.shape} ==============================")
+    DF_LOGGER.info(concat_corr_df)
+    LOGGER.info("=============================== concat_target_df.shape: {concat_target_df.shape} ==============================")
+    DF_LOGGER.info(concat_target_df)
+

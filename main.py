@@ -26,10 +26,11 @@ from models.gru_models import (GRUCorrClass, GRUCorrClassCustomFeatures,
                                GRUCorrClassOneFeature, GRUCorrCoefPred,
                                GRUCorrCoefPredOneFeature)
 from utils.assorted_utils import load_data_cfg, split_data
+from utils.etl_utils import report_preds_err_degree
 from utils.log_utils import Log
 from utils.metrics_utils import (CustomIndicesCrossEntropyLoss,
                                  CustomIndicesEdgeAccuracy, TolEdgeAccuracy,
-                                 TolEdgeAccuracyLoss, report_preds_err_rate)
+                                 TolEdgeAccuracyLoss)
 from utils.plot_utils import plot_heatmap
 
 warnings.simplefilter("ignore")
@@ -378,10 +379,10 @@ if __name__ == "__main__":
                 plot_heatmap(preds, y_labels, num_classes=num_labels_classes, pic_title=ARGS.inference_data_split, can_show_conf_mat=True, save_fig_path=conf_mat_save_fig_path)
             tr_val_tt_len_list = [train_dataset["model_input"].shape[1], val_dataset["model_input"].shape[1], test_dataset["model_input"].shape[1]]
             report_preds_err_save_dir = MODEL_RESULTS_DIR/f"model_result_csvs/{ARGS.inference_models[0]}/{model_param_path.stem}"
-            report_preds_err_df_name = f'report_preds_err_rate-{ARGS.inference_data_split}.csv'
+            report_preds_err_df_name = f'report_preds_err_degree-{ARGS.inference_data_split}.csv'
             report_preds_err_df_path = report_preds_err_save_dir/report_preds_err_df_name
             report_preds_err_save_dir.mkdir(parents=True, exist_ok=True)
-            report_preds_err_rate(model_input_df=model_input_df, tr_val_tt_len_list=tr_val_tt_len_list, inference_data=inference_data, preds=preds, labels=y_labels, data_sp_mode=ARGS.inference_data_split, report_save_path=report_preds_err_df_path)
+            report_preds_err_degree(model_input_df=model_input_df, tr_val_tt_len_list=tr_val_tt_len_list, inference_data=inference_data, preds=preds, labels=y_labels, data_sp_mode=ARGS.inference_data_split, report_save_path=report_preds_err_df_path)
             LOGGER.info(f"loss_fns:{loss_fns_dict['fns']}")
             LOGGER.info(f"metric_fn:{basic_model_cfg['metric_fn'] if 'metric_fn' in basic_model_cfg.keys() else None}")
             LOGGER.info(f"Special args of loss_fns: {[(loss_fn, loss_args) for loss_fn, loss_args in loss_fns_dict['fn_args'].items() for arg in loss_args if arg not in ['input', 'target']]}")
