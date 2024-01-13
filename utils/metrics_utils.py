@@ -86,7 +86,7 @@ class CustomIndicesEdgeAccuracy(torch.nn.Module):
         return edge_acc
 
 
-def report_preds_correctness(model_input_df: pd.DataFrame, tr_val_tt_len_list: list, inference_data: dict, preds: np.ndarray, labels: np.ndarray, data_sp_mode: str, report_save_path: Path) -> None:
+def report_preds_err_rate(model_input_df: pd.DataFrame, tr_val_tt_len_list: list, inference_data: dict, preds: np.ndarray, labels: np.ndarray, data_sp_mode: str, report_save_path: Path) -> None:
     """
     This function is used to report the false predictions of the model.
     """
@@ -105,12 +105,12 @@ def report_preds_correctness(model_input_df: pd.DataFrame, tr_val_tt_len_list: l
     for i, pair_name in enumerate(model_input_df.index):
         labels_each_pair = labels[:, i].astype("int64")
         preds_each_pair = preds[:, i].astype("int64")
-        correct_preds_each_pair = (labels_each_pair == preds_each_pair)
+        preds_err_rate_each_pair = abs(labels_each_pair-preds_each_pair)
         selected_dates = data_sp_dates[-1*len(preds_each_pair):]
         corr_coef_data = model_input_df.loc[pair_name, selected_dates].to_numpy()
         ori_labels = inference_data["target"][i, -1*len(preds_each_pair):].astype("int64")
-        df_each_pair_idx = pd.MultiIndex.from_product([[pair_name], ["corr_coef", "ori_labels", "new_labels", "preds", "correct_pred"]], names=["pair_name", "data_category"])
-        df_each_pair = pd.DataFrame([corr_coef_data, ori_labels, labels_each_pair, preds_each_pair, correct_preds_each_pair], columns=selected_dates, index=df_each_pair_idx)
+        df_each_pair_idx = pd.MultiIndex.from_product([[pair_name], ["corr_coef", "ori_labels", "new_labels", "preds", "preds_err_rate"]], names=["pair_name", "data_category"])
+        df_each_pair = pd.DataFrame([corr_coef_data, ori_labels, labels_each_pair, preds_each_pair, preds_err_rate_each_pair], columns=selected_dates, index=df_each_pair_idx)
         report_df = pd.concat([report_df, df_each_pair], axis=0)
     if report_save_path is not None:
         report_df.to_csv(report_save_path)
