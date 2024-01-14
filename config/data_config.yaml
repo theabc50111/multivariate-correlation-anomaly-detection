@@ -182,7 +182,7 @@ DATASETS:
         OTHER_SETTINGS: {rand_seed: *default_seed, designated_samples: ['ADBE', 'MCHP']}
         OUTPUT_FILE_NAME_BASIS: "sp500_20112015_pca_cluster_mix_given_items_2"
     RAND_1_PCA_CLUSTER_PAIRS_0_V2:
-        FILE_PATH: *sp500_20112015_rand_1_corr_s1_w50_file_path
+        FILE_PATH: &sp500_20112015_rand_1_corr_s1_w50_file_path "{DIRS.PIPELINE_DATA_DIR}/sp500_20112015_rand_1-train_train/pearson/corr_data/corr_s1_w50.csv"
         ALL_SET: []
         TRAIN_PAIRS_SET: ['AFL & MDLZ', 'DISH & FFIV', 'FFIV & MRK', 'MDLZ & MRK', 'MDLZ & PPL', 'MRK & PPL']
         TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_RAND_1"]
@@ -230,7 +230,7 @@ DATASETS:
         CLUSTER_SETTINGS: {n_samples: 435, n_features: 30, n_clusters: 3, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_label: 1}
         OUTPUT_FILE_NAME_BASIS: "rand_2_pca_cluster_pairs_2_v2"
     ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_0_V2:
-        FILE_PATH: *sp500_20112015_corr_mean_above_moderate_positive_keep_corr_s1_w50_file_path
+        FILE_PATH: &sp500_20112015_corr_mean_above_moderate_positive_keep_corr_s1_w50_file_path "{DIRS.PIPELINE_DATA_DIR}/sp500_20112015_corr_mean_above_moderate_positive_keep-train_train/pearson/corr_data/corr_s1_w50.csv"
         ALL_SET: []
         TRAIN_PAIRS_SET: ['ADBE & AFL', 'ADBE & COF', 'ADBE & EL', 'ADBE & IPG', 'ADBE & IT', 'ADBE & TSCO', 'AFL & COF', 'AFL & IPG', 'AFL & ZBH', 'COF & IPG', 'COF & IT', 'COF & ITW', 'COF & MAS', 'COF & ZBH', 'EL & IT', 'EL & ITW', 'EL & TSCO', 'EL & ZBH', 'IPG & IT', 'IPG & ITW', 'IPG & TSCO', 'IPG & ZBH', 'IT & MAS', 'IT & TSCO', 'ITW & TSCO', 'ITW & ZBH']
         TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_CORR_MEAN_ABOVE_MODERATE_POSITIVE_KEEP"]
@@ -380,7 +380,7 @@ DATASETS:
 ################################################### Deprecated Datasets should be deleted after proper time #####################################################
 
     RAND_1_PCA_CLUSTER_PAIRS_0:
-        FILE_PATH: &sp500_20112015_rand_1_corr_s1_w50_file_path "{DIRS.PIPELINE_DATA_DIR}/sp500_20112015_rand_1-train_train/pearson/corr_data/corr_s1_w50.csv"
+        FILE_PATH: *sp500_20112015_rand_1_corr_s1_w50_file_path
         ALL_SET: []
         TRAIN_PAIRS_SET: ['AFL & FFIV', 'MRK & MSFT']
         TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_RAND_1"]
@@ -550,7 +550,7 @@ DATASETS:
 
 
     ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_0:
-        FILE_PATH: &sp500_20112015_corr_mean_above_moderate_positive_keep_corr_s1_w50_file_path "{DIRS.PIPELINE_DATA_DIR}/sp500_20112015_corr_mean_above_moderate_positive_keep-train_train/pearson/corr_data/corr_s1_w50.csv"
+        FILE_PATH: *sp500_20112015_corr_mean_above_moderate_positive_keep_corr_s1_w50_file_path
         ALL_SET: []
         TRAIN_PAIRS_SET: ['EL & IPG', 'IT & ZBH']
         TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_CORR_MEAN_ABOVE_MODERATE_POSITIVE_KEEP"]
