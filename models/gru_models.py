@@ -15,6 +15,7 @@ import numpy as np
 import torch
 from torch.nn import GRU, Dropout, Linear, Sequential, Softmax
 from tqdm import tqdm
+
 from utils.log_utils import Log, TqdmToLogger
 
 LOGGER = Log().init_logger(logger_name=__name__)
@@ -130,7 +131,7 @@ class GRUCorrClass(torch.nn.Module):
                               "gru_gradient": torch.zeros(1),
                               "fc_dec_gradient": torch.zeros(1),
                               "class_fc_gradient": torch.zeros(1)}
-        data_split = ["train", "val"]
+        data_split = ["train", "val", "test"]
         self.epoch_metrics.update({(sp+"_"+str(loss_fn)): torch.zeros(1) for sp, loss_fn in product(data_split, loss_fns["fns"])})
 
         return self.epoch_metrics

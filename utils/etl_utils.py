@@ -146,7 +146,7 @@ def report_preds_err_degree(model_input_df: pd.DataFrame, tr_val_tt_len_list: li
         preds_each_pair = preds[:, i].astype("int64")
         selected_dates = data_sp_dates[-1*len(preds_each_pair):]
         corr_coef_data = model_input_df.loc[pair_name, selected_dates].to_numpy()
-        ori_labels = inference_data["target"][i, -1*len(preds_each_pair):].astype("int64")
+        ori_labels = inference_data["target"][i, -1*len(preds_each_pair)-1:-1].astype("int64")
         corr_coef_t_shift_diff = np.concatenate([[0], np.diff(corr_coef_data)])
         preds_t_shift_diff_each_pair = np.concatenate([[0], np.diff(preds_each_pair)])
         preds_err_degree_each_pair = abs(labels_each_pair-preds_each_pair)

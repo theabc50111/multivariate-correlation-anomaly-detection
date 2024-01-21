@@ -367,7 +367,7 @@ DATASETS:
 ################################################### Temporary Datasets should be deleted after observation its distribution #####################################################
 
     TMP_SP500_20112015_RAND_1_ABOVE_MODERATE_BELOW_MODERATE:
-        FILE_PATH: ""
+        FILE_PATH: "{DIRS.PIPELINE_DATA_DIR}/tmp_sp500_20112015_rand_1_above_moderate_below_moderate-train_train/pearson/corr_data/corr_s1_w50.csv"
         ALL_SET: []
         TRAIN_SET: []
         TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_RAND_1", "SP500_20112015_CORR_MEAN_ABOVE_MODERATE_POSITIVE_KEEP", "SP500_20112015_CORR_MEAN_BELOW_MODERATE_POSITIVE_KEEP"]
