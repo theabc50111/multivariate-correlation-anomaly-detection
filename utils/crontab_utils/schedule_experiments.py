@@ -4,11 +4,12 @@ from datetime import datetime, timedelta
 from itertools import chain, product, repeat
 from pprint import pprint
 
-data_implement_list = ['--data_implement RAND_1_PCA_CLUSTER_PAIRS_0_V2', '--data_implement RAND_1_PCA_CLUSTER_PAIRS_1_V2', '--data_implement RAND_1_PCA_CLUSTER_PAIRS_2_V2', '--data_implement ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_0_V2', '--data_implement ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_1_V2', '--data_implement ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_2_V2', '--data_implement BELOW_MOD_POSI_PCA_CLUSTER_PAIRS_0_V2', '--data_implement BELOW_MOD_POSI_PCA_CLUSTER_PAIRS_1_V2', '--data_implement BELOW_MOD_POSI_PCA_CLUSTER_PAIRS_2_V2']  # ["", "--data_implement LINEAR_REG_ONE_CLUSTER_DIM_30_BKPS_0_NOISE_STD_30"]
+###data_implement_list = ['--data_implement RAND_1_PCA_CLUSTER_PAIRS_0_V2', '--data_implement RAND_1_PCA_CLUSTER_PAIRS_1_V2', '--data_implement RAND_1_PCA_CLUSTER_PAIRS_2_V2', '--data_implement ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_0_V2', '--data_implement ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_1_V2', '--data_implement ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_2_V2', '--data_implement BELOW_MOD_POSI_PCA_CLUSTER_PAIRS_0_V2', '--data_implement BELOW_MOD_POSI_PCA_CLUSTER_PAIRS_1_V2', '--data_implement BELOW_MOD_POSI_PCA_CLUSTER_PAIRS_2_V2']  # ["", "--data_implement LINEAR_REG_ONE_CLUSTER_DIM_30_BKPS_0_NOISE_STD_30"]
+data_implement_list = ['--data_implement SP500_20112015_RAND_1', '--data_implement SP500_20112015_CORR_MEAN_ABOVE_MODERATE_POSITIVE_KEEP', '--data_implement SP500_20112015_CORR_MEAN_BELOW_MODERATE_POSITIVE_KEEP']  # ["", "--data_implement LINEAR_REG_ONE_CLUSTER_DIM_30_BKPS_0_NOISE_STD_30"]
 batch_size_list = [""]
 n_folds_list = [""]  # ["", "--n_folds 2", "--n_folds 3"]
 tr_epochs_list = [""]  # ["", "--tr_epochs 200"]
-train_model_list = ["--train_model ATTNONEDIMGRURESMAPCORRCLASS"]  # ["", "--train_model GRUCORRCLASS"]
+train_model_list = ["--train_model GRUCORRCOEFPREDONEFEATURE"]  # ["", "--train_model GRUCORRCLASS"]
 corr_type_list = ["--corr_type pearson"]  # ["--corr_type pearson", "--corr_type cross_corr"]
 seq_len_list = ["--seq_len 40"]  # ["--seq_len 5", "--seq_len 10"]
 model_input_cus_bins_list = [""]  # ["", "--model_input_cus_bins -1 --model_input_cus_bins 0 --model_input_cus_bins 1", "--model_input_cus_bins -1 --model_input_cus_bins -0.3 --model_input_cus_bins 0.3 --model_input_cus_bins 1", "--model_input_cus_bins -1 --model_input_cus_bins -0.5 --model_input_cus_bins 0 --model_input_cus_bins 0.5 --model_input_cus_bins 1"]
@@ -18,8 +19,8 @@ weight_decay_list = ["", "--weight_decay 0.001", "--weight_decay 0.0001"]  # ["-
 use_optim_scheduler_list = [""]  # ["", "--use_optim_scheduler true"]
 drop_pos_list = [""]  # ["", "--drop_pos gru", "--drop_pos decoder --drop_pos gru", "--drop_pos gru --drop_pos decoder"]
 drop_p_list = [""]  # ["--drop_p 0.33", "--drop_p 0.5", "--drop_p 0.66"]
-gru_l_list = [""]  # ["--gru_l 1", "--gru_l 2", "--gru_l 3", "--gru_l 4", "--gru_l 5"]
-gru_h_list = ["gru_h 40", "gru_h 80"]  # ["--gru_h 40", "--gru_h 80", "--gru_h 100", "--gru_h 320", "--gru_h 640"]
+gru_l_list = ["--gru_l 1", "--gru_l 2"]  # ["--gru_l 1", "--gru_l 2", "--gru_l 3", "--gru_l 4", "--gru_l 5"]
+gru_h_list = ["--gru_h 40", "--gru_h 80"]  # ["--gru_h 40", "--gru_h 80", "--gru_h 100", "--gru_h 320", "--gru_h 640"]
 gru_input_feature_idx_list = [""]  # ["--input_idx 0", "--input_idx 1", "--input_idx 2", "--input_idx 0 --input_idx 1 --input_idx 2 --input_idx 3"]
 kernel_size_list = [""]  # ["--kernel_size 3", "--kernel_size 5", "--kernel_size 7"]
 kernel_pad_list = [""]  # ["--kernel_pad 1", "--kernel_pad 2", "--kernel_pad 3"]
@@ -62,7 +63,7 @@ if list(filter(lambda x: (x["custom_indices_loss_idx"] and x["custom_indices_met
 ###    num_models = len(args_list)
 ###    model_timedelta_list = [timedelta(hours=2, minutes=0)]
 num_models = len(args_list)
-model_timedelta_list = [timedelta(hours=0, minutes=50)]
+model_timedelta_list = [timedelta(hours=2, minutes=0)]
 
 model_timedelta_list = list(chain.from_iterable(repeat(x, num_models) for x in model_timedelta_list))
 model_timedelta_list = [model_timedelta_list[-1]] + model_timedelta_list  # Use the last element of model_timedelta_list to fill the first element of model_timedelta_list for repeating the whole experiments.
