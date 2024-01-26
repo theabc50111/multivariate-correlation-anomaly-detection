@@ -11,7 +11,7 @@ import sklearn
 from matplotlib.pyplot import MultipleLocator
 from scipy.cluster.hierarchy import dendrogram
 from seaborn import heatmap
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import classification_report, confusion_matrix
 
 from .log_utils import Log
 
@@ -59,8 +59,9 @@ def plot_heatmap(preds: np.ndarray, labels: np.ndarray, num_classes: int, pic_ti
     """Plots the heatmap of the confusion matrix."""
     assert num_classes % 2 != 0, "the number of classes should be odd"
     classes_range = range(-1*(num_classes//2), (num_classes//2)+1)
+    class_report = classification_report(labels.reshape(-1), preds.reshape(-1), labels=range(num_classes), target_names=[str(label) for label in classes_range], digits=3, output_dict=False)
     total_data_confusion_matrix = pd.DataFrame(confusion_matrix(labels.reshape(-1), preds.reshape(-1), labels=range(num_classes)), columns=classes_range, index=classes_range)
-    plt.figure(figsize = (17, 17))
+    plt.figure(figsize=(17, 17))
     plt.rcParams.update({'font.size': 44})
     ax = plt.gca()
     heatmap(total_data_confusion_matrix, annot=True, ax=ax, fmt='g')
@@ -70,6 +71,7 @@ def plot_heatmap(preds: np.ndarray, labels: np.ndarray, num_classes: int, pic_ti
     if can_show_conf_mat:
         total_data_confusion_matrix.index.name = 'Ground Truth'
         total_data_confusion_matrix.columns.name = 'Prediction'
+        LOGGER.info(f"\n{class_report}")
         LOGGER.info(f"\nconfusion_matrix:\n{total_data_confusion_matrix}")
         LOGGER.info("-"*50)
     if save_fig_path:

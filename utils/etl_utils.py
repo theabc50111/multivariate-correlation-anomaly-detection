@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from sklearn.linear_model import LinearRegression
+from sklearn.metrics import classification_report, confusion_matrix
 from statsmodels.tsa.seasonal import seasonal_decompose
 
 from .log_utils import Log
@@ -199,3 +200,35 @@ def find_anomalies(model_name: str, model_weights_name: str, data_sp_mode: str, 
     DF_LOGGER.info(all_anomalies_preds_err_info_df)
     DF_LOGGER.info(all_anomalies_info_df)
 
+
+def mix_report_n_class_report_conf_mat(model_name: str, model_weights_name_list: list, data_sp_mode: str, dataset_name: str, num_classes: int = None, can_display: bool = True) -> None:
+    this_file_dir = Path(__file__).resolve().parent
+    mix_report_preds_labels_df = pd.DataFrame()
+    for model_weights_name in model_weights_name_list:
+        report_df_dir = this_file_dir/f"../models/exploration_model_result/model_result_csvs/{model_name}/{model_weights_name}/"
+        report_df_path = report_df_dir/f"report_preds_err_degree-{data_sp_mode}.csv"
+        report_df = pd.read_csv(report_df_path, index_col=['pair_name', 'data_category'])
+        report_preds_labels_df = report_df.loc[(slice(None), ["new_labels", "preds"]), :].sort_index(axis=0, level=0).unstack(level=0)
+        mix_report_preds_labels_df = pd.concat([mix_report_preds_labels_df, report_preds_labels_df], axis=1)
+    assert mix_report_preds_labels_df.shape[0] == 2, "mix_report_preds_labels_df should only contains two row: [new_labels, preds]"
+    labels = mix_report_preds_labels_df.loc["new_labels", ::]
+    preds = mix_report_preds_labels_df.loc["preds", ::]
+    num_classes = len(np.unique(labels)) if not num_classes else num_classes
+    classes_range = range(-1*(num_classes//2), (num_classes//2)+1)
+    class_report = pd.DataFrame(classification_report(labels, preds, labels=range(num_classes), target_names=[str(label) for label in classes_range], digits=3, output_dict=True)).transpose()
+    mix_model_n_data_confusion_matrix = pd.DataFrame(confusion_matrix(labels, preds, labels=range(num_classes)), columns=classes_range, index=classes_range)
+    mix_model_n_data_confusion_matrix.loc["precision", :] = class_report.loc[map(str, classes_range), "precision"].to_list()
+    mix_model_n_data_confusion_matrix.loc["f1-score", :] = class_report.loc[map(str, classes_range), "f1-score"].to_list()
+    mix_model_n_data_confusion_matrix.loc["accuracy", :] = [class_report.loc["accuracy", :][0]]+[np.nan]*(num_classes-1)
+    mix_model_n_data_confusion_matrix.loc["dataset_name", :] = [dataset_name]+[np.nan]*(num_classes-1)
+    mix_model_n_data_confusion_matrix.loc[:, "recall"] = class_report.loc[map(str, classes_range), "recall"].to_list()+[np.nan, np.nan, np.nan, np.nan]
+    mix_model_n_data_confusion_matrix.index.name = 'Ground Truth'
+    mix_model_n_data_confusion_matrix.columns.name = 'Prediction'
+    if can_display:
+        LOGGER.info(f"=============== For {dataset_name} ===============")
+        DF_LOGGER.info("=================== class_report ===================")
+        DF_LOGGER.info(f"\n{class_report}")
+        DF_LOGGER.info("=================== mix_model_n_data_confusion_matrix ===================")
+        DF_LOGGER.info(f"{mix_model_n_data_confusion_matrix}")
+
+    return class_report, mix_model_n_data_confusion_matrix
