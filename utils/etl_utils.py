@@ -232,3 +232,21 @@ def mix_report_n_class_report_conf_mat(model_name: str, model_weights_name_list:
         DF_LOGGER.info(f"{mix_model_n_data_confusion_matrix}")
 
     return class_report, mix_model_n_data_confusion_matrix
+
+
+def compute_mts_anomaly_percentage_per_day(model_name: str, model_weights_name_list: list, data_sp_mode: str, dataset_name: str, save_report: bool = False) -> None:
+    this_file_dir = Path(__file__).resolve().parent
+    preds_err_degree_df = pd.DataFrame()
+    for model_weights_name in model_weights_name_list:
+        report_df_dir = this_file_dir/f"../models/exploration_model_result/model_result_csvs/{model_name}/{model_weights_name}/"
+        report_df_path = report_df_dir/f"report_preds_err_degree-{data_sp_mode}.csv"
+        report_df = pd.read_csv(report_df_path, index_col=['pair_name', 'data_category'])
+        preds_err_degree_each_weight_df = report_df.loc[(slice(None), ["preds_err_degree"]), :]
+        anomaly_mask = preds_err_degree_each_weight_df > 0
+        preds_err_degree_each_weight_df[anomaly_mask] = 1
+        preds_err_degree_df = pd.concat([preds_err_degree_df, preds_err_degree_each_weight_df])
+    preds_err_degree_df.loc[(dataset_name, "err_percentage"), ::] = preds_err_degree_df.sum(axis=0)/len(preds_err_degree_df)
+    LOGGER.info(f"These input model_weights_list contain {preds_err_degree_df.shape[0]-1} corr_ser")
+    LOGGER.info(f"average accuracy of all corr_ser: {1-preds_err_degree_df.loc[(dataset_name, 'err_percentage'), ::].mean()}")
+
+    return preds_err_degree_df.loc[(dataset_name, "err_percentage"), ::]
