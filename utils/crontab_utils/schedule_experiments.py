@@ -9,7 +9,7 @@ data_implement_list = ['--data_implement SP500_20112015_RAND_1', '--data_impleme
 batch_size_list = [""]
 n_folds_list = [""]  # ["", "--n_folds 2", "--n_folds 3"]
 tr_epochs_list = [""]  # ["", "--tr_epochs 200"]
-train_model_list = ["--train_model GRUCORRCLASSONEFEATURE"]  # ["", "--train_model GRUCORRCLASS"]
+train_model_list = ["--train_model GRUCORRCLASS"]  # ["", "--train_model GRUCORRCLASS"]
 corr_type_list = ["--corr_type pearson"]  # ["--corr_type pearson", "--corr_type cross_corr"]
 seq_len_list = ["--seq_len 30"]  # ["--seq_len 5", "--seq_len 10"]
 model_input_cus_bins_list = [""]  # ["", "--model_input_cus_bins -1 --model_input_cus_bins 0 --model_input_cus_bins 1", "--model_input_cus_bins -1 --model_input_cus_bins -0.3 --model_input_cus_bins 0.3 --model_input_cus_bins 1", "--model_input_cus_bins -1 --model_input_cus_bins -0.5 --model_input_cus_bins 0 --model_input_cus_bins 0.5 --model_input_cus_bins 1"]
@@ -63,7 +63,7 @@ if list(filter(lambda x: (x["custom_indices_loss_idx"] and x["custom_indices_met
 ###    num_models = len(args_list)
 ###    model_timedelta_list = [timedelta(hours=2, minutes=0)]
 num_models = len(args_list)
-model_timedelta_list = [timedelta(hours=2, minutes=0)]
+model_timedelta_list = [timedelta(hours=0, minutes=5)]
 
 model_timedelta_list = list(chain.from_iterable(repeat(x, num_models) for x in model_timedelta_list))
 model_timedelta_list = [model_timedelta_list[-1]] + model_timedelta_list  # Use the last element of model_timedelta_list to fill the first element of model_timedelta_list for repeating the whole experiments.
