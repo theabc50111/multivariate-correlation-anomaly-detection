@@ -4,13 +4,15 @@ from datetime import datetime, timedelta
 from itertools import chain, product, repeat
 from pprint import pprint
 
-###data_implement_list = ['--data_implement RAND_1_PCA_CLUSTER_PAIRS_0_V2', '--data_implement RAND_1_PCA_CLUSTER_PAIRS_1_V2', '--data_implement RAND_1_PCA_CLUSTER_PAIRS_2_V2', '--data_implement ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_0_V2', '--data_implement ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_1_V2', '--data_implement ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_2_V2', '--data_implement BELOW_MOD_POSI_PCA_CLUSTER_PAIRS_0_V2', '--data_implement BELOW_MOD_POSI_PCA_CLUSTER_PAIRS_1_V2', '--data_implement BELOW_MOD_POSI_PCA_CLUSTER_PAIRS_2_V2']  # ["", "--data_implement LINEAR_REG_ONE_CLUSTER_DIM_30_BKPS_0_NOISE_STD_30"]
-data_implement_list = ['--data_implement SP500_20112015_RAND_1', '--data_implement SP500_20112015_CORR_MEAN_ABOVE_MODERATE_POSITIVE_KEEP', '--data_implement SP500_20112015_CORR_MEAN_BELOW_MODERATE_POSITIVE_KEEP']  # ["", "--data_implement LINEAR_REG_ONE_CLUSTER_DIM_30_BKPS_0_NOISE_STD_30"]
+data_implement_list = ['--data_implement RAND_1_PCA_CLUSTER_PAIRS_0_V2', '--data_implement RAND_1_PCA_CLUSTER_PAIRS_1_V2', '--data_implement RAND_1_PCA_CLUSTER_PAIRS_2_V2', '--data_implement ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_0_V2', '--data_implement ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_1_V2', '--data_implement ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_2_V2', '--data_implement BELOW_MOD_POSI_PCA_CLUSTER_PAIRS_0_V2', '--data_implement BELOW_MOD_POSI_PCA_CLUSTER_PAIRS_1_V2', '--data_implement BELOW_MOD_POSI_PCA_CLUSTER_PAIRS_2_V2']  # ["", "--data_implement LINEAR_REG_ONE_CLUSTER_DIM_30_BKPS_0_NOISE_STD_30"]
+###data_implement_list = ['--data_implement SP500_20112015_RAND_1', '--data_implement SP500_20112015_CORR_MEAN_ABOVE_MODERATE_POSITIVE_KEEP', '--data_implement SP500_20112015_CORR_MEAN_BELOW_MODERATE_POSITIVE_KEEP']  # ["", "--data_implement LINEAR_REG_ONE_CLUSTER_DIM_30_BKPS_0_NOISE_STD_30"]
 batch_size_list = [""]
 n_folds_list = [""]  # ["", "--n_folds 2", "--n_folds 3"]
 tr_epochs_list = [""]  # ["", "--tr_epochs 200"]
-train_model_list = ["--train_model GRUCORRCLASS"]  # ["", "--train_model GRUCORRCLASS"]
+train_model_list = ["--train_model ATTNONEDIMGRURESMAPCORRCLASS"]  # ["", "--train_model GRUCORRCLASS"]
 corr_type_list = ["--corr_type pearson"]  # ["--corr_type pearson", "--corr_type cross_corr"]
+corr_w_list = ["--corr_window 30"]
+corr_s_list = ["--corr_stride 1", "--corr_stride 10"]
 seq_len_list = ["--seq_len 30"]  # ["--seq_len 5", "--seq_len 10"]
 model_input_cus_bins_list = [""]  # ["", "--model_input_cus_bins -1 --model_input_cus_bins 0 --model_input_cus_bins 1", "--model_input_cus_bins -1 --model_input_cus_bins -0.3 --model_input_cus_bins 0.3 --model_input_cus_bins 1", "--model_input_cus_bins -1 --model_input_cus_bins -0.5 --model_input_cus_bins 0 --model_input_cus_bins 0.5 --model_input_cus_bins 1"]
 target_mats_path_list = ["--target_mats_path pearson/custom_discretize_corr_data/bins_-10_-07_-03_03_07_10"]  # ["", "--target_mats_path pearson/custom_discretize_corr_data/bins_-10_-025_025_10", "--target_mats_path pearson/custom_discretize_corr_data/bins_-10_-07_-03_03_07_10", "--target_mats_path pearson/quan_discretize_corr_data/bin3"]
@@ -33,12 +35,12 @@ custom_indices_metric_idx_list = [""]  # ["", "--custom_indices_metric_idx 0", "
 
 output_type_list = ["--output_type class_probability"]  # ["--output_type corr_coef", "--output_type class_probability"]
 
-args_values = list(product(data_implement_list, batch_size_list, n_folds_list, tr_epochs_list, train_model_list, corr_type_list, seq_len_list, model_input_cus_bins_list,
+args_values = list(product(data_implement_list, batch_size_list, n_folds_list, tr_epochs_list, train_model_list, corr_type_list, corr_w_list, corr_s_list, seq_len_list, model_input_cus_bins_list,
                            target_mats_path_list, learning_rate_list, weight_decay_list, use_optim_scheduler_list,
                            drop_pos_list, drop_p_list, gru_l_list, gru_h_list, gru_input_feature_idx_list, kernel_size_list, kernel_pad_list, attn_num_heads_list,
                            use_weighted_loss_list, tol_edge_acc_loss_atol_list, custom_indices_loss_idx_list, tol_edge_acc_metric_atol_list, custom_indices_metric_idx_list,
                            output_type_list))
-args_keys = ["data_implement", "batch_size", "n_folds", "tr_epochs", "train_model", "corr_type", "seq_len", "model_input_cus_bins", "target_mats_path",
+args_keys = ["data_implement", "batch_size", "n_folds", "tr_epochs", "train_model", "corr_type", "corr_window", "corr_stride", "seq_len", "model_input_cus_bins", "target_mats_path",
              "learning_rate", "weight_decay", "use_optim_scheduler", "drop_pos", "drop_p", "gru_l", "gru_h", "gru_input_feature_idx", "kernel_size", "kernel_pad", "attn_num_heads",
              "use_weighted_loss", "tol_edge_acc_loss_atol", "custom_indices_loss_idx", "tol_edge_acc_metric_atol", "custom_indices_metric_idx", "output_type"]
 args_list = []
@@ -63,7 +65,7 @@ if list(filter(lambda x: (x["custom_indices_loss_idx"] and x["custom_indices_met
 ###    num_models = len(args_list)
 ###    model_timedelta_list = [timedelta(hours=2, minutes=0)]
 num_models = len(args_list)
-model_timedelta_list = [timedelta(hours=0, minutes=5)]
+model_timedelta_list = [timedelta(hours=2, minutes=0)]
 
 model_timedelta_list = list(chain.from_iterable(repeat(x, num_models) for x in model_timedelta_list))
 model_timedelta_list = [model_timedelta_list[-1]] + model_timedelta_list  # Use the last element of model_timedelta_list to fill the first element of model_timedelta_list for repeating the whole experiments.

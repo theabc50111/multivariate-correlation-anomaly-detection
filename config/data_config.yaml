@@ -122,7 +122,7 @@ DATASETS:
         OTHER_SETTINGS: {rand_seed: *default_seed, num_samples_each_cluster: 1, num_selected_clusters: 10}
         OUTPUT_FILE_NAME_BASIS: "sp500_20112015_pca_cluster_mix"
     SP500_20112015_PCA_CLUSTER_PAIRS_1:
-        FILE_PATH: &sp500_20112015_corr_s1_w50_file_path  "{DIRS.PIPELINE_DATA_DIR}/sp500_20112015-train_train/pearson/corr_data/corr_s1_w50.csv"
+        FILE_PATH: &sp500_20112015_corr_s1_w50_file_path  "{DIRS.PIPELINE_DATA_DIR}/sp500_20112015-train_train/pearson/corr_data/corr_sxxx_wxxx.csv"
         ALL_SET: *sp500_20082017_train_set
         TRAIN_PAIRS_SET: ['CMS & EA', 'D & EA', 'EA & ES', 'EA & LNT']
         PCA_SETTINGS: {n_samples: 4950, n_featues: 1209, pca_explanation_variance_thres: 0.01, scaler: 'MinMaxScaler'}
@@ -182,7 +182,7 @@ DATASETS:
         OTHER_SETTINGS: {rand_seed: *default_seed, designated_samples: ['ADBE', 'MCHP']}
         OUTPUT_FILE_NAME_BASIS: "sp500_20112015_pca_cluster_mix_given_items_2"
     RAND_1_PCA_CLUSTER_PAIRS_0_V2:
-        FILE_PATH: &sp500_20112015_rand_1_corr_s1_w50_file_path "{DIRS.PIPELINE_DATA_DIR}/sp500_20112015_rand_1-train_train/pearson/corr_data/corr_s1_w50.csv"
+        FILE_PATH: &sp500_20112015_rand_1_corr_s1_w50_file_path "{DIRS.PIPELINE_DATA_DIR}/sp500_20112015_rand_1-train_train/pearson/corr_data/corr_sxxx_wxxx.csv"
         ALL_SET: []
         TRAIN_PAIRS_SET: ['AFL & MDLZ', 'DISH & FFIV', 'FFIV & MRK', 'MDLZ & MRK', 'MDLZ & PPL', 'MRK & PPL']
         TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_RAND_1"]
@@ -206,7 +206,7 @@ DATASETS:
         CLUSTER_SETTINGS: {n_samples: 45, n_features: 23, n_clusters: 3, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_label: 2}
         OUTPUT_FILE_NAME_BASIS: "rand_1_pca_cluster_pairs_2_v2"
     RAND_2_PCA_CLUSTER_PAIRS_0_V2:
-        FILE_PATH: &sp500_20112015_rand_2_corr_s1_w50_file_path "{DIRS.PIPELINE_DATA_DIR}/sp500_20112015_rand_2-train_train/pearson/corr_data/corr_s1_w50.csv"
+        FILE_PATH: &sp500_20112015_rand_2_corr_s1_w50_file_path "{DIRS.PIPELINE_DATA_DIR}/sp500_20112015_rand_2-train_train/pearson/corr_data/corr_sxxx_wxxx.csv"
         ALL_SET: []
         TRAIN_PAIRS_SET: ['ADBE & CMG', 'ADBE & COF', 'ADBE & DISH', 'ADBE & FL', 'ADBE & INCY', 'ADBE & IPGP', 'ADBE & LEN', 'ADBE & LMT', 'ADBE & MCHP', 'ADBE & MDLZ', 'ADBE & PVH', 'ADBE & VZ', 'AIV & ALB', 'AIV & CMG', 'AIV & COF', 'AIV & DISH', 'AIV & ES', 'AIV & EXR', 'AIV & FL', 'AIV & IPGP', 'AIV & LEN', 'AIV & LMT', 'AIV & MA', 'AIV & MAC', 'AIV & MDLZ', 'AIV & MSCI', 'AIV & PPL', 'AIV & UDR', 'AIV & VZ', 'ALB & CMG', 'ALB & COF', 'ALB & CRM', 'ALB & DISH', 'ALB & ES', 'ALB & EXR', 'ALB & FFIV', 'ALB & FL', 'ALB & HBI', 'ALB & IFF', 'ALB & INCY', 'ALB & IPGP', 'ALB & LEN', 'ALB & LMT', 'ALB & MAC', 'ALB & MCHP', 'ALB & MDLZ', 'ALB & MSCI', 'ALB & OKE', 'ALB & PPL', 'ALB & PVH', 'ALB & UDR', 'ALB & VZ', 'ALB & ZBH', 'ATVI & COF', 'ATVI & EXR', 'ATVI & FFIV', 'ATVI & FL', 'ATVI & INCY', 'ATVI & LEN', 'ATVI & LMT', 'ATVI & MDLZ', 'ATVI & PVH', 'ATVI & VZ', 'CMG & COF', 'CMG & CRM', 'CMG & DISH', 'CMG & ES', 'CMG & EXR', 'CMG & FFIV', 'CMG & HBI', 'CMG & IFF', 'CMG & INCY', 'CMG & IPGP', 'CMG & LEN', 'CMG & LMT', 'CMG & MA', 'CMG & MAC', 'CMG & MCHP', 'CMG & MDLZ', 'CMG & MSCI', 'CMG & PPL', 'CMG & UDR', 'CMG & VZ', 'CMG & ZBH', 'COF & ES', 'COF & EXR', 'COF & FFIV', 'COF & FL', 'COF & HBI', 'COF & IFF', 'COF & INCY', 'COF & IPGP', 'COF & LEN', 'COF & LMT', 'COF & MAC', 'COF & MCHP', 'COF & MDLZ', 'COF & MSCI', 'COF & PPL', 'COF & PVH', 'COF & UDR', 'COF & VZ', 'COF & ZBH', 'CRM & FFIV', 'CRM & FL', 'CRM & IFF', 'CRM & INCY', 'CRM & LEN', 'CRM & MCHP', 'CRM & PVH', 'CRM & VZ', 'DISH & ES', 'DISH & EXR', 'DISH & FFIV', 'DISH & FL', 'DISH & HBI', 'DISH & IFF', 'DISH & INCY', 'DISH & IPGP', 'DISH & LMT', 'DISH & MAC', 'DISH & PPL', 'DISH & PVH', 'DISH & UDR', 'DISH & VZ', 'ES & EXR', 'ES & FL', 'ES & IFF', 'ES & IPGP', 'ES & LEN', 'ES & LMT', 'ES & MAC', 'ES & MDLZ', 'ES & PPL', 'ES & UDR', 'ES & VZ', 'EXR & FL', 'EXR & IPGP', 'EXR & LEN', 'EXR & LMT', 'EXR & MAC', 'EXR & MDLZ', 'EXR & MSCI', 'EXR & PPL', 'EXR & UDR', 'EXR & VZ', 'FFIV & FL', 'FFIV & IFF', 'FFIV & INCY', 'FFIV & IPGP', 'FFIV & LEN', 'FFIV & MA', 'FFIV & MDLZ', 'FFIV & MSCI', 'FFIV & PVH', 'FFIV & VZ', 'FL & HBI', 'FL & IFF', 'FL & INCY', 'FL & IPGP', 'FL & LEN', 'FL & LMT', 'FL & MAC', 'FL & MCHP', 'FL & MDLZ', 'FL & MSCI', 'FL & OKE', 'FL & PPL', 'FL & PVH', 'FL & UDR', 'FL & VZ', 'FL & ZBH', 'HBI & IFF', 'HBI & INCY', 'HBI & IPGP', 'HBI & LMT', 'HBI & MSCI', 'HBI & PVH', 'IFF & INCY', 'IFF & IPGP', 'IFF & LMT', 'IFF & MCHP', 'IFF & MDLZ', 'IFF & MSCI', 'IFF & OKE', 'IFF & PPL', 'IFF & VZ', 'IFF & ZBH', 'INCY & IPGP', 'INCY & LEN', 'INCY & LMT', 'INCY & MCHP', 'INCY & MSCI', 'IPGP & LMT', 'IPGP & MAC', 'IPGP & MDLZ', 'IPGP & MSCI', 'IPGP & OKE', 'IPGP & PPL', 'IPGP & PVH', 'IPGP & UDR', 'IPGP & VZ', 'IPGP & ZBH', 'LEN & MAC', 'LEN & MCHP', 'LEN & MDLZ', 'LEN & MSCI', 'LEN & OKE', 'LEN & PPL', 'LEN & UDR', 'LEN & VZ', 'LMT & MAC', 'LMT & MDLZ', 'LMT & MSCI', 'LMT & PPL', 'LMT & PVH', 'LMT & UDR', 'LMT & VZ', 'LMT & ZBH', 'MA & MDLZ', 'MA & PVH', 'MA & RRC', 'MA & UDR', 'MA & VZ', 'MAC & MDLZ', 'MAC & MSCI', 'MAC & PPL', 'MAC & UDR', 'MAC & VZ', 'MCHP & MSCI', 'MCHP & PVH', 'MCHP & VZ', 'MDLZ & MSCI', 'MDLZ & OKE', 'MDLZ & PPL', 'MDLZ & UDR', 'MDLZ & VZ', 'MSCI & OKE', 'MSCI & PPL', 'MSCI & PVH', 'MSCI & UDR', 'MSCI & VZ', 'MSCI & ZBH', 'OKE & RRC', 'OKE & VZ', 'PPL & UDR', 'PPL & VZ', 'RRC & VZ', 'UDR & VZ', 'VZ & ZBH']
         TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_RAND_2"]
@@ -230,7 +230,7 @@ DATASETS:
         CLUSTER_SETTINGS: {n_samples: 435, n_features: 30, n_clusters: 3, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_label: 1}
         OUTPUT_FILE_NAME_BASIS: "rand_2_pca_cluster_pairs_2_v2"
     ABOVE_MOD_POSI_PCA_CLUSTER_PAIRS_0_V2:
-        FILE_PATH: &sp500_20112015_corr_mean_above_moderate_positive_keep_corr_s1_w50_file_path "{DIRS.PIPELINE_DATA_DIR}/sp500_20112015_corr_mean_above_moderate_positive_keep-train_train/pearson/corr_data/corr_s1_w50.csv"
+        FILE_PATH: &sp500_20112015_corr_mean_above_moderate_positive_keep_corr_s1_w50_file_path "{DIRS.PIPELINE_DATA_DIR}/sp500_20112015_corr_mean_above_moderate_positive_keep-train_train/pearson/corr_data/corr_sxxx_wxxx.csv"
         ALL_SET: []
         TRAIN_PAIRS_SET: ['ADBE & AFL', 'ADBE & COF', 'ADBE & EL', 'ADBE & IPG', 'ADBE & IT', 'ADBE & TSCO', 'AFL & COF', 'AFL & IPG', 'AFL & ZBH', 'COF & IPG', 'COF & IT', 'COF & ITW', 'COF & MAS', 'COF & ZBH', 'EL & IT', 'EL & ITW', 'EL & TSCO', 'EL & ZBH', 'IPG & IT', 'IPG & ITW', 'IPG & TSCO', 'IPG & ZBH', 'IT & MAS', 'IT & TSCO', 'ITW & TSCO', 'ITW & ZBH']
         TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_CORR_MEAN_ABOVE_MODERATE_POSITIVE_KEEP"]
@@ -254,7 +254,7 @@ DATASETS:
         CLUSTER_SETTINGS: {n_samples: 45, n_features: 22, n_clusters: 3, linkage: 'complete', cluster_metric: 'euclidean', selected_cluter_label: 2}
         OUTPUT_FILE_NAME_BASIS: "above_mod_posi_pca_cluster_pairs_2_v2"
     BELOW_MOD_POSI_PCA_CLUSTER_PAIRS_0_V2:
-        FILE_PATH: &sp500_20112015_corr_mean_below_moderate_positive_keep_corr_s1_w50_file_path "{DIRS.PIPELINE_DATA_DIR}/sp500_20112015_corr_mean_below_moderate_positive_keep-train_train/pearson/corr_data/corr_s1_w50.csv"
+        FILE_PATH: &sp500_20112015_corr_mean_below_moderate_positive_keep_corr_s1_w50_file_path "{DIRS.PIPELINE_DATA_DIR}/sp500_20112015_corr_mean_below_moderate_positive_keep-train_train/pearson/corr_data/corr_sxxx_wxxx.csv"
         ALL_SET: []
         TRAIN_PAIRS_SET: ['AAP & CMG', 'AAP & EQR', 'AAP & INCY', 'AAP & RMD', 'CMG & FFIV', 'CMG & KSS', 'CMG & LEN', 'CMG & PVH', 'EQR & LEN', 'EQR & RMD', 'FFIV & INCY', 'FFIV & PVH', 'INCY & KSS', 'INCY & LEN', 'INCY & PVH', 'INCY & RMD', 'LEN & RMD']
         TRAIN_SET_SOURCE_DATASETS: ["SP500_20112015_CORR_MEAN_BELOW_MODERATE_POSITIVE_KEEP"]
