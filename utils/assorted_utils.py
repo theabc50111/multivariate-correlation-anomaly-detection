@@ -30,6 +30,9 @@ def split_data_with_varied_ratio(model_input_df: pd.DataFrame, batch_size: int, 
             train_pct = 1-val_test_pct
             val_pct = train_pct+(val_test_pct/2)
             break
+        else:
+            train_pct = 1-val_test_pct
+            val_pct = train_pct+(val_test_pct/2)
     train_dataset = {"model_input": model_input_mat[::, :int(all_timesteps*train_pct)]}
     val_dataset = {"model_input": model_input_mat[::, int(all_timesteps*train_pct):int(all_timesteps*val_pct)]}
     ###test_dataset = {"model_input": model_input_mat[::, int(all_timesteps*val_pct):]}
