@@ -65,7 +65,7 @@ if list(filter(lambda x: (x["custom_indices_loss_idx"] and x["custom_indices_met
 ###    num_models = len(args_list)
 ###    model_timedelta_list = [timedelta(hours=2, minutes=0)]
 num_models = len(args_list)
-model_timedelta_list = [timedelta(hours=2, minutes=0)]
+model_timedelta_list = [timedelta(hours=0, minutes=40)]
 
 model_timedelta_list = list(chain.from_iterable(repeat(x, num_models) for x in model_timedelta_list))
 model_timedelta_list = [model_timedelta_list[-1]] + model_timedelta_list  # Use the last element of model_timedelta_list to fill the first element of model_timedelta_list for repeating the whole experiments.
