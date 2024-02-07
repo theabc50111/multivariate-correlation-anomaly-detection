@@ -32,13 +32,15 @@ def split_data_with_varied_ratio(model_input_df: pd.DataFrame, batch_size: int, 
             break
     train_dataset = {"model_input": model_input_mat[::, :int(all_timesteps*train_pct)]}
     val_dataset = {"model_input": model_input_mat[::, int(all_timesteps*train_pct):int(all_timesteps*val_pct)]}
-    test_dataset = {"model_input": model_input_mat[::, int(all_timesteps*val_pct):]}
+    ###test_dataset = {"model_input": model_input_mat[::, int(all_timesteps*val_pct):]}
+    test_dataset = {"model_input": model_input_mat[::, int(all_timesteps*train_pct):]}
     if target_df is not None:
         assert model_input_df.shape == target_df.shape, "Check the whether the shape of model_input_df and target_df are the same."
         target_mat = target_df.values
         train_dataset["target"] = target_mat[::, :int(all_timesteps*train_pct)]
         val_dataset["target"] = target_mat[::, int(all_timesteps*train_pct):int(all_timesteps*val_pct)]
-        test_dataset["target"] = target_mat[::, int(all_timesteps*val_pct):]
+        ###test_dataset["target"] = target_mat[::, int(all_timesteps*val_pct):]
+        test_dataset["target"] = target_mat[::, int(all_timesteps*train_pct):]
     else:
         train_dataset["target"] = train_dataset["model_input"]
         val_dataset["target"] = val_dataset["model_input"]

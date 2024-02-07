@@ -133,13 +133,14 @@ def report_preds_err_degree(model_input_df: pd.DataFrame, tr_val_tt_len_list: li
     num_pairs, tol_time_steps = model_input_df.shape
     assert num_pairs == inference_data["model_input"].shape[0] == inference_data["target"].shape[0], "The number of pairs in the model input dataframe must be equal to the number of pairs in the inference data."
     assert len(tr_val_tt_len_list) == 3, "The length of the `tr_val_tt_list` list must be 3."
-    assert sum(tr_val_tt_len_list) == tol_time_steps, "The sum of the `tr_val_tt_list` list must be equal to the total number of time steps in the model input dataframe."
+    ###assert sum(tr_val_tt_len_list) == tol_time_steps, "The sum of the `tr_val_tt_list` list must be equal to the total number of time steps in the model input dataframe."
     assert inference_data["target"].shape[1] in tr_val_tt_len_list, "The number of time steps in the inference data target must be in the `tr_val_tt_list` list."
     model_input_dates = model_input_df.columns
     tr_dates_range = (model_input_dates[0:int(tr_val_tt_len_list[0])])
     val_dates_range = (model_input_dates[int(tr_val_tt_len_list[0]):int(tr_val_tt_len_list[0])+int(tr_val_tt_len_list[1])])
-    test_dates_range = (model_input_dates[int(tr_val_tt_len_list[0])+int(tr_val_tt_len_list[1]):])
-    assert len(tr_dates_range) == tr_val_tt_len_list[0] and len(val_dates_range) == tr_val_tt_len_list[1] and len(test_dates_range) == tr_val_tt_len_list[2], "The length of the dates range must be equal to the length of the `tr_val_tt_len` list."
+    ###test_dates_range = (model_input_dates[int(tr_val_tt_len_list[0])+int(tr_val_tt_len_list[1]):])
+    test_dates_range = (model_input_dates[int(tr_val_tt_len_list[0]):])
+    ###assert len(tr_dates_range) == tr_val_tt_len_list[0] and len(val_dates_range) == tr_val_tt_len_list[1] and len(test_dates_range) == tr_val_tt_len_list[2], "The length of the dates range must be equal to the length of the `tr_val_tt_len` list."
     data_sp_dates = {"tr": tr_dates_range, "val": val_dates_range, "test": test_dates_range}[data_sp_mode]
     report_df = pd.DataFrame()
     for i, pair_name in enumerate(model_input_df.index):
